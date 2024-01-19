@@ -23,4 +23,8 @@
         backup_target_path,backup_target_root_id,md5,
         backup_id
     </sql>
+    <select id="getLastBackupHistory" resultType="org.dam.entity.BackupFileHistory">
+        SELECT * FROM backup_file_history WHERE backup_file_id = #{ fileId }
+            ORDER BY id DESC LIMIT 1
+    </select>
 </mapper>

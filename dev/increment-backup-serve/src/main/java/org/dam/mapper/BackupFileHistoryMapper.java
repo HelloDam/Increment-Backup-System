@@ -1,5 +1,6 @@
 package org.dam.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.dam.entity.BackupFileHistory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface BackupFileHistoryMapper extends BaseMapper<BackupFileHistory> {
 
+    BackupFileHistory getLastBackupHistory(@Param("fileId") long fileId);
 }
 
 
