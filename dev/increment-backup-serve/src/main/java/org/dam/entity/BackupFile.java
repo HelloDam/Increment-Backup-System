@@ -18,13 +18,13 @@ public class BackupFile implements Serializable {
     /**
      * 
      */
-    @TableId
+    @TableId(value = "id",type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
      * 
      */
-    private Long backupRootId;
+    private Long backupSourceId;
 
     /**
      * 
