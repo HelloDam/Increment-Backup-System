@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Data;
+import org.dam.entity.base.BaseEntity;
 
 /**
  * 
@@ -13,12 +14,7 @@ import lombok.Data;
  */
 @TableName(value ="backup_target")
 @Data
-public class BackupTarget implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+public class BackupTarget extends BaseEntity implements Serializable {
 
     /**
      * 
