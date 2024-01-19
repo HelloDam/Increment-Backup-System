@@ -207,6 +207,7 @@ public class BackupServiceImpl implements BackupService {
         history.setBackupTargetPath(targetNameSave);
         history.setBackupTargetRootId(target.getBackupSourceId());
         history.setMd5(md5str);
+        backupFileHistoryService.save(history);
         return true;
     }
 
