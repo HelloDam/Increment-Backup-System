@@ -74,12 +74,12 @@ public class BackupServiceImpl implements BackupService {
         }
         for (BackupTarget backupTarget : backUpTask.getTargetList()) {
             Statistic statistic = new Statistic(0, new Date().getTime() / 1000, 0, 0);
-            backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, statistic, new StringBuilder(), fileNum);
+            backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, statistic, "", fileNum);
         }
 
     }
 
-    private void backUpAllFiles(File file, BackupSource backupSource, BackupTarget backupTarget, Map<String, Long> filePathAndIdMap, Statistic statistic, StringBuilder stringBuilder, int totalFileNum) {
+    private void backUpAllFiles(File file, BackupSource backupSource, BackupTarget backupTarget, Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath, int totalFileNum) {
         File[] fs = file.listFiles();
         for (File f : fs) {
             if (f.toString().indexOf("/.") != -1 || f.toString().indexOf("\\.") != -1) {
@@ -87,18 +87,17 @@ public class BackupServiceImpl implements BackupService {
             }
             if (f.isDirectory()) {
                 // --if-- 若是目录，先创建文件，然后递归创建文件
-                String targetName = getTargetPath(f, backupTarget, stringBuilder.toString());
-                stringBuilder.append(f.getName() + File.separator);
+                String targetName = getTargetPath(f, backupTarget, middlePath);
                 File dir = new File(targetName);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                backUpAllFiles(f, backupSource, backupTarget, filePathAndIdMap, statistic, stringBuilder, totalFileNum);
+                backUpAllFiles(f, backupSource, backupTarget, filePathAndIdMap, statistic, middlePath + f.getName() + File.separator, totalFileNum);
             }
             if (f.isFile()) {
                 // --if-- 若是文件，添加到文件夹中
                 try {
-                    execBackUp(backupSource, backupTarget, f.toString(), filePathAndIdMap, statistic, stringBuilder.toString(), totalFileNum);
+                    execBackUp(backupSource, backupTarget, f.toString(), filePathAndIdMap, statistic, middlePath, totalFileNum);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 } catch (IOException e) {
