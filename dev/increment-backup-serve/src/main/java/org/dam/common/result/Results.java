@@ -40,7 +40,7 @@ public final class Results {
      *
      * @return
      */
-    protected static Result<Void> failure() {
+    public static Result<Void> failure() {
         return new Result<Void>()
                 .setCode(BaseErrorCode.SERVICE_ERROR.code())
                 .setMessage(BaseErrorCode.SERVICE_ERROR.message());
@@ -52,7 +52,7 @@ public final class Results {
      * @param abstractException
      * @return
      */
-    protected static Result<Void> failure(AbstractException abstractException) {
+    public static Result<Void> failure(AbstractException abstractException) {
         String errorCode = Optional.ofNullable(abstractException.getErrorCode())
                 .orElse(BaseErrorCode.SERVICE_ERROR.code());
         String errorMessage = Optional.ofNullable(abstractException.getErrorMessage())
@@ -69,7 +69,7 @@ public final class Results {
      * @param errorMessage
      * @return
      */
-    protected static Result<Void> failure(String errorCode, String errorMessage) {
+    public static Result<Void> failure(String errorCode, String errorMessage) {
         return new Result<Void>()
                 .setCode(errorCode)
                 .setMessage(errorMessage);
