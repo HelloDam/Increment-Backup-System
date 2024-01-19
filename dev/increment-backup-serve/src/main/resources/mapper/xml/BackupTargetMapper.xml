@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dam.mapper.BackupTargetMapper">
+
+    <resultMap id="BaseResultMap" type="org.dam.entity.BackupTarget">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="backupSourceId" column="backup_source_id" jdbcType="BIGINT"/>
+            <result property="tagetRootPath" column="taget_root_path" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,backup_source_id,taget_root_path
+    </sql>
+</mapper>

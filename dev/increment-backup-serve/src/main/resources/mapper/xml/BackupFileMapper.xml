@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dam.mapper.BackupFileMapper">
+
+    <resultMap id="BaseResultMap" type="org.dam.entity.BackupFile">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="backupRootId" column="backup_root_id" jdbcType="BIGINT"/>
+            <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+            <result property="backupNum" column="backup_num" jdbcType="INTEGER"/>
+            <result property="lastBackupTime" column="last_backup_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,backup_root_id,file_path,
+        backup_num,last_backup_time
+    </sql>
+</mapper>

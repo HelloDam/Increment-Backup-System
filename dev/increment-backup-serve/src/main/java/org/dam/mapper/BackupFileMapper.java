@@ -1,0 +1,18 @@
+package org.dam.mapper;
+
+import org.dam.entity.BackupFile;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+/**
+* @author mac
+* @description 针对表【backup_file】的数据库操作Mapper
+* @createDate 2024-01-19 11:05:11
+* @Entity org.dam.entity.BackupFile
+*/
+public interface BackupFileMapper extends BaseMapper<BackupFile> {
+
+}
+
+
+
+
