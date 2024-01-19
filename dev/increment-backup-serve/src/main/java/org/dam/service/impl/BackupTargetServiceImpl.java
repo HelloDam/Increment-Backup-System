@@ -26,8 +26,8 @@ public class BackupTargetServiceImpl extends ServiceImpl<BackupTargetMapper, Bac
     public PageResponse<BackupTarget> pageBackupTarget(PageRequest pageRequest) {
         LambdaQueryWrapper<BackupTarget> queryWrapper = Wrappers.lambdaQuery(BackupTarget.class)
                 /* .orderByDesc(BackupTarget::getCreateTime)*/;
-        IPage<BackupTarget> orderPage = baseMapper.selectPage(PageUtil.convert(pageRequest), queryWrapper);
-        return PageUtil.convert(orderPage);
+        IPage<BackupTarget> page = baseMapper.selectPage(PageUtil.convert(pageRequest), queryWrapper);
+        return PageUtil.convert(page);
     }
 }
 
