@@ -60,6 +60,14 @@
             <artifactId>hutool-all</artifactId>
             <version>5.8.23</version>
         </dependency>
+        <!-- 热部署 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
