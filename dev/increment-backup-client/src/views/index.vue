@@ -26,7 +26,7 @@
 
 <script>
 
-import BackupSourceTable from "../layout/BackupSourceTable.vue";
+import BackupSourceTable from "../components/BackupSourceTable.vue";
 
 export default {
   components: {BackupSourceTable},
