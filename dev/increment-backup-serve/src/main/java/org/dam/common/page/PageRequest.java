@@ -1,12 +1,16 @@
 package org.dam.common.page;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Author dam
  * @create 2024/1/19 16:12
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PageRequest {
 
     /**

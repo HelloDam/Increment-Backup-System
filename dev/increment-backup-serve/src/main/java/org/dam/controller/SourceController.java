@@ -6,6 +6,7 @@ import org.dam.common.result.Result;
 import org.dam.common.result.Results;
 import org.dam.entity.BackupSource;
 import org.dam.entity.User;
+import org.dam.entity.request.BackupSourceRequest;
 import org.dam.mapper.UserMapper;
 import org.dam.service.BackupSourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class SourceController {
      */
     @PostMapping("/save")
     public Result save(@RequestBody BackupSource backupSource) {
-        sourceService.save(backupSource);
+        sourceService.saveSource(backupSource);
         return Results.success();
     }
 
@@ -50,8 +51,8 @@ public class SourceController {
      * 查询数据
      */
     @PostMapping("/list")
-    public Result<PageResponse<BackupSource>> list(PageRequest pageRequest) {
-        PageResponse<BackupSource> backupSourcePageResponse = sourceService.pageBackupSource(pageRequest);
+    public Result<PageResponse<BackupSource>> list(@RequestBody BackupSourceRequest sourceRequest) {
+        PageResponse<BackupSource> backupSourcePageResponse = sourceService.pageBackupSource(sourceRequest);
         return Results.success(backupSourcePageResponse);
     }
 
@@ -77,8 +78,18 @@ public class SourceController {
      * 修改数据
      */
     @PostMapping("/update")
-    public Result update(BackupSource source) {
-        sourceService.updateById(source);
+    public Result update(@RequestBody BackupSource source) {
+        sourceService.updateSourceById(source);
         return Results.success();
+    }
+
+    /**
+     * 根据id获取数据源
+     * @param id
+     * @return
+     */
+    @GetMapping("/getById/{id}")
+    public Result getById(@PathVariable Long id){
+        return Results.success(sourceService.getById(id));
     }
 }

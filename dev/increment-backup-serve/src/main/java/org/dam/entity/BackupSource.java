@@ -20,7 +20,7 @@ import org.dam.entity.base.BaseEntity;
 @Accessors(chain = true)
 public class BackupSource extends BaseEntity implements Serializable {
     /**
-     *
+     * 根目录
      */
     private String rootPath;
 

@@ -4,6 +4,7 @@ import org.dam.common.page.PageRequest;
 import org.dam.common.page.PageResponse;
 import org.dam.entity.BackupSource;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.dam.entity.request.BackupSourceRequest;
 
 /**
 * @author mac
@@ -12,6 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface BackupSourceService extends IService<BackupSource> {
 
-    PageResponse<BackupSource> pageBackupSource(PageRequest pageRequest);
+    PageResponse<BackupSource> pageBackupSource(BackupSourceRequest sourceRequest);
 
+    void saveSource(BackupSource backupSource);
+
+    void updateSourceById(BackupSource source);
 }
