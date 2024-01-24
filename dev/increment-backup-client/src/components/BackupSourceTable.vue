@@ -2,9 +2,10 @@
   <div>
     <div class="tableTitle">
       <div>
-        数据源目录
+        数据源目录管理
       </div>
       <div>
+        <Compass  style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"  @click="addBackupSourceDialog()"/>
         <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
                     @click="addBackupSourceDialog()"/>
         <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
@@ -16,7 +17,7 @@
       </div>
     </div>
     <div class="table">
-      <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange">
+      <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource">
         <el-table-column type="selection" width="55"/>
         <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
         <el-table-column prop="rootPath" label="根目录路径" width="300" :show-overflow-tooltip="true"/>
@@ -76,7 +77,7 @@
       <template #footer>
           <span class="dialog-footer">
             <el-button @click="searchBackupSourceDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="listBackSource(true)">
+            <el-button type="primary" @click="listBackupSource(true)">
               查 询
             </el-button>
           </span>
@@ -107,6 +108,8 @@ export default {
       backSourceTotal: 0,
       // 选择的数据源id数组
       selectBackupSourceIdArr: [],
+
+      selectBackupSource: '',
     };
   },
   computed: {},
@@ -115,7 +118,7 @@ export default {
     /**
      * 分页查询数据源
      */
-    listBackSource(isSearch) {
+    listBackupSource(isSearch) {
       this.searchBackupSourceForm.current = this.backupSourceCurrent;
       this.searchBackupSourceForm.size = this.backupSourceSize;
       backupSourceApi.list(this.searchBackupSourceForm).then(res => {
@@ -136,7 +139,7 @@ export default {
     addBackupSourceDialog() {
       this.addOrUpdateBackupSourceTitle = "增加数据源";
       this.addOrUpdateBackupSourceDialogVisible = true;
-      this.addOrUpdateBackupSourceForm = [];
+      this.addOrUpdateBackupSourceForm = {};
     },
     updateBackupSourceDialog() {
       if (this.selectBackupSourceIdArr.length == 1) {
@@ -167,7 +170,7 @@ export default {
       if (this.addOrUpdateBackupSourceForm.id) {
         backupSourceApi.update(this.addOrUpdateBackupSourceForm).then(res => {
               this.addOrUpdateBackupSourceDialogVisible = false;
-              this.listBackSource(false);
+              this.listBackupSource(false);
               // 情况表单
               this.addOrUpdateBackupSourceForm = {};
               ElMessage({
@@ -178,9 +181,10 @@ export default {
             }
         )
       } else {
+        console.log("this.addOrUpdateBackupSourceForm:" + JSON.stringify(this.addOrUpdateBackupSourceForm))
         backupSourceApi.save(this.addOrUpdateBackupSourceForm).then(res => {
               this.addOrUpdateBackupSourceDialogVisible = false;
-              this.listBackSource(false);
+              this.listBackupSource(false);
               // 情况表单
               this.addOrUpdateBackupSourceForm = {};
 
@@ -209,7 +213,7 @@ export default {
      */
     removeByBackupSourceIds() {
       backupSourceApi.removeByIds(this.selectBackupSourceIdArr).then(res => {
-        this.listBackSource(false);
+        this.listBackupSource(false);
         ElMessage({
           message: "删除成功",
           type: 'success',
@@ -223,14 +227,23 @@ export default {
      */
     handleBackSourceSizeChange(val) {
       this.backupSourceSize = val;
-      this.listBackSource(false);
+      this.listBackupSource(false);
     },
     /**
      * 分页页数改变
      */
     handleBackSourceCurrentChange(val) {
       this.backupSourceCurrent = val;
-      this.listBackSource(false);
+      this.listBackupSource(false);
+    },
+
+    /**
+     * 点击表格的一行触发
+     * @param val 所点击行的数据
+     */
+    changeSource(val) {
+      this.selectBackupSource = val;
+      this.$emit("changeSourceChange", this.selectBackupSource);
     },
 
     /**
@@ -245,7 +258,7 @@ export default {
   },
 
   created() {
-    this.listBackSource(false);
+    this.listBackupSource(false);
   },
 
   beforeMount() {
