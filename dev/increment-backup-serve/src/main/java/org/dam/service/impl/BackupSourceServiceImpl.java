@@ -39,7 +39,7 @@ public class BackupSourceServiceImpl extends ServiceImpl<BackupSourceMapper, Bac
         if (!StringUtils.isEmpty(sourceRequest.getBackupName())) {
             queryWrapper.like("backup_name", sourceRequest.getBackupName());
         }
-        IPage<BackupSource> page = baseMapper.selectPage(new Page(sourceRequest.getCurrent(),sourceRequest.getSize()), queryWrapper);
+        IPage<BackupSource> page = baseMapper.selectPage(new Page(sourceRequest.getCurrent(), sourceRequest.getSize()), queryWrapper);
 
         return PageUtil.convert(page);
     }
