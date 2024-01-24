@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import org.dam.entity.base.BaseEntity;
 
@@ -17,14 +20,15 @@ import org.dam.entity.base.BaseEntity;
 public class BackupTarget extends BaseEntity implements Serializable {
 
     /**
-     * 
+     * 数据源ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long backupSourceId;
 
     /**
-     * 
+     * 目标备份目录
      */
-    private String tagetRootPath;
+    private String targetRootPath;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

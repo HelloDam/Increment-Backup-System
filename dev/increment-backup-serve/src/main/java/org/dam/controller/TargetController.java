@@ -6,10 +6,14 @@ import org.dam.common.result.Result;
 import org.dam.common.result.Results;
 import org.dam.entity.BackupTarget;
 import org.dam.entity.BackupTarget;
+import org.dam.entity.BackupTarget;
+import org.dam.entity.request.BackupTargetRequest;
 import org.dam.service.BackupTargetService;
 import org.dam.service.BackupTargetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author dam
@@ -29,9 +33,18 @@ public class TargetController {
     public Result insertTarget(long backupSourceId, String targetRootPath) {
         BackupTarget backupTarget = new BackupTarget();
         backupTarget.setBackupSourceId(backupSourceId);
-        backupTarget.setTagetRootPath(targetRootPath);
+        backupTarget.setTargetRootPath(targetRootPath);
 
         targetService.save(backupTarget);
+        return Results.success();
+    }
+
+    /**
+     * 增添数据
+     */
+    @PostMapping("/save")
+    public Result save(@RequestBody BackupTarget backupSource) {
+        targetService.saveTarget(backupSource);
         return Results.success();
     }
 
@@ -39,8 +52,9 @@ public class TargetController {
      * 查询数据
      */
     @PostMapping("/list")
-    public Result<PageResponse<BackupTarget>> list(PageRequest pageRequest) {
-        return Results.success(targetService.pageBackupTarget(pageRequest));
+    public Result<PageResponse<BackupTarget>> list(@RequestBody BackupTargetRequest request) {
+        PageResponse<BackupTarget> backupTargetPageResponse = targetService.pageBackupTarget(request);
+        return Results.success(backupTargetPageResponse);
     }
 
     /**
@@ -53,11 +67,32 @@ public class TargetController {
     }
 
     /**
+     * 删除数据
+     */
+    @PostMapping("/removeByIds")
+    public Result removeByIds(@RequestBody List<Long> idList) {
+        targetService.removeByIds(idList);
+        return Results.success();
+    }
+
+    /**
      * 修改数据
      */
     @PostMapping("/update")
-    public Result update(BackupTarget target) {
-        targetService.updateById(target);
+    public Result update(@RequestBody BackupTarget target) {
+        targetService.updateTargetById(target);
         return Results.success();
     }
+
+    /**
+     * 根据id获取数据源
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/getById/{id}")
+    public Result getById(@PathVariable Long id) {
+        return Results.success(targetService.getById(id));
+    }
 }
+
