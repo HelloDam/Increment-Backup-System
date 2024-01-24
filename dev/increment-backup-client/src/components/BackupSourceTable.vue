@@ -5,7 +5,8 @@
         数据源目录管理
       </div>
       <div>
-        <Compass  style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"  @click="addBackupSourceDialog()"/>
+        <Compass style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
+                 @click="backupBySourceId()"/>
         <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
                     @click="addBackupSourceDialog()"/>
         <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
@@ -89,7 +90,9 @@
 <script>
 
 import backupSourceApi from "../api/backupSourceApi.js";
+import backupTargetApi from "../api/backupTargetApi.js";
 import {ElMessage} from "element-plus";
+import backupApi from "../api/backupApi.js";
 
 export default {
   components: {},
@@ -253,6 +256,35 @@ export default {
       let date = new Date(cellValue);
       return date.toLocaleDateString() + " " + date.toLocaleTimeString();
     },
+
+    /**
+     * 对指定的数据源进行备份
+     */
+    backupBySourceId(id) {
+
+      if (this.selectBackupSourceIdArr.length == 1) {
+        backupApi.backupBySourceId(this.selectBackupSourceIdArr[0]).then(res => {
+          ElMessage({
+            message: "开始备份",
+            type: 'success',
+            duration: 5 * 1000
+          })
+        })
+      } else if (this.selectBackupSourceIdArr.length > 1) {
+        ElMessage({
+          message: "所选中的数据源数据超过一个，无法备份",
+          type: 'error',
+          duration: 5 * 1000
+        })
+      } else {
+        ElMessage({
+          message: "没有选中数据源，无法备份",
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
+
+    }
   },
   beforeCreate() {
   },
