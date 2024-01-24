@@ -6,10 +6,10 @@ import org.dam.entity.User;
 import org.dam.mapper.UserMapper;
 import org.dam.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @Author dam
@@ -21,13 +21,23 @@ public class BackupController {
 
     @Autowired
     private BackupService backupService;
+    @Autowired
+    private ThreadPoolExecutor executor;
 
     /**
-     * 对 某源目录 执行备份
+     * 对指定的数据源进行备份
      */
-    @GetMapping("/backupBySourceId")
-    public Result backupBySourceId(String sourceId) {
-        backupService.backupBySourceId(sourceId);
+    @GetMapping("/backupBySourceId/{sourceId}")
+    public Result backupBySourceId(@PathVariable String sourceId) {
+
+        CompletableFuture.runAsync(() -> {
+            backupService.backupBySourceId(sourceId);
+        }, executor);
+
+        return Results.success();
+    }
+
+    public Result clear() {
         return Results.success();
     }
 
