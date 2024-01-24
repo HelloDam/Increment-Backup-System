@@ -7,17 +7,11 @@
     <div class="bodyDiv">
 
       <div class="tableDiv">
-        <BackupSourceTable></BackupSourceTable>
+        <BackupSourceTable @changeSourceChange="changeSourceChange()" ref="backupSourceTable"></BackupSourceTable>
       </div>
       <div style="width: 10px"></div>
       <div class="tableDiv">
-        <el-table :data="sourceList">
-          <el-table-column prop="id" label="编号" width="180"/>
-          <el-table-column prop="rootPath" label="根目录路径" width="180"/>
-          <el-table-column prop="backupName" label="简要介绍" width="180"/>
-          <el-table-column prop="createTime" label="创建时间"/>
-          <el-table-column prop="updateTime" label="修改时间"/>
-        </el-table>
+        <BackupTargetTable :selectBackupSource="selectBackupSource"></BackupTargetTable>
       </div>
     </div>
 
@@ -27,16 +21,24 @@
 <script>
 
 import BackupSourceTable from "../components/BackupSourceTable.vue";
+import BackupTargetTable from "../components/BackupTargetTable.vue";
 
 export default {
-  components: {BackupSourceTable},
+  components: {BackupSourceTable, BackupTargetTable},
   data() {
-    return {};
+    return {
+      // 数据源
+      selectBackupSource: {},
+    };
   },
   computed: {},
   watch: {},
-  methods: {}
-  ,
+  methods: {
+    changeSourceChange() {
+      console.log("子组件选中数据源更新");
+      this.selectBackupSource = this.$refs.backupSourceTable.selectBackupSource;
+    },
+  },
   beforeCreate() {
   }
   ,
@@ -121,7 +123,7 @@ export default {
       box-shadow: 0px 0px 10px 0px rgba(20, 20, 20, 0.116);
       border-radius: 5px;
       padding: 5px;
-      width: calc(50% - 10px);
+      width: calc(50% - 15px);
       height: 100%;
 
     }
