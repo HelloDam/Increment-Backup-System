@@ -48,6 +48,7 @@ export default {
      * @returns {*}
      */
     save(data) {
+        console.log("保存数据源：" + JSON.stringify(data));
         return request({
             url: `${apiName}/save`,
             method: "post",
