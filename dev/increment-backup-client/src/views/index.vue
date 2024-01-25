@@ -53,6 +53,19 @@
       </div>
     </div>
 
+    <div v-if="activeIndex==='4'" class="bodyDiv">
+      <div class="table2Div">
+        <BackupFileTable></BackupFileTable>
+      </div>
+    </div>
+
+    <div v-if="activeIndex==='5'" class="bodyDiv">
+      <div class="table2Div">
+        <BackupFileHistoryTable></BackupFileHistoryTable>
+      </div>
+    </div>
+
+
     <el-dialog
         v-model="backupTaskListDialogVisible"
         title="任务列表"
@@ -118,10 +131,12 @@
 import BackupSourceTable from "../components/BackupSourceTable.vue";
 import BackupTargetTable from "../components/BackupTargetTable.vue";
 import BackupTaskTable from "../components/BackupTaskTable.vue";
+import BackupFileTable from "../components/BackupFileTable.vue";
+import BackupFileHistoryTable from "../components/BackupFileHistoryTable.vue";
 import backupTaskApi from "../api/backupTaskApi.js";
 
 export default {
-  components: {BackupSourceTable, BackupTargetTable, BackupTaskTable},
+  components: {BackupSourceTable, BackupTargetTable, BackupTaskTable, BackupFileTable, BackupFileHistoryTable},
   data() {
     return {
       // 数据源
