@@ -44,8 +44,6 @@ public class BackupServiceImpl implements BackupService {
     @Autowired
     private BackupTargetService backupTargetService;
     @Autowired
-    private TotalBackupService totalBackupService;
-    @Autowired
     private ThreadPoolExecutor executor;
     @Autowired
     private BackupTaskService backupTaskService;
@@ -116,13 +114,7 @@ public class BackupServiceImpl implements BackupService {
         backupTask1.setFinishFileNum(sta.getTotalPackupFileNum());
         backupTask1.setFinishByteNum(sta.getFinishBackupByteNum());
         backupTaskService.updateById(backupTask1);
-        // 将备份信息存储到数据库中
-        TotalBackup totalBackup = new TotalBackup();
-        totalBackup.setStartTime(start);
-        totalBackup.setEndTime(new Date());
-        totalBackup.setBackupFileNum(sta.finishBackupFileNum);
-        totalBackup.setBackupByteNum(sta.finishBackupByteNum);
-        totalBackupService.save(totalBackup);
+
         // 查询出还没有完成的任务，或者是当前正在执行的任务
         QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
         backupTaskQueryWrapper.ne("backup_status", 2).or().eq("id", backupTask.getId());
@@ -200,7 +192,7 @@ public class BackupServiceImpl implements BackupService {
             return;
         }*/
         File backupSourceFile = new File(backupSourceFilePath);
-        long id;
+        long fileId;
         if (!filePathAndIdMap.containsKey(backupSourceFilePath)) {
             // --if-- 文件还没有备份过，将其插入到数据库中，并取出id
 
@@ -212,12 +204,12 @@ public class BackupServiceImpl implements BackupService {
             backupFile.setLastBackupTime(new DateTime());
             backupFileService.save(backupFile);
             // 查询出其在数据库中对应的ID
-            id = backupFile.getId();
+            fileId = backupFile.getId();
         } else {
-            id = filePathAndIdMap.get(backupSourceFilePath);
+            fileId = filePathAndIdMap.get(backupSourceFilePath);
         }
         // 查询出该文件的最后一次的备份历史
-        BackupFileHistory fileHistory = backupFileHistoryService.getLastBackupHistory(id);
+        BackupFileHistory fileHistory = backupFileHistoryService.getLastBackupHistory(fileId);
         // 判断文件是否有修改
         boolean isNeedBackup = true;
         if (fileHistory != null) {
@@ -240,7 +232,7 @@ public class BackupServiceImpl implements BackupService {
         // 执行具体的备份
         System.out.println("开始执行备份");
         if (isNeedBackup) {
-            if (!execBackupSingleFile(backupSourceFilePath, target, middlePath, id)) {
+            if (!execBackupSingleFile(backupSourceFilePath, target, middlePath, fileId, backupTaskId)) {
                 log.error("备份出错");
                 return;
             }
@@ -284,7 +276,7 @@ public class BackupServiceImpl implements BackupService {
      * @return
      * @throws IOException
      */
-    private boolean execBackupSingleFile(String sourceFilePath, BackupTarget target, String middlePath, long backupFileId) throws IOException {
+    private boolean execBackupSingleFile(String sourceFilePath, BackupTarget target, String middlePath, long backupFileId, long backupTaskId) throws IOException {
         Date start = new Date();
         File backupSourceFile = new File(sourceFilePath);
         FileInputStream sourceFileStream = new FileInputStream(backupSourceFile);
@@ -313,6 +305,7 @@ public class BackupServiceImpl implements BackupService {
         history.setBackupTargetPath(targetFilePath);
         history.setBackupTargetRootId(target.getBackupSourceId());
         history.setMd5(md5str);
+        history.setBackupTaskId(backupTaskId);
         backupFileHistoryService.save(history);
         return true;
     }
