@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dam.mapper.BackupTaskMapper">
+
+    <resultMap id="BaseResultMap" type="org.dam.entity.BackupTask">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="backupSourceRoot" column="backup_source_root" jdbcType="BIGINT"/>
+            <result property="backupTargetRoot" column="backup_target_root" jdbcType="VARCHAR"/>
+            <result property="totalFileNum" column="total_file_num" jdbcType="INTEGER"/>
+            <result property="finishFileNum" column="finish_file_num" jdbcType="INTEGER"/>
+            <result property="backupStatus" column="backup_status" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,backup_source_root,backup_target_root,
+        total_file_num,finish_file_num,backup_status,
+        create_time,update_time
+    </sql>
+</mapper>
