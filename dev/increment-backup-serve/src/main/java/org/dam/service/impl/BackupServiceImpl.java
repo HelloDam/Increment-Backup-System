@@ -106,8 +106,6 @@ public class BackupServiceImpl implements BackupService {
         BackupTarget backupTarget = task.getTarget();
         sta.timestamp = new Date().getTime() / 1000;
         backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, sta, "", backupTask.getId());
-        // 更新备份任务的状态为完成
-        QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
 
         // 备份结束，修改备份任务的状态为完成
         BackupTask backupTask1 = new BackupTask();
@@ -122,6 +120,7 @@ public class BackupServiceImpl implements BackupService {
         totalBackup.setBackupByteNum(sta.finishBackupByteNum);
         totalBackupService.save(totalBackup);
         // 查询出还没有完成的任务，或者是当前正在执行的任务
+        QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
         backupTaskQueryWrapper.ne("backup_status", 2).or().eq("id", backupTask.getId());
         backupTaskQueryWrapper.orderByDesc("create_time");
         List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
@@ -150,9 +149,9 @@ public class BackupServiceImpl implements BackupService {
                                 Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath, Long backupTaskId) {
         File[] fileArr = fatherFile.listFiles();
         for (File file : fileArr) {
-            if (file.toString().indexOf("/.") != -1 || file.toString().indexOf("\\.") != -1) {
-                continue;
-            }
+//            if (file.toString().indexOf("/.") != -1 || file.toString().indexOf("\\.") != -1) {
+//                continue;
+//            }
             if (file.isDirectory()) {
                 // --if-- 若是目录，先在目标目录下创建目录，然后递归备份文件
                 String targetName = getTargetPath(file, backupTarget, middlePath);
@@ -260,7 +259,7 @@ public class BackupServiceImpl implements BackupService {
 
             // 把所有没有完成的任务查询出来，发送给前端
             QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
-            backupTaskQueryWrapper.ne("backup_status", 2);
+            backupTaskQueryWrapper.eq("backup_status", 1);
             backupTaskQueryWrapper.orderByDesc("create_time");
             List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
             for (BackupTask task : taskList) {
@@ -361,9 +360,9 @@ public class BackupServiceImpl implements BackupService {
     private void getSonFileNum(File file, Statistic sta) {
         File[] fs = file.listFiles();
         for (File f : fs) {
-            if (f.toString().indexOf("/.") != -1 || f.toString().indexOf("\\.") != -1) {
-                continue;
-            }
+//            if (f.toString().indexOf("/.") != -1 || f.toString().indexOf("\\.") != -1) {
+//                continue;
+//            }
             if (f.isDirectory()) {
                 // --if-- 若是目录，则递归统计该目录下的文件数量
                 getSonFileNum(f, sta);
