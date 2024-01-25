@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class BackupTaskInit implements CommandLineRunner {
+
     @Autowired
     private BackupTaskService backupTaskService;
     @Override
