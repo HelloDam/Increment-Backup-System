@@ -7,7 +7,7 @@
     <resultMap id="BaseResultMap" type="org.dam.entity.BackupTarget">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="backupSourceId" column="backup_source_id" jdbcType="BIGINT"/>
-            <result property="tagetRootPath" column="taget_root_path" jdbcType="VARCHAR"/>
+            <result property="targetRootPath" column="taget_root_path" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
