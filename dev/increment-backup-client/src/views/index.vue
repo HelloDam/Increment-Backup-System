@@ -34,8 +34,7 @@
         <!--      </div>-->
         <!--      <div></div>-->
         <!--    </div>-->
-        <div class="bodyDiv">
-
+        <div class="bodyDiv" v-if="activeIndex==='0'">
             <div class="tableDiv">
                 <BackupSourceTable @changeSourceChange="changeSourceChange()"
                                    ref="backupSourceTable"></BackupSourceTable>
@@ -43,6 +42,12 @@
             <div style="width: 10px"></div>
             <div class="tableDiv">
                 <BackupTargetTable :selectBackupSource="selectBackupSource"></BackupTargetTable>
+            </div>
+        </div>
+
+        <div v-if="activeIndex==='2'">
+            <div class="tableDiv">
+                <BackupTaskTable></BackupTaskTable>
             </div>
         </div>
 
@@ -110,17 +115,18 @@
 
 import BackupSourceTable from "../components/BackupSourceTable.vue";
 import BackupTargetTable from "../components/BackupTargetTable.vue";
+import BackupTaskTable from "../components/BackupTaskTable.vue";
 import backupTaskApi from "../api/backupTaskApi.js";
 
 export default {
-    components: {BackupSourceTable, BackupTargetTable},
+    components: {BackupSourceTable, BackupTargetTable,BackupTaskTable},
     data() {
         return {
             // 数据源
             selectBackupSource: {},
             // 备份任务列表
             backupTaskList: [],
-            activeIndex: 0,
+            activeIndex: '0',
             backupTaskListDialogVisible: false,
         };
     },
@@ -193,6 +199,8 @@ export default {
                     console.log(JSON.stringify(this.backupTaskList[i]));
                 }
                 this.backupTaskListDialogVisible = true;
+            } else {
+                this.activeIndex = activeIndex;
             }
         },
         /**

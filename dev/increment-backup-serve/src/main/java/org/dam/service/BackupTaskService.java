@@ -1,7 +1,9 @@
 package org.dam.service;
 
+import org.dam.common.page.PageResponse;
 import org.dam.entity.BackupTask;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.dam.entity.request.BackupTaskRequest;
 
 import java.util.List;
 
@@ -15,4 +17,6 @@ public interface BackupTaskService extends IService<BackupTask> {
     List<BackupTask> listProcessingTask();
 
     void updateNotFinishedTask();
+
+    PageResponse<BackupTask> pageBackupTask(BackupTaskRequest request);
 }

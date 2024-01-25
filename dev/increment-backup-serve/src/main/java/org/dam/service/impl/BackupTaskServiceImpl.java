@@ -1,11 +1,18 @@
 package org.dam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.dam.common.page.PageResponse;
+import org.dam.common.page.PageUtil;
+import org.dam.entity.BackupSource;
 import org.dam.entity.BackupTask;
+import org.dam.entity.request.BackupTaskRequest;
 import org.dam.service.BackupTaskService;
 import org.dam.mapper.BackupTaskMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -26,7 +33,7 @@ public class BackupTaskServiceImpl extends ServiceImpl<BackupTaskMapper, BackupT
         backupTaskQueryWrapper.orderByDesc("create_time");
         List<BackupTask> taskList = baseMapper.selectList(backupTaskQueryWrapper);
         for (BackupTask task : taskList) {
-            task.setBackupProgress(String.format("%.1f", task.getFinishFileNum() * 100.0 / task.getTotalFileNum()));
+            setProgress(task);
         }
         return taskList;
     }
@@ -34,6 +41,36 @@ public class BackupTaskServiceImpl extends ServiceImpl<BackupTaskMapper, BackupT
     @Override
     public void updateNotFinishedTask() {
         baseMapper.updateNotFinishedTask();
+    }
+
+    @Override
+    public PageResponse<BackupTask> pageBackupTask(BackupTaskRequest request) {
+        QueryWrapper<BackupTask> queryWrapper = new QueryWrapper<>();
+        if (!StringUtils.isEmpty(request.getBackupSourceRoot())) {
+            queryWrapper.like("backup_source_root", request.getBackupSourceRoot());
+        }
+        if (!StringUtils.isEmpty(request.getBackupTargetRoot())) {
+            queryWrapper.like("backup_target_root", request.getBackupTargetRoot());
+        }
+        if (request.getBackupStatus() != null) {
+            queryWrapper.eq("backup_status", request.getBackupStatus());
+        }
+        Page pageParam = new Page(request.getCurrent(), request.getSize());
+        IPage<BackupTask> page = baseMapper.selectPage(pageParam, queryWrapper);
+        for (BackupTask task : page.getRecords()) {
+            setProgress(task);
+        }
+
+        return PageUtil.convert(page);
+    }
+
+    /**
+     * 设置进度
+     *
+     * @param task
+     */
+    public static void setProgress(BackupTask task) {
+        task.setBackupProgress(String.format("%.1f", task.getFinishFileNum() * 100.0 / task.getTotalFileNum()));
     }
 }
 

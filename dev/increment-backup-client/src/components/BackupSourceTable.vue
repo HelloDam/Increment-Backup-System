@@ -30,12 +30,12 @@
       </el-table>
       <div style="padding: 10px">
         <el-pagination background layout="total, sizes, prev, pager, next, jumper" :page-sizes="[10, 20, 30, 40]"
-                       :total=backSourceTotal
+                       :total=backupSourceTotal
                        v-model:current-page="backupSourceCurrent"
                        v-model:page-size="backupSourceSize"
                        small="small"
-                       @size-change="handleBackSourceSizeChange"
-                       @current-change="handleBackSourceCurrentChange"/>
+                       @size-change="handlebackupSourceSizeChange"
+                       @current-change="handlebackupSourceCurrentChange"/>
       </div>
     </div>
     <!-- 添加或修改数据源 -->
@@ -108,7 +108,7 @@ export default {
       searchBackupSourceForm: {},
       backupSourceCurrent: 1,
       backupSourceSize: 10,
-      backSourceTotal: 0,
+      backupSourceTotal: 0,
       // 选择的数据源id数组
       selectBackupSourceIdArr: [],
 
@@ -127,7 +127,7 @@ export default {
       backupSourceApi.list(this.searchBackupSourceForm).then(res => {
         console.log(JSON.stringify(res))
         this.sourceList = res.data.records;
-        this.backSourceTotal = res.data.total;
+        this.backupSourceTotal = res.data.total;
         if (isSearch == true) {
           this.searchBackupSourceDialogVisible = false;
           this.searchBackupSourceForm = [];
@@ -228,14 +228,14 @@ export default {
     /**
      * 分页大小改变
      */
-    handleBackSourceSizeChange(val) {
+    handlebackupSourceSizeChange(val) {
       this.backupSourceSize = val;
       this.listBackupSource(false);
     },
     /**
      * 分页页数改变
      */
-    handleBackSourceCurrentChange(val) {
+    handlebackupSourceCurrentChange(val) {
       this.backupSourceCurrent = val;
       this.listBackupSource(false);
     },

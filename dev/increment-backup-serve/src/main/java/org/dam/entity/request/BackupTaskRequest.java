@@ -1,23 +1,16 @@
-package org.dam.entity;
+package org.dam.entity.request;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import org.dam.common.page.PageRequest;
+
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.dam.entity.base.BaseEntity;
-
 /**
- * 
- * @TableName backup_task
+ * @Author dam
+ * @create 2024/1/25 19:43
  */
-@TableName(value ="backup_task")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class BackupTask extends BaseEntity implements Serializable {
+public class BackupTaskRequest extends PageRequest implements Serializable {
 
     /**
      * 备份数据源根目录
@@ -54,12 +47,4 @@ public class BackupTask extends BaseEntity implements Serializable {
      */
     private Integer backupStatus;
 
-    /**
-     * 备份进度百分比
-     */
-    @TableField(exist = false)
-    private String backupProgress;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

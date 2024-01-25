@@ -1,6 +1,6 @@
 import request from '../utils/axiosRequest.js'
 
-const apiName = '/source'
+const apiName = '/task'
 
 export default {
 
@@ -14,6 +14,17 @@ export default {
             url: `${apiName}/list`,
             method: "post",
             data: data
+        })
+    },
+
+    /**
+     * 查询正在处理的任务
+     * @returns {*}
+     */
+    listProcessingTask(){
+        return request({
+            url: `${apiName}/listProcessingTask`,
+            method: "get"
         })
     },
 
