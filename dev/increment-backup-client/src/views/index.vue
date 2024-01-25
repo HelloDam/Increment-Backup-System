@@ -17,13 +17,14 @@
             </el-menu-item>
             <div class="flex-grow"/>
             <el-menu-item index="1">
-                <div>
-                    备份任务
-                    <span class="badge">{{ backupTaskList.length }}</span>
+                <div style="border: #069ad2 solid 1px;height: 30px;border-radius: 5px;padding: 2px 5px;display: flex;align-items: center;justify-items: center">
+                    <div>备份中任务</div>
                 </div>
+                <span class="badge">{{ backupTaskList.length }}</span>
             </el-menu-item>
-            <el-menu-item index="2">已备份文件</el-menu-item>
-            <el-menu-item index="3">文件备份记录</el-menu-item>
+            <el-menu-item index="2">备份任务管理</el-menu-item>
+            <el-menu-item index="3">备份文件管理</el-menu-item>
+            <el-menu-item index="4">备份记录管理</el-menu-item>
         </el-menu>
 
         <!--    <div class="head">-->
@@ -78,14 +79,18 @@
                         <el-tag class="ml-2" type="danger" v-if="scope.row.backupStatus==3">失 败</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="totalFileNum" label="总文件数" width="120"
-                                 :show-overflow-tooltip="true"/>
-                <el-table-column prop="finishFileNum" label="已备份文件数" width="150"
-                                 :show-overflow-tooltip="true"/>
-                <el-table-column prop="totalByteNum" label="总字节数" width="150"
-                                 :show-overflow-tooltip="true"/>
-                <el-table-column prop="finishByteNum" label="已备份字节数" width="150"
-                                 :show-overflow-tooltip="true"/>
+                <el-table-column prop="totalFileNum" label="已备份文件数 / 总文件数" width="200"
+                                 :show-overflow-tooltip="true">
+                    <template #default="scope">
+                        <span>{{ scope.row.finishFileNum }} / {{ scope.row.totalFileNum }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="totalByteNum" label="已备份字节数 / 总字节数" width="300"
+                                 :show-overflow-tooltip="true">
+                    <template #default="scope">
+                        <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"
                                  :formatter="formatDate"/>
                 <el-table-column prop="updateTime" label="修改时间" width="180" :show-overflow-tooltip="true"
@@ -105,6 +110,7 @@
 
 import BackupSourceTable from "../components/BackupSourceTable.vue";
 import BackupTargetTable from "../components/BackupTargetTable.vue";
+import backupTaskApi from "../api/backupTaskApi.js";
 
 export default {
     components: {BackupSourceTable, BackupTargetTable},
@@ -121,9 +127,23 @@ export default {
     computed: {},
     watch: {},
     methods: {
+        /**
+         * 切换数据源
+         */
         changeSourceChange() {
             console.log("子组件选中数据源更新");
             this.selectBackupSource = this.$refs.backupSourceTable.selectBackupSource;
+        },
+        /**
+         * 查询正在处理的任务
+         */
+        listProcessingTask() {
+            backupTaskApi.listProcessingTask().then(
+                res => {
+                    // console.log("res:" + JSON.stringify(res));
+                    this.backupTaskList = res.data;
+                }
+            )
         },
         /**
          * 初始化websocket连接
@@ -163,9 +183,6 @@ export default {
             }
         },
         /**
-         /**
-         /**
-         /**
          * 切换所激活主题
          */
         handleSelectActive(activeIndex) {
@@ -192,6 +209,7 @@ export default {
 
     created() {
         this.initWebSocket();
+        this.listProcessingTask();
     }
     ,
 
@@ -265,7 +283,7 @@ export default {
       border-radius: 10%;
       position: absolute;
       top: 5px;
-      right: 5px;
+      right: 15px;
     }
 
     .flex-grow {
