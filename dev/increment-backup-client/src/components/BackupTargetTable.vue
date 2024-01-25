@@ -149,7 +149,7 @@ export default {
       }
     },
     addBackupTargetDialog() {
-      if (this.selectBackupSource) {
+      if (this.selectBackupSource && this.selectBackupSource.length > 0) {
         console.log("已经勾选数据源")
         console.log("this.selectBackupSource:" + JSON.stringify(this.selectBackupSource))
         this.addOrUpdateBackupTargetTitle = "增加备份目标目录";
