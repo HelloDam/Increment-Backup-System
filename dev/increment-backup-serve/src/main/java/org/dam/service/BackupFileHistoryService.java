@@ -4,6 +4,7 @@ import org.dam.common.page.PageRequest;
 import org.dam.common.page.PageResponse;
 import org.dam.entity.BackupFileHistory;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.dam.entity.request.BackupFileHistoryRequest;
 
 /**
  * @author mac
@@ -14,5 +15,5 @@ public interface BackupFileHistoryService extends IService<BackupFileHistory> {
 
     BackupFileHistory getLastBackupHistory(long fileId);
 
-    PageResponse<BackupFileHistory> pageBackupFile(PageRequest pageRequest);
+    PageResponse<BackupFileHistory> pageBackupFileHistory(BackupFileHistoryRequest request);
 }
