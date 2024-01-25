@@ -25,6 +25,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static org.dam.service.impl.BackupTaskServiceImpl.setProgress;
+
 /**
  * @Author dam
  * @create 2024/1/19 13:53
@@ -128,7 +130,7 @@ public class BackupServiceImpl implements BackupService {
             if (backupTask2.getId().equals(backupTask.getId())) {
                 backupTask2.setBackupProgress("100");
             } else {
-                backupTask2.setBackupProgress(String.format("%.1f", backupTask2.getFinishFileNum() * 100.0 / backupTask2.getTotalFileNum()));
+                setProgress(backupTask2);
             }
         }
         log.info("发送任务消息");
@@ -263,7 +265,7 @@ public class BackupServiceImpl implements BackupService {
             backupTaskQueryWrapper.orderByDesc("create_time");
             List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
             for (BackupTask task : taskList) {
-                task.setBackupProgress(String.format("%.2f", task.getFinishFileNum() * 100.0 / task.getTotalFileNum()));
+                setProgress(task);
             }
             log.info("发送任务消息");
             webSocketServer.sendMessage(JSON.toJSONString(taskList), WebSocketServer.usernameAndSessionMap.get("Admin"));
