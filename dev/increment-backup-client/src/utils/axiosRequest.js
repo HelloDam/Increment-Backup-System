@@ -3,7 +3,7 @@ import {ElMessage} from "element-plus";
 
 //获取配置文件 .env.development 的数据
 const BASE_URL = "http://localhost:8899";
-const REQUEST_TIMEOUT = 100;
+const REQUEST_TIMEOUT = 5000;
 
 // create an axios instance
 const service = axios.create({
