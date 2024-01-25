@@ -18,7 +18,7 @@ public class MybatisPlusConfig implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        System.out.printf("生成createTime和updateTime");
+//        System.out.printf("生成createTime和updateTime");
         // "createTime"这些要对应数据库的字段名
         strictInsertFill(metaObject, "createTime", Date::new, Date.class);
         strictInsertFill(metaObject, "updateTime", Date::new, Date.class);
