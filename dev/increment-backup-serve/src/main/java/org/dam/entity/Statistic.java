@@ -10,14 +10,25 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Statistic {
-    public int counter;
-    public long timestamp;
+    /**
+     * 已完成备份的文件数量
+     */
+    public int finishBackupFileNum;
+    /**
+     * 已完成备份的字节数量
+     */
+    public long finishBackupByteNum;
     /**
      * 备份的文件数量
      */
-    public int backupFileNum;
+    public int totalPackupFileNum;
     /**
      * 备份的字节数
      */
-    public long backupByteNum;
+    public long totalBackupByteNum;
+    /**
+     * 记录时间戳
+     */
+    public long timestamp;
+
 }
