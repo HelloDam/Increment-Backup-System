@@ -1,11 +1,15 @@
 package org.dam.service.impl;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.lang.hash.Hash;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.dam.common.exception.ClientException;
 import org.dam.common.exception.ServiceException;
+import org.dam.controller.BackupController;
+import org.dam.controller.WebSocketServer;
 import org.dam.entity.*;
 import org.dam.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,8 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @Author dam
@@ -37,6 +43,14 @@ public class BackupServiceImpl implements BackupService {
     private BackupTargetService backupTargetService;
     @Autowired
     private TotalBackupService totalBackupService;
+    @Autowired
+    private ThreadPoolExecutor executor;
+    @Autowired
+    private BackupTaskService backupTaskService;
+    @Autowired
+    private WebSocketServer webSocketServer;
+    @Autowired
+    private BackupController backupController;
 
     /**
      * 对指定的备份源进行备份
@@ -45,24 +59,42 @@ public class BackupServiceImpl implements BackupService {
      */
     @Override
     public void backupBySourceId(String sourceId) {
+
         // 检查 备份源目录是否存在 和 准备好备份目标目录
-        BackUpTask backUpTask = checkSourceAndTarget(sourceId);
+        List<Task> taskList = checkSourceAndTarget(sourceId);
         // todo 需要记录关于本次备份源的信息
         // 执行备份
-        backUpByTask(backUpTask);
+        CompletableFuture[] futureArr = new CompletableFuture[taskList.size()];
+        for (int i = 0; i < taskList.size(); i++) {
+            int finalI = i;
+            futureArr[i] = CompletableFuture.runAsync(() -> backUpByTask(taskList.get(finalI)), executor);
+        }
+        CompletableFuture.allOf(futureArr).join();
+
+        // 计算完成，移除相应数据源ID
+        if (backupController.sourceIDSet.contains(sourceId)) {
+            backupController.sourceIDSet.remove(sourceId);
+        }
     }
 
     /**
      * 备份一个数据源的数据
      *
-     * @param backUpTask
+     * @param task
      */
-    private void backUpByTask(BackUpTask backUpTask) {
-        BackupSource source = backUpTask.getSource();
+    private void backUpByTask(Task task) {
+        BackupSource source = task.getSource();
         Date start = new Date();
         // 找到备份目录下面的所有文件
-        int fileNum = getSonFileNum(new File(source.getRootPath()));
-        log.info("当前数据源（id={}）下的总文件数量:{}", source.getId(), fileNum);
+        Statistic sta = new Statistic(0, 0, 0, 0, new Date().getTime() / 1000);
+        getSonFileNum(new File(source.getRootPath()), sta);
+        log.info("当前数据源（id={}）下的总文件数量:{}，总字节数：{}", source.getId(), sta.totalPackupFileNum, sta.totalBackupByteNum);
+        // 将任务插入到数据库中
+        BackupTask backupTask = new BackupTask(source.getRootPath(), task.getTarget().getTargetRootPath(),
+                sta.totalPackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0");
+        backupTaskService.save(backupTask);
+        log.info("任务创建成功，开始备份");
+
         // 记录每个文件路径及其对应的id，如/Users/mac/Dev/BackUpTest/dasdasdasd.txt=>515351
         Map<String, Long> filePathAndIdMap = new HashMap<>();
         // 查询出当前数据源中所有已经备份过的文件
@@ -71,21 +103,37 @@ public class BackupServiceImpl implements BackupService {
             filePathAndIdMap.put(backupFile.getFilePath(), backupFile.getId());
         }
         // 将数据源的数据备份到多个目标目录下面
-        int backupFileNum = 0;
-        long backupByteNum = 0;
-        for (BackupTarget backupTarget : backUpTask.getTargetList()) {
-            Statistic statistic = new Statistic(0, new Date().getTime() / 1000, 0, 0);
-            backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, statistic, "", fileNum);
-            backupFileNum += statistic.backupFileNum;
-            backupByteNum += statistic.backupByteNum;
-        }
+        BackupTarget backupTarget = task.getTarget();
+        sta.timestamp = new Date().getTime() / 1000;
+        backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, sta, "", backupTask.getId());
+        // 更新备份任务的状态为完成
+        QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
+
+        // 备份结束，修改备份任务的状态为完成
+        BackupTask backupTask1 = new BackupTask();
+        backupTask1.setId(backupTask.getId());
+        backupTask1.setBackupStatus(2);
+        backupTaskService.updateById(backupTask1);
         // 将备份信息存储到数据库中
         TotalBackup totalBackup = new TotalBackup();
         totalBackup.setStartTime(start);
         totalBackup.setEndTime(new Date());
-        totalBackup.setBackupFileNum(backupFileNum);
-        totalBackup.setBackupByteNum(backupByteNum);
+        totalBackup.setBackupFileNum(sta.finishBackupFileNum);
+        totalBackup.setBackupByteNum(sta.finishBackupByteNum);
         totalBackupService.save(totalBackup);
+        // 查询出还没有完成的任务，或者是当前正在执行的任务
+        backupTaskQueryWrapper.ne("backup_status", 2).or().eq("id", backupTask.getId());
+        backupTaskQueryWrapper.orderByDesc("create_time");
+        List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
+        for (BackupTask backupTask2 : taskList) {
+            if (backupTask2.getId().equals(backupTask.getId())) {
+                backupTask2.setBackupProgress("100");
+            } else {
+                backupTask2.setBackupProgress(String.format("%.1f", backupTask2.getFinishFileNum() * 100.0 / backupTask2.getTotalFileNum()));
+            }
+        }
+        log.info("发送任务消息");
+        webSocketServer.sendMessage(JSON.toJSONString(taskList), WebSocketServer.usernameAndSessionMap.get("Admin"));
     }
 
     /**
@@ -97,10 +145,9 @@ public class BackupServiceImpl implements BackupService {
      * @param filePathAndIdMap
      * @param statistic
      * @param middlePath
-     * @param totalFileNum
      */
     private void backUpAllFiles(File fatherFile, BackupSource backupSource, BackupTarget backupTarget,
-                                Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath, int totalFileNum) {
+                                Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath, Long backupTaskId) {
         File[] fileArr = fatherFile.listFiles();
         for (File file : fileArr) {
             if (file.toString().indexOf("/.") != -1 || file.toString().indexOf("\\.") != -1) {
@@ -113,12 +160,14 @@ public class BackupServiceImpl implements BackupService {
                 if (!targetFile.exists()) {
                     targetFile.mkdirs();
                 }
-                backUpAllFiles(file, backupSource, backupTarget, filePathAndIdMap, statistic, middlePath + file.getName() + File.separator, totalFileNum);
+                backUpAllFiles(file, backupSource, backupTarget, filePathAndIdMap, statistic,
+                        middlePath + file.getName() + File.separator, backupTaskId);
             }
             if (file.isFile()) {
                 // --if-- 若是文件，执行备份操作
                 try {
-                    execBackUp(backupSource, backupTarget, file.toString(), filePathAndIdMap, statistic, middlePath, totalFileNum);
+                    execBackUp(backupSource, backupTarget, file.toString(), filePathAndIdMap,
+                            statistic, middlePath, backupTaskId);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 } catch (IOException e) {
@@ -135,13 +184,13 @@ public class BackupServiceImpl implements BackupService {
      * @param filePathAndIdMap
      * @param statistic
      * @param middlePath
-     * @param totalFileNum
      * @throws SQLException
      * @throws IOException
      */
     private void execBackUp(BackupSource source, BackupTarget target, String backupSourceFilePath,
                             Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath,
-                            int totalFileNum) throws SQLException, IOException {
+                            long backupTaskId) throws SQLException, IOException {
+        System.out.println("执行execBackUp");
         // todo 检查这里是否合理
        /* if (backupSourceFilePath.indexOf("/.") != -1 || backupSourceFilePath.indexOf("\\.") != -1) {
             // 不拷贝.开头的文件夹和文件
@@ -167,38 +216,59 @@ public class BackupServiceImpl implements BackupService {
         // 查询出该文件的最后一次的备份历史
         BackupFileHistory fileHistory = backupFileHistoryService.getLastBackupHistory(id);
         // 判断文件是否有修改
+        boolean isNeedBackup = true;
         if (fileHistory != null) {
             long lastModify = fileHistory.getModifyTime();
             long fileSize = fileHistory.getFileSize();
             String historyMD5 = fileHistory.getMd5();
             if (lastModify == backupSourceFile.lastModified() && fileSize == backupSourceFile.length()) {
                 // 如果文件的 修改时间 和 文件大小 都和数据库中的对应，认为文件没有被修改，无需备份
-                return;
+                isNeedBackup = false;
             }
             // 如果修改时间不一样，文件大小一样，追加校验一次hash，如果hash一样，则更新修改时间，不执行备份
             if (lastModify != backupSourceFile.lastModified() && fileSize == backupSourceFile.length()) {
                 // 只要输入一样，输出的MD5码就是一样的，如果md5一样，不执行备份
                 String md5str = DigestUtil.md5Hex(new FileInputStream(backupSourceFile));
                 if (md5str.equals(historyMD5)) {
-                    return;
+                    isNeedBackup = false;
                 }
             }
         }
         // 执行具体的备份
-        if (!execBackupSingleFile(backupSourceFilePath, target, middlePath, id)) {
-            log.error("备份出错");
-            return;
+        System.out.println("开始执行备份");
+        if (isNeedBackup) {
+            if (!execBackupSingleFile(backupSourceFilePath, target, middlePath, id)) {
+                log.error("备份出错");
+                return;
+            }
         }
+
         // 每隔一秒输出一下拷贝进度
-        statistic.counter++;
+        System.out.println("更新表格");
+        statistic.finishBackupFileNum++;
+        statistic.finishBackupByteNum += backupSourceFile.length();
         if (new Date().getTime() / 1000 != statistic.timestamp) {
             statistic.timestamp = new Date().getTime() / 1000;
-            log.info("拷贝进度:" + statistic.counter * 100 / totalFileNum + "%  " + statistic.counter + "/" + totalFileNum);
+            log.info("文件数量：拷贝进度:" + statistic.finishBackupFileNum * 100.0 / statistic.totalPackupFileNum + "%  " + statistic.finishBackupFileNum + "/" + statistic.totalPackupFileNum +
+                    "； 文件大小：拷贝进度:" + statistic.finishBackupByteNum * 100.0 / statistic.totalBackupByteNum + "%  " + statistic.finishBackupByteNum + "/" + statistic.totalBackupByteNum);
+            BackupTask backupTask = new BackupTask();
+            backupTask.setBackupStatus(1);
+            backupTask.setId(backupTaskId);
+            backupTask.setFinishFileNum(statistic.finishBackupFileNum);
+            backupTask.setFinishByteNum(statistic.finishBackupByteNum);
+            backupTaskService.updateById(backupTask);
+
+            // 把所有没有完成的任务查询出来，发送给前端
+            QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
+            backupTaskQueryWrapper.ne("backup_status", 2);
+            backupTaskQueryWrapper.orderByDesc("create_time");
+            List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
+            for (BackupTask task : taskList) {
+                task.setBackupProgress(String.format("%.2f", task.getFinishFileNum() * 100.0 / task.getTotalFileNum()));
+            }
+            log.info("发送任务消息");
+            webSocketServer.sendMessage(JSON.toJSONString(taskList), WebSocketServer.usernameAndSessionMap.get("Admin"));
         }
-        // 备份成功，备份的文件数量+1
-        statistic.backupFileNum++;
-        // 备份的文件字节数 增加
-        statistic.backupByteNum += backupSourceFile.length();
     }
 
     /**
@@ -288,23 +358,22 @@ public class BackupServiceImpl implements BackupService {
      *
      * @param file
      */
-    private int getSonFileNum(File file) {
+    private void getSonFileNum(File file, Statistic sta) {
         File[] fs = file.listFiles();
-        int fileNum = 0;
         for (File f : fs) {
             if (f.toString().indexOf("/.") != -1 || f.toString().indexOf("\\.") != -1) {
                 continue;
             }
             if (f.isDirectory()) {
                 // --if-- 若是目录，则递归统计该目录下的文件数量
-                fileNum += getSonFileNum(f);
+                getSonFileNum(f, sta);
             }
             if (f.isFile()) {
                 // --if-- 若是文件，添加到文件夹中
-                fileNum++;
+                sta.totalPackupFileNum++;
+                sta.totalBackupByteNum += f.length();
             }
         }
-        return fileNum;
     }
 
     /**
@@ -312,7 +381,7 @@ public class BackupServiceImpl implements BackupService {
      *
      * @param sourceId
      */
-    private BackUpTask checkSourceAndTarget(String sourceId) {
+    private List<Task> checkSourceAndTarget(String sourceId) {
         BackupSource source = backupSourceService.getById(sourceId);
         if (source == null) {
             throw new ClientException("id对应备份源信息不存在于数据库中");
@@ -335,6 +404,9 @@ public class BackupServiceImpl implements BackupService {
                 }
             }
         }
-        return new BackUpTask(source, backupSourceList);
+        List<Task> taskList = backupSourceList.stream().map(item -> {
+            return new Task(source, item);
+        }).toList();
+        return taskList;
     }
 }
