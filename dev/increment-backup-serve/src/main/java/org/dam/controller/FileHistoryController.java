@@ -1,15 +1,15 @@
 package org.dam.controller;
 
-import org.dam.common.page.PageRequest;
 import org.dam.common.page.PageResponse;
 import org.dam.common.result.Result;
 import org.dam.common.result.Results;
-import org.dam.entity.BackupFile;
 import org.dam.entity.BackupFileHistory;
+import org.dam.entity.request.BackupFileHistoryRequest;
 import org.dam.service.BackupFileHistoryService;
-import org.dam.service.BackupFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author dam
@@ -25,14 +25,9 @@ public class FileHistoryController {
     /**
      * 增添数据
      */
-    @GetMapping("/insertTarget")
-    public Result insertTarget(long backupSourceId, String targetRootPath) {
-        BackupFileHistory fileHistory = new BackupFileHistory();
-//        backupFile.setBackupSourceId(backupSourceId);
-//        backupFile.setFilePath();
-//        backupFile.setBackupNum();
-//        backupFile.setLastBackupTime();
-        fileHistoryService.save(fileHistory);
+    @PostMapping("/save")
+    public Result save(@RequestBody BackupFileHistory backupFileHistory) {
+        fileHistoryService.save(backupFileHistory);
         return Results.success();
     }
 
@@ -40,8 +35,9 @@ public class FileHistoryController {
      * 查询数据
      */
     @PostMapping("/list")
-    public Result<PageResponse<BackupFileHistory>> list(PageRequest pageRequest) {
-        return Results.success(fileHistoryService.pageBackupFile(pageRequest));
+    public Result<PageResponse<BackupFileHistory>> list(@RequestBody BackupFileHistoryRequest request) {
+        PageResponse<BackupFileHistory> backupTargetPageResponse = fileHistoryService.pageBackupFileHistory(request);
+        return Results.success(backupTargetPageResponse);
     }
 
     /**
@@ -54,11 +50,32 @@ public class FileHistoryController {
     }
 
     /**
+     * 删除数据
+     */
+    @PostMapping("/removeByIds")
+    public Result removeByIds(@RequestBody List<Long> idList) {
+        fileHistoryService.removeByIds(idList);
+        return Results.success();
+    }
+
+    /**
      * 修改数据
      */
     @PostMapping("/update")
-    public Result update(BackupFileHistory fileHistory) {
+    public Result update(@RequestBody BackupFileHistory fileHistory) {
         fileHistoryService.updateById(fileHistory);
         return Results.success();
     }
+
+    /**
+     * 根据id获取数据源
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/getById/{id}")
+    public Result getById(@PathVariable Long id) {
+        return Results.success(fileHistoryService.getById(id));
+    }
 }
+
