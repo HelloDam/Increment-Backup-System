@@ -113,6 +113,8 @@ public class BackupServiceImpl implements BackupService {
         BackupTask backupTask1 = new BackupTask();
         backupTask1.setId(backupTask.getId());
         backupTask1.setBackupStatus(2);
+        backupTask1.setFinishFileNum(sta.getTotalPackupFileNum());
+        backupTask1.setFinishByteNum(sta.getFinishBackupByteNum());
         backupTaskService.updateById(backupTask1);
         // 将备份信息存储到数据库中
         TotalBackup totalBackup = new TotalBackup();
