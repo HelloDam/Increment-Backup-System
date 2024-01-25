@@ -5,6 +5,7 @@ import org.dam.common.page.PageResponse;
 import org.dam.entity.BackupFile;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.dam.entity.BackupTarget;
+import org.dam.entity.request.BackupFileRequest;
 
 /**
 * @author mac
@@ -13,5 +14,5 @@ import org.dam.entity.BackupTarget;
 */
 public interface BackupFileService extends IService<BackupFile> {
 
-    PageResponse<BackupFile> pageBackupFile(PageRequest pageRequest);
+    PageResponse<BackupFile> pageBackupFile(BackupFileRequest pageRequest);
 }

@@ -19,22 +19,22 @@ import org.dam.entity.base.BaseEntity;
 public class BackupFile extends BaseEntity implements Serializable {
 
     /**
-     *
+     * 属于哪个数据源
      */
     private Long backupSourceId;
 
     /**
-     *
+     * 文件的路径
      */
     private String filePath;
 
     /**
-     *
+     * 备份数量
      */
     private Integer backupNum;
 
     /**
-     *
+     * 最后一次备份时间
      */
     private Date lastBackupTime;
 
