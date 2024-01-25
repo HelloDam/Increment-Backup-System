@@ -20,4 +20,10 @@
         total_file_num,finish_file_num,backup_status,
         create_time,update_time
     </sql>
+    <update id="updateNotFinishedTask">
+        update backup_task
+        set backup_status = 3
+        where backup_status = 1
+           or backup_status = 0
+    </update>
 </mapper>

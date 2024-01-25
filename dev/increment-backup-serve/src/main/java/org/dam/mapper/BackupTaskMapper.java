@@ -11,6 +11,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface BackupTaskMapper extends BaseMapper<BackupTask> {
 
+    void updateNotFinishedTask();
+
 }
 
 

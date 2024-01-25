@@ -3,6 +3,8 @@ package org.dam.service;
 import org.dam.entity.BackupTask;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author mac
 * @description 针对表【backup_task】的数据库操作Service
@@ -10,4 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface BackupTaskService extends IService<BackupTask> {
 
+    List<BackupTask> listProcessingTask();
+
+    void updateNotFinishedTask();
 }
