@@ -56,6 +56,11 @@ public class BackupSourceServiceImpl extends ServiceImpl<BackupSourceMapper, Bac
         baseMapper.updateById(backupSource);
     }
 
+    @Override
+    public void updateBackupNum(String sourceId) {
+        baseMapper.updateBackupNum(sourceId);
+    }
+
     /**
      * 检查数据源是否正确
      *

@@ -1,5 +1,6 @@
 package org.dam.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.dam.entity.BackupSource;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface BackupSourceMapper extends BaseMapper<BackupSource> {
 
+    void updateBackupNum(@Param("sourceId") String sourceId);
 }
 
 

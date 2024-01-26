@@ -68,6 +68,7 @@
         <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
         <el-table-column prop="rootPath" label="根目录路径" width="300" resizable="true" :show-overflow-tooltip="true"/>
         <el-table-column prop="backupName" label="简要介绍" width="200" resizable="true" :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupNum" label="备份次数" width="100" resizable="true" :show-overflow-tooltip="true"/>
         <el-table-column prop="backupType" label="备份类型" width="250" resizable="true" :show-overflow-tooltip="true">
           <template #default="scope">
             <el-tag class="ml-2" v-if="scope.row.backupType==0">数据全部备份到多个目标目录中</el-tag>

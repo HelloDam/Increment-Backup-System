@@ -15,4 +15,6 @@ import org.dam.entity.request.BackupFileRequest;
 public interface BackupFileService extends IService<BackupFile> {
 
     PageResponse<BackupFile> pageBackupFile(BackupFileRequest pageRequest);
+
+    void updateBackupNum(long fileId);
 }

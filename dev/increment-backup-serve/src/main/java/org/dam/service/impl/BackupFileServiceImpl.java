@@ -42,6 +42,11 @@ public class BackupFileServiceImpl extends ServiceImpl<BackupFileMapper, BackupF
 
         return PageUtil.convert(page);
     }
+
+    @Override
+    public void updateBackupNum(long fileId) {
+        baseMapper.updateBackupNum(fileId);
+    }
 }
 
 

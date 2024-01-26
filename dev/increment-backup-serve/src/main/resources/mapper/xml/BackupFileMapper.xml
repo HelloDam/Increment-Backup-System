@@ -16,4 +16,7 @@
         id,backup_root_id,file_path,
         backup_num,last_backup_time
     </sql>
+    <update id="updateBackupNum">
+        update backup_file set backup_num = backup_num + 1 where id = #{fileId}
+    </update>
 </mapper>

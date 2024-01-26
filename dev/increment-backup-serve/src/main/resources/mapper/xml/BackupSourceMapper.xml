@@ -12,4 +12,7 @@
     <sql id="Base_Column_List">
         id,root_path
     </sql>
+    <update id="updateBackupNum">
+        UPDATE backup_source SET backup_num = backup_num + 1 WHERE id = #{sourceId}
+    </update>
 </mapper>

@@ -61,7 +61,8 @@ public class BackupServiceImpl implements BackupService {
 
         // 检查 备份源目录是否存在 和 准备好备份目标目录
         List<Task> taskList = checkSourceAndTarget(sourceId);
-        // todo 需要记录关于本次备份源的信息
+        // 更新数据源备份次数
+        backupSourceService.updateBackupNum(sourceId);
         // 执行备份
         CompletableFuture[] futureArr = new CompletableFuture[taskList.size()];
         for (int i = 0; i < taskList.size(); i++) {
@@ -227,6 +228,9 @@ public class BackupServiceImpl implements BackupService {
             if (!execBackupSingleFile(backupSourceFilePath, target, middlePath, fileId, backupTaskId)) {
                 log.error("备份出错");
                 return;
+            } else {
+                // 更新文件的备份次数
+                backupFileService.updateBackupNum(fileId);
             }
         }
 

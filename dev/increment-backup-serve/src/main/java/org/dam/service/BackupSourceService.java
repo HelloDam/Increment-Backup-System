@@ -18,4 +18,6 @@ public interface BackupSourceService extends IService<BackupSource> {
     void saveSource(BackupSource backupSource);
 
     void updateSourceById(BackupSource source);
+
+    void updateBackupNum(String sourceId);
 }
