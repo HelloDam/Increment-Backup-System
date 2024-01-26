@@ -295,7 +295,8 @@ public class BackupServiceImpl implements BackupService {
         history.setFileSize(backupSourceFile.length());
         history.setBackupStartTime(start);
         history.setBackupEndTime(new Date());
-        history.setBackupTargetPath(targetFilePath);
+        history.setBackupSourceFilePath(sourceFilePath);
+        history.setBackupTargetFilePath(targetFilePath);
         history.setBackupTargetRootId(target.getBackupSourceId());
         history.setMd5(md5str);
         history.setBackupTaskId(backupTaskId);

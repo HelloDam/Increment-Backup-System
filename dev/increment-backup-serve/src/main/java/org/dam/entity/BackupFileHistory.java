@@ -31,6 +31,11 @@ public class BackupFileHistory implements Serializable {
     private Long backupFileId;
 
     /**
+     * 备份源文件路径
+     */
+    private String backupSourceFilePath;
+
+    /**
      * 修改时间
      */
     private Long modifyTime;
@@ -53,7 +58,7 @@ public class BackupFileHistory implements Serializable {
     /**
      * 备份目标目录
      */
-    private String backupTargetPath;
+    private String backupTargetFilePath;
 
     /**
      * 备份目标目录ID
