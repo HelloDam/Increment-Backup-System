@@ -18,14 +18,14 @@
       </div>
     </div>
     <div class="table">
-      <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource">
+      <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource" border="true">
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
-        <el-table-column prop="rootPath" label="根目录路径" width="300" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupName" label="简要介绍" width="200" :show-overflow-tooltip="true"/>
-        <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"
+        <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
+        <el-table-column prop="rootPath" label="根目录路径" width="300" resizable="true" :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupName" label="简要介绍" width="200" resizable="true" :show-overflow-tooltip="true"/>
+        <el-table-column prop="createTime" label="创建时间" width="180" resizable="true" :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
-        <el-table-column prop="updateTime" label="修改时间" width="180" :show-overflow-tooltip="true"
+        <el-table-column prop="updateTime" label="修改时间" width="180" resizable="true" :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
       </el-table>
       <div style="padding: 10px">

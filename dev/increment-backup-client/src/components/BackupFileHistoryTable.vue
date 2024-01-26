@@ -5,35 +5,40 @@
         数据源目录管理
       </div>
       <div>
-        <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
-                    @click="addBackupFileHistoryDialog()"/>
+        <!--        <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"-->
+        <!--                    @click="addBackupFileHistoryDialog()"/>-->
         <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
                 @click="removeByBackupFileHistoryIds"/>
-        <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"
-              @click="updateBackupFileHistoryDialog()"/>
+        <!--        <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"-->
+        <!--              @click="updateBackupFileHistoryDialog()"/>-->
         <Search style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#8a4f03"
                 @click="searchBackupFileHistoryDialogVisible=true"/>
       </div>
     </div>
     <div class="table">
       <el-table :data="fileHistoryList" @selection-change="handleBackupFileHistorySelectionChange"
-                @select="changeFileHistory">
+                @select="changeFileHistory" border="true">
 
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupFileId" label="对应的备份文件id" width="200"
+        <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupFileId" label="对应的备份文件id" width="200" resizable="true"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTargetPath" label="备份目标目录" width="200"
+        <el-table-column prop="backupSourceFilePath" label="文件源目录" width="200" resizable="true"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="md5" label="md5" width="200"
+        <el-table-column prop="backupTargetFilePath" label="文件目标目录" width="200" resizable="true"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTaskId" label="所属任务ID" width="200"
+        <el-table-column prop="md5" label="md5" width="200" resizable="true"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="modifyTime" label="修改时间" width="180" :show-overflow-tooltip="true"
+        <el-table-column prop="backupTaskId" label="所属任务ID" width="200" resizable="true"
+                         :show-overflow-tooltip="true"/>
+        <el-table-column prop="modifyTime" label="文件修改时间" width="180" resizable="true"
+                         :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
-        <el-table-column prop="backupStartTime" label="备份开始时间" width="180" :show-overflow-tooltip="true"
+        <el-table-column prop="backupStartTime" label="备份开始时间" width="180" resizable="true"
+                         :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
-        <el-table-column prop="backupEndTime" label="备份结束时间" width="180" :show-overflow-tooltip="true"
+        <el-table-column prop="backupEndTime" label="备份结束时间" width="180" resizable="true"
+                         :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
       </el-table>
       <div style="padding: 10px">

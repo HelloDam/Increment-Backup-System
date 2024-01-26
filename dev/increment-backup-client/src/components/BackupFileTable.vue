@@ -5,26 +5,28 @@
         数据源目录管理
       </div>
       <div>
-        <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
-                    @click="addBackupFileDialog()"/>
+        <!--        <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"-->
+        <!--                    @click="addBackupFileDialog()"/>-->
         <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
                 @click="removeByBackupFileIds"/>
-        <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"
-              @click="updateBackupFileDialog()"/>
+        <!--        <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"-->
+        <!--              @click="updateBackupFileDialog()"/>-->
         <Search style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#8a4f03"
                 @click="searchBackupFileDialogVisible=true"/>
       </div>
     </div>
     <div class="table">
-      <el-table :data="fileList" @selection-change="handleBackupFileSelectionChange" @select="changeFile">
+      <el-table :data="fileList" @selection-change="handleBackupFileSelectionChange" @select="changeFile" border="true">
         <el-table-column type="selection" width="55"/>
 
-        <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceId" label="数据源ID"
+        <el-table-column prop="id" label="编号" width="200" :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupSourceId" label="数据源ID" resizable="true" width="200"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="filePath" label="文件路径"
+        <el-table-column prop="backupTargetId" label="备份目标目录ID" resizable="true" width="200"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupNum" label="备份次数"
+        <el-table-column prop="filePath" label="文件路径" resizable="true" width="auto"
+                         :show-overflow-tooltip="true"/>s
+        <el-table-column prop="backupNum" label="备份次数" resizable="true" width="100"
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="lastBackupTime" label="上次备份时间" width="180" :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
