@@ -1,5 +1,7 @@
 package org.dam.entity.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import org.dam.common.page.PageRequest;
 
@@ -17,6 +19,11 @@ public class BackupFileRequest extends PageRequest implements Serializable {
      * 属于哪个数据源
      */
     private Long backupSourceId;
+
+    /**
+     * 属于哪个备份目录
+     */
+    private Long backupTargetId;
 
     /**
      * 文件的路径

@@ -19,6 +19,11 @@ public class BackupFileHistoryRequest extends PageRequest implements Serializabl
     private Long backupFileId;
 
     /**
+     * 备份源文件路径
+     */
+    private String backupSourceFilePath;
+
+    /**
      * 修改时间
      */
     private Long modifyTime;
@@ -41,7 +46,7 @@ public class BackupFileHistoryRequest extends PageRequest implements Serializabl
     /**
      * 备份目标目录
      */
-    private String backupTargetPath;
+    private String backupTargetFilePath;
 
     /**
      * 备份目标目录ID

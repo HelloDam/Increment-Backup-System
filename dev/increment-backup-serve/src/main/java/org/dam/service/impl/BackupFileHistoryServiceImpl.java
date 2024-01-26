@@ -36,6 +36,7 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
     @Override
     public PageResponse<BackupFileHistory> pageBackupFileHistory(BackupFileHistoryRequest request) {
         QueryWrapper<BackupFileHistory> queryWrapper = new QueryWrapper<>();
+
         if (request.getBackupFileId() != null) {
             queryWrapper.like("backup_file_id", request.getBackupFileId());
         }
@@ -45,8 +46,11 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
         if (request.getBackupTaskId() != null) {
             queryWrapper.like("backup_task_id", request.getBackupTaskId());
         }
-        if (!StringUtils.isEmpty(request.getBackupTargetPath())) {
-            queryWrapper.like("backup_target_path", request.getBackupTargetPath());
+        if (!StringUtils.isEmpty(request.getBackupTargetFilePath())) {
+            queryWrapper.like("backup_target_file_path", request.getBackupTargetFilePath());
+        }
+        if (!StringUtils.isEmpty(request.getBackupSourceFilePath())) {
+            queryWrapper.like("backup_source_file_path", request.getBackupSourceFilePath());
         }
 
         IPage<BackupFileHistory> page = baseMapper.selectPage(new Page(request.getCurrent(), request.getSize()), queryWrapper);

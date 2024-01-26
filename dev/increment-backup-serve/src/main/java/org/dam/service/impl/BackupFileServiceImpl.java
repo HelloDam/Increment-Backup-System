@@ -34,6 +34,9 @@ public class BackupFileServiceImpl extends ServiceImpl<BackupFileMapper, BackupF
         if (request.getBackupSourceId() != null) {
             queryWrapper.like("backup_source_id", request.getBackupSourceId());
         }
+        if (request.getBackupTargetId() != null) {
+                queryWrapper.like("backup_target_id", request.getBackupTargetId());
+        }
         if (!StringUtils.isEmpty(request.getFilePath())) {
             queryWrapper.like("file_path", request.getFilePath());
         }

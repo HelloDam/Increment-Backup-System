@@ -33,6 +33,7 @@ public class BackupSource extends BaseEntity implements Serializable {
      * 备份类型 0：数据源的数据全部备份到多个目标目录中 1：数据源的数据分散备份到多个目标目录中
      */
     private Integer backupType;
+
     /**
      * 备份次数
      */
