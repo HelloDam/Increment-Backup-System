@@ -5,22 +5,52 @@
         数据备份目标目录管理
       </div>
       <div>
-        <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
-                    @click="addBackupTargetDialog()"/>
-        <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
-                @click="removeByBackupTargetIds"/>
-        <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"
-              @click="updateBackupTargetDialog()"/>
-        <Search style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#8a4f03"
-                @click="searchBackupTargetDialogVisible=true"/>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="增加备份目标目录"
+            placement="top"
+        >
+          <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
+                      @click="addBackupTargetDialog()"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="删除备份目标目录"
+            placement="top"
+        >
+          <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
+                  @click="removeByBackupTargetIds"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="修改备份目标目录"
+            placement="top"
+        >
+          <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"
+                @click="updateBackupTargetDialog()"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="条件查询"
+            placement="top"
+        >
+          <Search style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#8a4f03"
+                  @click="searchBackupTargetDialogVisible=true"/>
+        </el-tooltip>
       </div>
     </div>
     <div class="table">
       <el-table :data="backupTargetList" @selection-change="handleBackupTargetSelectionChange" border="true">
         <el-table-column type="selection" width="55"/>
         <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceId" label="数据源ID" width="200" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="targetRootPath" label="目标目录路径" width="300" resizable="true" :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupSourceId" label="数据源ID" width="200" resizable="true"
+                         :show-overflow-tooltip="true"/>
+        <el-table-column prop="targetRootPath" label="目标目录路径" width="300" resizable="true"
+                         :show-overflow-tooltip="true"/>
         <el-table-column prop="createTime" label="创建时间" width="180" resizable="true" :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
         <el-table-column prop="updateTime" label="修改时间" width="180" resizable="true" :show-overflow-tooltip="true"

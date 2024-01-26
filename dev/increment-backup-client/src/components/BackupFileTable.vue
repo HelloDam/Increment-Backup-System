@@ -25,7 +25,7 @@
         <el-table-column prop="backupTargetId" label="备份目标目录ID" resizable="true" width="200"
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="filePath" label="文件路径" resizable="true" width="auto"
-                         :show-overflow-tooltip="true"/>s
+                         :show-overflow-tooltip="true"/>
         <el-table-column prop="backupNum" label="备份次数" resizable="true" width="100"
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="lastBackupTime" label="上次备份时间" width="180" :show-overflow-tooltip="true"

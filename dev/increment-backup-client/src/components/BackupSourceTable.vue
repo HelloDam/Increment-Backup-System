@@ -5,24 +5,76 @@
         数据源目录管理
       </div>
       <div>
-        <Compass style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
-                 @click="backupBySourceId()"/>
-        <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
-                    @click="addBackupSourceDialog()"/>
-        <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
-                @click="removeByBackupSourceIds"/>
-        <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"
-              @click="updateBackupSourceDialog()"/>
-        <Search style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#8a4f03"
-                @click="searchBackupSourceDialogVisible=true"/>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="删除无用的数据，如数据源中已经删除的数据，将其从备份目录中删除，并相应删除其备份记录"
+            placement="top"
+        >
+          <Filter style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#9ca605;"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="为勾选的数据源执行备份"
+            placement="top"
+        >
+          <Compass style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#039484;"
+                   @click="backupBySourceId()"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="增加数据源"
+            placement="top"
+        >
+          <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"
+                      @click="addBackupSourceDialog()"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="删除数据源"
+            placement="top"
+        >
+          <Delete style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#f54248"
+                  @click="removeByBackupSourceIds"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="修改数据源"
+            placement="top"
+        >
+
+          <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"
+                @click="updateBackupSourceDialog()"/>
+        </el-tooltip>
+        <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="条件查询"
+            placement="top"
+        >
+          <Search style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#8a4f03"
+                  @click="searchBackupSourceDialogVisible=true"/>
+        </el-tooltip>
       </div>
     </div>
     <div class="table">
-      <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource" border="true">
+      <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource"
+                border="true">
         <el-table-column type="selection" width="55"/>
         <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
         <el-table-column prop="rootPath" label="根目录路径" width="300" resizable="true" :show-overflow-tooltip="true"/>
         <el-table-column prop="backupName" label="简要介绍" width="200" resizable="true" :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupType" label="备份类型" width="250" resizable="true" :show-overflow-tooltip="true">
+          <template #default="scope">
+            <el-tag class="ml-2" v-if="scope.row.backupType==0">数据全部备份到多个目标目录中</el-tag>
+            <el-tag class="ml-2" type="success" v-if="scope.row.backupType==1">数据分散备份到多个目标目录中
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" resizable="true" :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
         <el-table-column prop="updateTime" label="修改时间" width="180" resizable="true" :show-overflow-tooltip="true"
@@ -51,6 +103,21 @@
         <el-form-item label="基 本 介 绍" :label-width="110">
           <el-input v-model="addOrUpdateBackupSourceForm.backupName" autocomplete="off"/>
         </el-form-item>
+        <el-form-item label="备 份 类 型" :label-width="110">
+          <el-select
+              v-model="addOrUpdateBackupSourceForm.backupType"
+              class="m-2"
+              placeholder="请选择备份类型"
+          >
+            <el-option
+                v-for="item in backupTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
       </el-form>
       <template #footer>
           <span class="dialog-footer">
@@ -103,6 +170,16 @@ export default {
       addOrUpdateBackupSourceDialogVisible: false,
       addOrUpdateBackupSourceTitle: '',
       addOrUpdateBackupSourceForm: {},
+      backupTypeOptions: [
+        {
+          value: '0',
+          label: '数据源的数据全部备份到每个目标目录中',
+        },
+        {
+          value: '1',
+          label: '数据源的数据分散备份到多个目标目录中',
+        }
+      ],
       // 查询数据源
       searchBackupSourceDialogVisible: false,
       searchBackupSourceForm: {},
