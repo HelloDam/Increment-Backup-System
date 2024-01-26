@@ -3,15 +3,12 @@ package org.dam.controller;
 import org.dam.common.exception.ClientException;
 import org.dam.common.result.Result;
 import org.dam.common.result.Results;
-import org.dam.entity.User;
-import org.dam.mapper.UserMapper;
 import org.dam.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
