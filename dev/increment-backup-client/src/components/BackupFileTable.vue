@@ -134,7 +134,7 @@ export default {
         this.backupFileTotal = res.data.total;
         if (isSearch === true) {
           this.searchBackupFileDialogVisible = false;
-          this.searchBackupFileForm = [];
+          this.searchBackupFileForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',

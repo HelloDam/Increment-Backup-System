@@ -145,7 +145,7 @@ export default {
         this.backupFileHistoryTotal = res.data.total;
         if (isSearch == true) {
           this.searchBackupFileHistoryDialogVisible = false;
-          this.searchBackupFileHistoryForm = [];
+          this.searchBackupFileHistoryForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',

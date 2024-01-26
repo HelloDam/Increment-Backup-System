@@ -207,7 +207,7 @@ export default {
         this.backupSourceTotal = res.data.total;
         if (isSearch == true) {
           this.searchBackupSourceDialogVisible = false;
-          this.searchBackupSourceForm = [];
+          this.searchBackupSourceForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',

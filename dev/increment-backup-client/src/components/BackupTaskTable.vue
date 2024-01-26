@@ -166,7 +166,7 @@ export default {
         this.backupTaskTotal = res.data.total;
         if (isSearch == true) {
           this.searchBackupTaskDialogVisible = false;
-          this.searchBackupTaskForm = [];
+          this.searchBackupTaskForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',
