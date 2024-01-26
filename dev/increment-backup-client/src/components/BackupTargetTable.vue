@@ -44,16 +44,16 @@
       </div>
     </div>
     <div class="table">
-      <el-table :data="backupTargetList" @selection-change="handleBackupTargetSelectionChange" border="true">
+      <el-table :data="backupTargetList" @selection-change="handleBackupTargetSelectionChange" border>
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceId" label="数据源ID" width="200" resizable="true"
+        <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupSourceId" label="数据源ID" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="targetRootPath" label="目标目录路径" width="300" resizable="true"
+        <el-table-column prop="targetRootPath" label="目标目录路径" width="300" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="createTime" label="创建时间" width="180" resizable="true" :show-overflow-tooltip="true"
+        <el-table-column prop="createTime" label="创建时间" width="180" resizable :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
-        <el-table-column prop="updateTime" label="修改时间" width="180" resizable="true" :show-overflow-tooltip="true"
+        <el-table-column prop="updateTime" label="修改时间" width="180" resizable :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
       </el-table>
       <div style="padding: 10px">

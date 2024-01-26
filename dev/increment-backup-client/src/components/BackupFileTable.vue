@@ -16,17 +16,17 @@
       </div>
     </div>
     <div class="table">
-      <el-table :data="fileList" @selection-change="handleBackupFileSelectionChange" @select="changeFile" border="true">
+      <el-table :data="fileList" @selection-change="handleBackupFileSelectionChange" @select="changeFile" border>
         <el-table-column type="selection" width="55"/>
 
         <el-table-column prop="id" label="编号" width="200" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceId" label="数据源ID" resizable="true" width="200"
+        <el-table-column prop="backupSourceId" label="数据源ID" resizable width="200"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTargetId" label="备份目标目录ID" resizable="true" width="200"
+        <el-table-column prop="backupTargetId" label="备份目标目录ID" resizable width="200"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="filePath" label="文件路径" resizable="true" width="auto"
+        <el-table-column prop="filePath" label="文件路径" resizable width="auto"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupNum" label="备份次数" resizable="true" width="100"
+        <el-table-column prop="backupNum" label="备份次数" resizable width="100"
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="lastBackupTime" label="上次备份时间" width="180" :show-overflow-tooltip="true"
                          :formatter="formatDate"/>

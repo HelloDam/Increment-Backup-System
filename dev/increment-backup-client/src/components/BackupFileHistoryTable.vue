@@ -17,27 +17,27 @@
     </div>
     <div class="table">
       <el-table :data="fileHistoryList" @selection-change="handleBackupFileHistorySelectionChange"
-                @select="changeFileHistory" border="true">
+                @select="changeFileHistory" border>
 
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupFileId" label="对应的备份文件id" width="200" resizable="true"
+        <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupFileId" label="对应的备份文件id" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceFilePath" label="文件源目录" width="200" resizable="true"
+        <el-table-column prop="backupSourceFilePath" label="文件源目录" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTargetFilePath" label="文件目标目录" width="200" resizable="true"
+        <el-table-column prop="backupTargetFilePath" label="文件目标目录" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="md5" label="md5" width="200" resizable="true"
+        <el-table-column prop="md5" label="md5" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTaskId" label="所属任务ID" width="200" resizable="true"
+        <el-table-column prop="backupTaskId" label="所属任务ID" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="modifyTime" label="文件修改时间" width="180" resizable="true"
+        <el-table-column prop="modifyTime" label="文件修改时间" width="180" resizable
                          :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
-        <el-table-column prop="backupStartTime" label="备份开始时间" width="180" resizable="true"
+        <el-table-column prop="backupStartTime" label="备份开始时间" width="180" resizable
                          :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
-        <el-table-column prop="backupEndTime" label="备份结束时间" width="180" resizable="true"
+        <el-table-column prop="backupEndTime" label="备份结束时间" width="180" resizable
                          :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
       </el-table>

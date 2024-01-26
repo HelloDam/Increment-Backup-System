@@ -73,7 +73,7 @@
           title="任务列表"
           width="85%"
       >
-        <el-table :data="backupTaskList" border="true">
+        <el-table :data="backupTaskList" border>
           <el-table-column type="selection" width="55"/>
           <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
           <el-table-column prop="backupSourceRoot" label="备份数据源根目录" width="200"

@@ -16,14 +16,14 @@
             </div>
         </div>
         <div class="table">
-            <el-table :data="taskList" @selection-change="handleBackupTaskSelectionChange" @select="changeTask" border="true">
+            <el-table :data="taskList" @selection-change="handleBackupTaskSelectionChange" @select="changeTask" border>
                 <el-table-column type="selection" width="55"/>
-                <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
-                <el-table-column prop="backupSourceRoot" label="备份数据源根目录" width="200" resizable="true"
+                <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
+                <el-table-column prop="backupSourceRoot" label="备份数据源根目录" width="200" resizable
                                  :show-overflow-tooltip="true"/>
-                <el-table-column prop="backupTargetRoot" label="备份目标根目录" width="200" resizable="true"
+                <el-table-column prop="backupTargetRoot" label="备份目标根目录" width="200" resizable
                                  :show-overflow-tooltip="true"/>
-                <el-table-column prop="backupProgress" label="备份进度" width="200"  resizable="true":show-overflow-tooltip="true">
+                <el-table-column prop="backupProgress" label="备份进度" width="200"  resizable:show-overflow-tooltip="true">
                     <template #default="scope">
                         <!-- 进度条 -->
                         <el-progress
@@ -36,7 +36,7 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column prop="backupStatus" label="状态" width="100" resizable="true" :show-overflow-tooltip="true">
+                <el-table-column prop="backupStatus" label="状态" width="100" resizable :show-overflow-tooltip="true">
                     <template #default="scope">
                         <el-tag class="ml-2" v-if="scope.row.backupStatus==0">刚创建</el-tag>
                         <el-tag class="ml-2" type="warning" v-if="scope.row.backupStatus==1">进行中</el-tag>
@@ -44,21 +44,21 @@
                         <el-tag class="ml-2" type="danger" v-if="scope.row.backupStatus==3">失 败</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column prop="totalFileNum" label="已备份文件数 / 总文件数" width="200" resizable="true"
+                <el-table-column prop="totalFileNum" label="已备份文件数 / 总文件数" width="200" resizable
                                  :show-overflow-tooltip="true">
                     <template #default="scope">
                         <span>{{ scope.row.finishFileNum }} / {{ scope.row.totalFileNum }}</span>
                     </template>
                 </el-table-column>ß
-                <el-table-column prop="totalByteNum" label="已备份字节数 / 总字节数" width="300" resizable="true"
+                <el-table-column prop="totalByteNum" label="已备份字节数 / 总字节数" width="300" resizable
                                  :show-overflow-tooltip="true">
                     <template #default="scope">
                         <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" width="180" resizable="true" :show-overflow-tooltip="true"
+                <el-table-column prop="createTime" label="创建时间" width="180" resizable :show-overflow-tooltip="true"
                                  :formatter="formatDate"/>
-                <el-table-column prop="updateTime" label="修改时间" width="180" resizable="true" :show-overflow-tooltip="true"
+                <el-table-column prop="updateTime" label="修改时间" width="180" resizable :show-overflow-tooltip="true"
                                  :formatter="formatDate"/>
             </el-table>
             <div style="padding: 10px">

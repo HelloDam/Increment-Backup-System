@@ -63,22 +63,22 @@
     </div>
     <div class="table">
       <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource"
-                border="true">
+                border>
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="rootPath" label="根目录路径" width="300" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupName" label="简要介绍" width="200" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupNum" label="备份次数" width="100" resizable="true" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupType" label="备份类型" width="250" resizable="true" :show-overflow-tooltip="true">
+        <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
+        <el-table-column prop="rootPath" label="根目录路径" width="300" resizable :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupName" label="简要介绍" width="200" resizable :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupNum" label="备份次数" width="100" resizable :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupType" label="备份类型" width="250" resizable :show-overflow-tooltip="true">
           <template #default="scope">
             <el-tag class="ml-2" v-if="scope.row.backupType==0">数据全部备份到多个目标目录中</el-tag>
             <el-tag class="ml-2" type="success" v-if="scope.row.backupType==1">数据分散备份到多个目标目录中
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180" resizable="true" :show-overflow-tooltip="true"
+        <el-table-column prop="createTime" label="创建时间" width="180" resizable :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
-        <el-table-column prop="updateTime" label="修改时间" width="180" resizable="true" :show-overflow-tooltip="true"
+        <el-table-column prop="updateTime" label="修改时间" width="180" resizable :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
       </el-table>
       <div style="padding: 10px">
