@@ -191,9 +191,18 @@ export default {
           // let data = JSON.parse(JSON.stringify(msg));
           // console.log("收到备份进度消息：" + JSON.stringify(msg));
           // console.log(msg);
-          _this.backupTaskList = JSON.parse(msg.data);
+          let task = JSON.parse(msg.data);
+          let isExit = false;
+          for (let i = 0; i < _this.backupTaskList.length; i++) {
+            if (_this.backupTaskList[i].id === task.id) {
+              _this.backupTaskList[i] = task;
+              isExit = true;
+            }
+          }
+          if (isExit === false) {
+            _this.backupTaskList.push(task);
+          }
           console.log("收到备份任务进度消息：");
-
         };
         //关闭事件
         socket.onclose = function () {

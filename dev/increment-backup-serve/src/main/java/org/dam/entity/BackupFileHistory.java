@@ -69,6 +69,7 @@ public class BackupFileHistory implements Serializable {
     /**
      * 所属任务ID
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long backupTaskId;
 
     @TableField(exist = false)

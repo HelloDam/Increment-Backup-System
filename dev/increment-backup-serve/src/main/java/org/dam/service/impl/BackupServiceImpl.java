@@ -84,7 +84,6 @@ public class BackupServiceImpl implements BackupService {
     private void backUpByTask(Task task) {
         BackupSource source = task.getSource();
         BackupTarget target = task.getTarget();
-        Date start = new Date();
         // 找到备份目录下面的所有文件
         Statistic sta = new Statistic(0, 0, 0, 0, new Date().getTime() / 1000);
         getSonFileNum(new File(source.getRootPath()), sta);
@@ -110,27 +109,26 @@ public class BackupServiceImpl implements BackupService {
         backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, sta, "", backupTask.getId());
 
         // 备份结束，修改备份任务的状态为完成
-        BackupTask backupTask1 = new BackupTask();
-        backupTask1.setId(backupTask.getId());
-        backupTask1.setBackupStatus(2);
-        backupTask1.setFinishFileNum(sta.getTotalBackupFileNum());
-        backupTask1.setFinishByteNum(sta.getFinishBackupByteNum());
-        backupTaskService.updateById(backupTask1);
+        backupTask.setBackupStatus(2);
+        backupTask.setFinishFileNum(sta.getTotalBackupFileNum());
+        backupTask.setFinishByteNum(sta.getFinishBackupByteNum());
+        backupTaskService.updateById(backupTask);
 
         // 查询出还没有完成的任务，或者是当前正在执行的任务
-        QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
-        backupTaskQueryWrapper.ne("backup_status", 2).or().eq("id", backupTask.getId());
-        backupTaskQueryWrapper.orderByDesc("create_time");
-        List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
-        for (BackupTask backupTask2 : taskList) {
-            if (backupTask2.getId().equals(backupTask.getId())) {
-                backupTask2.setBackupProgress("100");
-            } else {
-                setProgress(backupTask2);
-            }
-        }
+//        QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
+//        backupTaskQueryWrapper.ne("backup_status", 2).or().eq("id", backupTask.getId());
+//        backupTaskQueryWrapper.orderByDesc("create_time");
+//        List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
+//        for (BackupTask backupTask2 : taskList) {
+//            if (backupTask2.getId().equals(backupTask.getId())) {
+//                backupTask2.setBackupProgress("100");
+//            } else {
+//                setProgress(backupTask2);
+//            }
+//        }
+        setProgress(backupTask);
         log.info("发送任务消息");
-        webSocketServer.sendMessage(JSON.toJSONString(taskList), WebSocketServer.usernameAndSessionMap.get("Admin"));
+        webSocketServer.sendMessage(JSON.toJSONString(backupTask), WebSocketServer.usernameAndSessionMap.get("Admin"));
     }
 
     /**
@@ -257,15 +255,16 @@ public class BackupServiceImpl implements BackupService {
             backupTaskService.updateById(backupTask);
 
             // 把所有没有完成的任务查询出来，发送给前端
-            QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
-            backupTaskQueryWrapper.eq("backup_status", 1);
-            backupTaskQueryWrapper.orderByDesc("create_time");
-            List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
-            for (BackupTask task : taskList) {
-                setProgress(task);
-            }
+//            QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
+//            backupTaskQueryWrapper.eq("backup_status", 1);
+//            backupTaskQueryWrapper.orderByDesc("create_time");
+//            List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
+//            for (BackupTask task : taskList) {
+//                setProgress(task);
+//            }
+            setProgress(backupTask);
             log.info("发送任务消息");
-            webSocketServer.sendMessage(JSON.toJSONString(taskList), WebSocketServer.usernameAndSessionMap.get("Admin"));
+            webSocketServer.sendMessage(JSON.toJSONString(backupTask), WebSocketServer.usernameAndSessionMap.get("Admin"));
         }
     }
 
