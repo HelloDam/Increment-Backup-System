@@ -159,7 +159,7 @@ export default {
             this.searchBackupTaskForm.current = this.backupTaskCurrent;
             this.searchBackupTaskForm.size = this.backupTaskSize;
             backupTaskApi.list(this.searchBackupTaskForm).then(res => {
-                console.log(JSON.stringify(res))
+                // console.log(JSON.stringify(res))
                 this.taskList = res.data.records;
                 this.backupTaskTotal = res.data.total;
                 if (isSearch == true) {
@@ -183,7 +183,7 @@ export default {
                 this.addOrUpdateBackupTaskTitle = "修改数据源";
                 this.addOrUpdateBackupTaskDialogVisible = true;
                 backupTaskApi.getById(this.selectBackupTaskIdArr[0]).then(res => {
-                    console.log("根据id查询数据源：" + JSON.stringify(res));
+                    // console.log("根据id查询数据源：" + JSON.stringify(res));
                     this.addOrUpdateBackupTaskForm = res.data;
                 })
             } else if (this.selectBackupTaskIdArr.length > 1) {
@@ -218,7 +218,7 @@ export default {
                     }
                 )
             } else {
-                console.log("this.addOrUpdateBackupTaskForm:" + JSON.stringify(this.addOrUpdateBackupTaskForm))
+                // console.log("this.addOrUpdateBackupTaskForm:" + JSON.stringify(this.addOrUpdateBackupTaskForm))
                 backupTaskApi.save(this.addOrUpdateBackupTaskForm).then(res => {
                         this.addOrUpdateBackupTaskDialogVisible = false;
                         this.listBackupTask(false);
@@ -243,7 +243,7 @@ export default {
             val.forEach((item) => {
                 this.selectBackupTaskIdArr.push(item.id);
             })
-            console.log("选中ID数组：" + JSON.stringify(this.selectBackupTaskIdArr));
+            // console.log("选中ID数组：" + JSON.stringify(this.selectBackupTaskIdArr));
         },
         /**
          * 删除选中的数据

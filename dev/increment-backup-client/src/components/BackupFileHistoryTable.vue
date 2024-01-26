@@ -138,9 +138,9 @@ export default {
     listBackupFileHistory(isSearch) {
       this.searchBackupFileHistoryForm.current = this.backupFileHistoryCurrent;
       this.searchBackupFileHistoryForm.size = this.backupFileHistorySize;
-      console.log("searchBackupFileHistoryForm:" + JSON.stringify(this.searchBackupFileHistoryForm));
+      // console.log("searchBackupFileHistoryForm:" + JSON.stringify(this.searchBackupFileHistoryForm));
       backupFileHistoryApi.list(this.searchBackupFileHistoryForm).then(res => {
-        console.log(JSON.stringify(res))
+        // console.log(JSON.stringify(res))
         this.fileHistoryList = res.data.records;
         this.backupFileHistoryTotal = res.data.total;
         if (isSearch == true) {
@@ -164,7 +164,7 @@ export default {
         this.addOrUpdateBackupFileHistoryTitle = "修改数据源";
         this.addOrUpdateBackupFileHistoryDialogVisible = true;
         backupFileHistoryApi.getById(this.selectBackupFileHistoryIdArr[0]).then(res => {
-          console.log("根据id查询数据源：" + JSON.stringify(res));
+          // console.log("根据id查询数据源：" + JSON.stringify(res));
           this.addOrUpdateBackupFileHistoryForm = res.data;
         })
       } else if (this.selectBackupFileHistoryIdArr.length > 1) {
@@ -199,7 +199,7 @@ export default {
             }
         )
       } else {
-        console.log("this.addOrUpdateBackupFileHistoryForm:" + JSON.stringify(this.addOrUpdateBackupFileHistoryForm))
+        // console.log("this.addOrUpdateBackupFileHistoryForm:" + JSON.stringify(this.addOrUpdateBackupFileHistoryForm))
         backupFileHistoryApi.save(this.addOrUpdateBackupFileHistoryForm).then(res => {
               this.addOrUpdateBackupFileHistoryDialogVisible = false;
               this.listBackupFileHistory(false);
@@ -224,7 +224,7 @@ export default {
       val.forEach((item) => {
         this.selectBackupFileHistoryIdArr.push(item.id);
       })
-      console.log("选中ID数组：" + JSON.stringify(this.selectBackupFileHistoryIdArr));
+      // console.log("选中ID数组：" + JSON.stringify(this.selectBackupFileHistoryIdArr));
     },
     /**
      * 删除选中的数据
@@ -244,7 +244,7 @@ export default {
      * 分页大小改变
      */
     handleBackFileHistorySizeChange(val) {
-      console.log("分页大小改变，val:" + val);
+      // console.log("分页大小改变，val:" + val);
       this.backupFileHistorySize = val;
       this.listBackupFileHistory(false);
     },

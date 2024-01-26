@@ -129,10 +129,10 @@ export default {
       this.searchBackupFileForm.current = this.backupFileCurrent;
       this.searchBackupFileForm.size = this.backupFileSize;
       backupFileApi.list(this.searchBackupFileForm).then(res => {
-        console.log(JSON.stringify(res))
+        // console.log(JSON.stringify(res))
         this.fileList = res.data.records;
         this.backupFileTotal = res.data.total;
-        if (isSearch == true) {
+        if (isSearch === true) {
           this.searchBackupFileDialogVisible = false;
           this.searchBackupFileForm = [];
           ElMessage({
@@ -153,7 +153,7 @@ export default {
         this.addOrUpdateBackupFileTitle = "修改数据源";
         this.addOrUpdateBackupFileDialogVisible = true;
         backupFileApi.getById(this.selectBackupFileIdArr[0]).then(res => {
-          console.log("根据id查询数据源：" + JSON.stringify(res));
+          // console.log("根据id查询数据源：" + JSON.stringify(res));
           this.addOrUpdateBackupFileForm = res.data;
         })
       } else if (this.selectBackupFileIdArr.length > 1) {
@@ -188,7 +188,7 @@ export default {
             }
         )
       } else {
-        console.log("this.addOrUpdateBackupFileForm:" + JSON.stringify(this.addOrUpdateBackupFileForm))
+        // console.log("this.addOrUpdateBackupFileForm:" + JSON.stringify(this.addOrUpdateBackupFileForm))
         backupFileApi.save(this.addOrUpdateBackupFileForm).then(res => {
               this.addOrUpdateBackupFileDialogVisible = false;
               this.listBackupFile(false);
@@ -213,7 +213,7 @@ export default {
       val.forEach((item) => {
         this.selectBackupFileIdArr.push(item.id);
       })
-      console.log("选中ID数组：" + JSON.stringify(this.selectBackupFileIdArr));
+      // console.log("选中ID数组：" + JSON.stringify(this.selectBackupFileIdArr));
     },
     /**
      * 删除选中的数据

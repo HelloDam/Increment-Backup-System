@@ -202,7 +202,7 @@ export default {
       this.searchBackupSourceForm.current = this.backupSourceCurrent;
       this.searchBackupSourceForm.size = this.backupSourceSize;
       backupSourceApi.list(this.searchBackupSourceForm).then(res => {
-        console.log(JSON.stringify(res))
+        // console.log(JSON.stringify(res))
         this.sourceList = res.data.records;
         this.backupSourceTotal = res.data.total;
         if (isSearch == true) {
@@ -226,7 +226,7 @@ export default {
         this.addOrUpdateBackupSourceTitle = "修改数据源";
         this.addOrUpdateBackupSourceDialogVisible = true;
         backupSourceApi.getById(this.selectBackupSourceIdArr[0]).then(res => {
-          console.log("根据id查询数据源：" + JSON.stringify(res));
+          // console.log("根据id查询数据源：" + JSON.stringify(res));
           this.addOrUpdateBackupSourceForm = res.data;
         })
       } else if (this.selectBackupSourceIdArr.length > 1) {
@@ -261,7 +261,7 @@ export default {
             }
         )
       } else {
-        console.log("this.addOrUpdateBackupSourceForm:" + JSON.stringify(this.addOrUpdateBackupSourceForm))
+        // console.log("this.addOrUpdateBackupSourceForm:" + JSON.stringify(this.addOrUpdateBackupSourceForm))
         backupSourceApi.save(this.addOrUpdateBackupSourceForm).then(res => {
               this.addOrUpdateBackupSourceDialogVisible = false;
               this.listBackupSource(false);
@@ -286,7 +286,7 @@ export default {
       val.forEach((item) => {
         this.selectBackupSourceIdArr.push(item.id);
       })
-      console.log("选中ID数组：" + JSON.stringify(this.selectBackupSourceIdArr));
+      // console.log("选中ID数组：" + JSON.stringify(this.selectBackupSourceIdArr));
     },
     /**
      * 删除选中的数据
@@ -323,7 +323,7 @@ export default {
      * @param val 所点击行的数据
      */
     changeSource(val) {
-      console.log("changeSource,val:" + JSON.stringify(val));
+      // console.log("changeSource,val:" + JSON.stringify(val));
       this.selectBackupSource = val;
       this.$emit("changeSourceChange", this.selectBackupSource);
     },
@@ -339,7 +339,7 @@ export default {
     /**
      * 对指定的数据源进行备份
      */
-    backupBySourceId(id) {
+    backupBySourceId() {
 
       if (this.selectBackupSourceIdArr.length == 1) {
         backupApi.backupBySourceId(this.selectBackupSourceIdArr[0]).then(res => {

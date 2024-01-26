@@ -146,7 +146,7 @@ export default {
   watch: {
     selectBackupSource: {
       handler(newValue, oldValue) {
-        // console.log("父组件数据更新")
+        // // console.log("父组件数据更新")
         this.listBackupTarget(false);
       },
     }
@@ -161,7 +161,7 @@ export default {
         this.searchBackupTargetForm.size = this.backupTargetSize;
         this.searchBackupTargetForm.backupSourceId = this.selectBackupSource[this.selectBackupSource.length - 1].id;
         backupTargetApi.list(this.searchBackupTargetForm).then(res => {
-          console.log(JSON.stringify(res))
+          // console.log(JSON.stringify(res))
           this.backupTargetList = res.data.records;
           this.backupTargetTotal = res.data.total;
           if (isSearch === true) {
@@ -180,14 +180,14 @@ export default {
     },
     addBackupTargetDialog() {
       if (this.selectBackupSource && this.selectBackupSource.length > 0) {
-        console.log("已经勾选数据源")
-        console.log("this.selectBackupSource:" + JSON.stringify(this.selectBackupSource))
+        // console.log("已经勾选数据源")
+        // console.log("this.selectBackupSource:" + JSON.stringify(this.selectBackupSource))
         this.addOrUpdateBackupTargetTitle = "增加备份目标目录";
         this.addOrUpdateBackupTargetForm = {};
         this.addOrUpdateBackupTargetForm.backupSourceId = this.selectBackupSource[this.selectBackupSource - 1].id;
         this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource - 1].rootPath;
         this.addOrUpdateBackupTargetDialogVisible = true;
-        console.log("this.addOrUpdateBackupTargetForm:" + JSON.stringify(this.addOrUpdateBackupTargetForm))
+        // console.log("this.addOrUpdateBackupTargetForm:" + JSON.stringify(this.addOrUpdateBackupTargetForm))
       } else {
         ElMessage({
           message: "请先选中数据源，再为其添加目标备份目录",
@@ -201,7 +201,7 @@ export default {
         this.addOrUpdateBackupTargetTitle = "修改备份目标目录";
         this.addOrUpdateBackupTargetDialogVisible = true;
         backupTargetApi.getById(this.selectBackupTargetIdArr[0]).then(res => {
-          console.log("根据id查询备份目标目录：" + JSON.stringify(res));
+          // console.log("根据id查询备份目标目录：" + JSON.stringify(res));
           this.addOrUpdateBackupTargetForm = res.data;
           this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource-1].rootPath;
         })
@@ -261,7 +261,7 @@ export default {
       val.forEach((item) => {
         this.selectBackupTargetIdArr.push(item.id);
       })
-      console.log("选中ID数组：" + JSON.stringify(this.selectBackupTargetIdArr));
+      // console.log("选中ID数组：" + JSON.stringify(this.selectBackupTargetIdArr));
     },
     /**
      * 删除选中的数据
