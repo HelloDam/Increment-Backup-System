@@ -29,6 +29,11 @@ public class BackupSource extends BaseEntity implements Serializable {
      */
     private String backupName;
 
+    /**
+     * 备份类型 0：数据源的数据全部备份到多个目标目录中 1：数据源的数据分散备份到多个目标目录中
+     */
+    private Integer backupType;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
