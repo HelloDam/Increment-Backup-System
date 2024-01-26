@@ -3,6 +3,7 @@ package org.dam.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,6 +60,17 @@ public class BackupTask extends BaseEntity implements Serializable {
      */
     @TableField(exist = false)
     private String backupProgress;
+
+    /**
+     * 备份时间
+     */
+    @TableField(exist = false)
+    private Long backupTime;
+
+    /**
+     * 备份结束时间，备份开始时间就是create_time
+     */
+    private Date endTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

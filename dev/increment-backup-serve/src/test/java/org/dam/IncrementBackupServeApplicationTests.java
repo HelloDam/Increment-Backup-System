@@ -24,12 +24,12 @@ class IncrementBackupServeApplicationTests {
     void contextLoads() {
     }
 
-    @Test
-    void dasd(){
-        BackupTask backupTask = new BackupTask("dasdas", "dsadas",
-                10, 0, 10L, 0L, 0,"0.0");
-        backupTaskService.save(backupTask);
-    }
+//    @Test
+//    void dasd(){
+//        BackupTask backupTask = new BackupTask("dasdas", "dsadas",
+//                10, 0, 10L, 0L, 0,"0.0");
+//        backupTaskService.save(backupTask);
+//    }
 
     @Test
     void dashidas(){

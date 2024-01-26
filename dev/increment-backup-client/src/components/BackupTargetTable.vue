@@ -184,8 +184,8 @@ export default {
         // console.log("this.selectBackupSource:" + JSON.stringify(this.selectBackupSource))
         this.addOrUpdateBackupTargetTitle = "增加备份目标目录";
         this.addOrUpdateBackupTargetForm = {};
-        this.addOrUpdateBackupTargetForm.backupSourceId = this.selectBackupSource[this.selectBackupSource - 1].id;
-        this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource - 1].rootPath;
+        this.addOrUpdateBackupTargetForm.backupSourceId = this.selectBackupSource[this.selectBackupSource.length - 1].id;
+        this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource.length - 1].rootPath;
         this.addOrUpdateBackupTargetDialogVisible = true;
         // console.log("this.addOrUpdateBackupTargetForm:" + JSON.stringify(this.addOrUpdateBackupTargetForm))
       } else {

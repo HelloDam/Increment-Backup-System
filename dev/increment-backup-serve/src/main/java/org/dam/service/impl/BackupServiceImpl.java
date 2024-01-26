@@ -91,7 +91,7 @@ public class BackupServiceImpl implements BackupService {
         log.info("当前数据源（id={}）下的总文件数量:{}，总字节数：{}", source.getId(), sta.totalBackupFileNum, sta.totalBackupByteNum);
         // 将任务插入到数据库中
         BackupTask backupTask = new BackupTask(source.getRootPath(), task.getTarget().getTargetRootPath(),
-                sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0");
+                sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0", 0L, new Date());
         backupTaskService.save(backupTask);
         setProgress(backupTask);
         log.info("发送任务消息，通知前端任务创建成功");
@@ -111,14 +111,16 @@ public class BackupServiceImpl implements BackupService {
         // 将数据源的数据备份到多个目标目录下面
         BackupTarget backupTarget = task.getTarget();
         sta.timestamp = new Date().getTime() / 1000;
-        backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, sta, "", backupTask.getId());
+        backUpAllFiles(new File(source.getRootPath()), source, backupTarget, filePathAndIdMap, sta, "", backupTask.getId(),backupTask.getCreateTime());
 
         // 备份结束，修改备份任务的状态为完成
         backupTask.setBackupStatus(2);
         backupTask.setFinishFileNum(sta.getTotalBackupFileNum());
         backupTask.setFinishByteNum(sta.getFinishBackupByteNum());
+        backupTask.setEndTime(new Date());
         backupTaskService.updateById(backupTask);
         setProgress(backupTask);
+        backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
         log.info("发送任务消息，通知前端任务备份完成");
         webSocketServer.sendMessage(JSON.toJSONString(backupTask), WebSocketServer.usernameAndSessionMap.get("Admin"));
     }
@@ -134,7 +136,8 @@ public class BackupServiceImpl implements BackupService {
      * @param middlePath
      */
     private void backUpAllFiles(File fatherFile, BackupSource backupSource, BackupTarget backupTarget,
-                                Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath, Long backupTaskId) {
+                                Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath,
+                                Long backupTaskId,Date taskBackupStartTime) {
         File[] fileArr = fatherFile.listFiles();
         for (File file : fileArr) {
 //            if (file.toString().indexOf("/.") != -1 || file.toString().indexOf("\\.") != -1) {
@@ -148,13 +151,13 @@ public class BackupServiceImpl implements BackupService {
                     targetFile.mkdirs();
                 }
                 backUpAllFiles(file, backupSource, backupTarget, filePathAndIdMap, statistic,
-                        middlePath + file.getName() + File.separator, backupTaskId);
+                        middlePath + file.getName() + File.separator, backupTaskId,taskBackupStartTime);
             }
             if (file.isFile()) {
                 // --if-- 若是文件，执行备份操作
                 try {
                     execBackUp(backupSource, backupTarget, file.toString(), filePathAndIdMap,
-                            statistic, middlePath, backupTaskId);
+                            statistic, middlePath, backupTaskId,taskBackupStartTime);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 } catch (IOException e) {
@@ -176,7 +179,7 @@ public class BackupServiceImpl implements BackupService {
      */
     private void execBackUp(BackupSource source, BackupTarget target, String backupSourceFilePath,
                             Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath,
-                            long backupTaskId) throws SQLException, IOException {
+                            Long backupTaskId,Date taskBackupStartTime) throws SQLException, IOException {
         System.out.println("执行execBackUp");
         // todo 检查这里是否合理
        /* if (backupSourceFilePath.indexOf("/.") != -1 || backupSourceFilePath.indexOf("\\.") != -1) {
@@ -238,8 +241,9 @@ public class BackupServiceImpl implements BackupService {
         System.out.println("更新表格");
         statistic.finishBackupFileNum++;
         statistic.finishBackupByteNum += backupSourceFile.length();
-        if (new Date().getTime() / 1000 != statistic.timestamp) {
-            statistic.timestamp = new Date().getTime() / 1000;
+        long curTime = new Date().getTime();
+        if (curTime != statistic.timestamp) {
+            statistic.timestamp = curTime / 1000;
             log.info("文件数量：拷贝进度:" + statistic.finishBackupFileNum * 100.0 / statistic.totalBackupFileNum + "%  " + statistic.finishBackupFileNum + "/" + statistic.totalBackupFileNum +
                     "； 文件大小：拷贝进度:" + statistic.finishBackupByteNum * 100.0 / statistic.totalBackupByteNum + "%  " + statistic.finishBackupByteNum + "/" + statistic.totalBackupByteNum);
             BackupTask backupTask = new BackupTask();
@@ -247,17 +251,10 @@ public class BackupServiceImpl implements BackupService {
             backupTask.setId(backupTaskId);
             backupTask.setFinishFileNum(statistic.finishBackupFileNum);
             backupTask.setFinishByteNum(statistic.finishBackupByteNum);
+            backupTask.setTotalFileNum(statistic.totalBackupFileNum);
             backupTaskService.updateById(backupTask);
-
-            // 把所有没有完成的任务查询出来，发送给前端
-//            QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
-//            backupTaskQueryWrapper.eq("backup_status", 1);
-//            backupTaskQueryWrapper.orderByDesc("create_time");
-//            List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
-//            for (BackupTask task : taskList) {
-//                setProgress(task);
-//            }
             setProgress(backupTask);
+            backupTask.setBackupTime(curTime - taskBackupStartTime.getTime());
             log.info("发送任务消息，通知前端备份进度变化");
             webSocketServer.sendMessage(JSON.toJSONString(backupTask), WebSocketServer.usernameAndSessionMap.get("Admin"));
         }

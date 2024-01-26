@@ -93,8 +93,7 @@
               />
             </template>
           </el-table-column>
-          <el-table-column prop="backupTime" label="创建时间" width="180" :show-overflow-tooltip="true"
-                           :formatter="formatDate"/>
+          <el-table-column prop="backupTime" label="备份时间(ms)" width="180" :show-overflow-tooltip="true"/>
           <el-table-column prop="backupStatus" label="状态" width="100" :show-overflow-tooltip="true">
             <template #default="scope">
               <el-tag class="ml-2" v-if="scope.row.backupStatus==0">刚创建</el-tag>

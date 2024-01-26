@@ -59,6 +59,7 @@ public class BackupTaskServiceImpl extends ServiceImpl<BackupTaskMapper, BackupT
         IPage<BackupTask> page = baseMapper.selectPage(pageParam, queryWrapper);
         for (BackupTask task : page.getRecords()) {
             setProgress(task);
+            task.setBackupTime(task.getEndTime().getTime() - task.getCreateTime().getTime());
         }
 
         return PageUtil.convert(page);
