@@ -23,7 +23,7 @@
         <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
         <el-table-column prop="backupFileId" label="对应的备份文件id" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceFilePath" label="文件源目录" width="200" resizable
+        <el-table-column prop="backupSourceFilePath" label="源文件目录" width="200" resizable
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="backupTargetFilePath" label="文件目标目录" width="200" resizable
                          :show-overflow-tooltip="true"/>
@@ -82,16 +82,26 @@
         width="30%"
     >
       <el-form :model="searchBackupFileHistoryForm">
-        <el-form-item label="数据源根目录" :label-width="110">
-          <el-input v-model="searchBackupFileHistoryForm.rootPath" autocomplete="off"/>
+        <el-form-item label="备份文件ID" :label-width="110">
+          <el-input v-model="searchBackupFileHistoryForm.backupFileId" autocomplete="off"/>
         </el-form-item>
-        <el-form-item label="基 本 介 绍" :label-width="110">
-          <el-input v-model="searchBackupFileHistoryForm.backupName" autocomplete="off"/>
+        <el-form-item label="备份目标目录ID" :label-width="110">
+          <el-input v-model="searchBackupFileHistoryForm.backupTargetRootId" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="备份任务ID" :label-width="110">
+          <el-input v-model="searchBackupFileHistoryForm.backupTaskId" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="源文件目录" :label-width="110">
+          <el-input v-model="searchBackupFileHistoryForm.backupSourceFilePath" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="文件目标目录" :label-width="110">
+          <el-input v-model="searchBackupFileHistoryForm.backupTargetFilePath" autocomplete="off"/>
         </el-form-item>
       </el-form>
       <template #footer>
           <span class="dialog-footer">
             <el-button @click="searchBackupFileHistoryDialogVisible = false">取 消</el-button>
+            <el-button @click="clearSearch()">清 空</el-button>
             <el-button type="primary" @click="listBackupFileHistory(true)">
               查 询
             </el-button>
@@ -145,7 +155,6 @@ export default {
         this.backupFileHistoryTotal = res.data.total;
         if (isSearch == true) {
           this.searchBackupFileHistoryDialogVisible = false;
-          this.searchBackupFileHistoryForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',
@@ -153,6 +162,14 @@ export default {
           })
         }
       })
+    },
+    /**
+     * 清空查询条件
+     */
+    clearSearch() {
+      this.searchBackupFileHistoryDialogVisible = false;
+      this.searchBackupFileHistoryForm = {};
+      this.listBackupFileHistory(true);
     },
     addBackupFileHistoryDialog() {
       this.addOrUpdateBackupFileHistoryTitle = "增加数据源";

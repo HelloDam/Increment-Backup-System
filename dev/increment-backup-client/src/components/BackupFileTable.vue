@@ -72,16 +72,20 @@
         width="30%"
     >
       <el-form :model="searchBackupFileForm">
-        <el-form-item label="数据源根目录" :label-width="110">
-          <el-input v-model="searchBackupFileForm.rootPath" autocomplete="off"/>
+        <el-form-item label="数据源ID" :label-width="110">
+          <el-input v-model="searchBackupFileForm.backupSourceId" autocomplete="off"/>
         </el-form-item>
-        <el-form-item label="基 本 介 绍" :label-width="110">
-          <el-input v-model="searchBackupFileForm.backupName" autocomplete="off"/>
+        <el-form-item label="备份目标目录ID" :label-width="110">
+          <el-input v-model="searchBackupFileForm.backupTargetId" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="源文件目录" :label-width="110">
+          <el-input v-model="searchBackupFileForm.filePath" autocomplete="off"/>
         </el-form-item>
       </el-form>
       <template #footer>
           <span class="dialog-footer">
             <el-button @click="searchBackupFileDialogVisible = false">取 消</el-button>
+            <el-button @click="clearSearch()">清 空</el-button>
             <el-button type="primary" @click="listBackupFile(true)">
               查 询
             </el-button>
@@ -134,7 +138,6 @@ export default {
         this.backupFileTotal = res.data.total;
         if (isSearch === true) {
           this.searchBackupFileDialogVisible = false;
-          this.searchBackupFileForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',
@@ -142,6 +145,14 @@ export default {
           })
         }
       })
+    },
+    /**
+     * 清空查询条件
+     */
+    clearSearch() {
+      this.searchBackupFileDialogVisible = false;
+      this.searchBackupFileForm = {};
+      this.listBackupFile(true);
     },
     addBackupFileDialog() {
       this.addOrUpdateBackupFileTitle = "增加数据源";

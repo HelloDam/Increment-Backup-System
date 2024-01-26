@@ -105,15 +105,30 @@
     >
       <el-form :model="searchBackupTaskForm">
         <el-form-item label="数据源根目录" :label-width="110">
-          <el-input v-model="searchBackupTaskForm.rootPath" autocomplete="off"/>
+          <el-input v-model="searchBackupTaskForm.backupSourceRoot" autocomplete="off"/>
         </el-form-item>
-        <el-form-item label="基 本 介 绍" :label-width="110">
-          <el-input v-model="searchBackupTaskForm.backupName" autocomplete="off"/>
+        <el-form-item label="备份目标目录" :label-width="110">
+          <el-input v-model="searchBackupTaskForm.backupTargetRoot" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="任 务 状 态" :label-width="110">
+          <el-select
+              v-model="searchBackupTaskForm.backupStatus"
+              class="m-2"
+              placeholder="请选择任务状态"
+          >
+            <el-option
+                v-for="item in backupStatusOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
           <span class="dialog-footer">
             <el-button @click="searchBackupTaskDialogVisible = false">取 消</el-button>
+             <el-button @click="clearSearch()">清 空</el-button>
             <el-button type="primary" @click="listBackupTask(true)">
               查 询
             </el-button>
@@ -145,6 +160,24 @@ export default {
       backupTaskCurrent: 1,
       backupTaskSize: 10,
       backupTaskTotal: 0,
+      backupStatusOptions: [
+        {
+          value: '0',
+          label: '刚创建',
+        },
+        {
+          value: '1',
+          label: '正在执行备份',
+        },
+        {
+          value: '2',
+          label: '备份完成',
+        },
+        {
+          value: '3',
+          label: '备份失败',
+        }
+      ],
       // 选择的数据源id数组
       selectBackupTaskIdArr: [],
 
@@ -166,7 +199,6 @@ export default {
         this.backupTaskTotal = res.data.total;
         if (isSearch == true) {
           this.searchBackupTaskDialogVisible = false;
-          this.searchBackupTaskForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',
@@ -174,6 +206,14 @@ export default {
           })
         }
       })
+    },
+    /**
+     * 清空查询条件
+     */
+    clearSearch() {
+      this.searchBackupTaskDialogVisible = false;
+      this.searchBackupTaskForm = {};
+      this.listBackupTask(true);
     },
     addBackupTaskDialog() {
       this.addOrUpdateBackupTaskTitle = "增加数据源";

@@ -142,10 +142,25 @@
         <el-form-item label="基 本 介 绍" :label-width="110">
           <el-input v-model="searchBackupSourceForm.backupName" autocomplete="off"/>
         </el-form-item>
+        <el-form-item label="备 份 类 型" :label-width="110">
+          <el-select
+              v-model="searchBackupSourceForm.backupType"
+              class="m-2"
+              placeholder="请选择备份类型"
+          >
+            <el-option
+                v-for="item in backupTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <template #footer>
           <span class="dialog-footer">
             <el-button @click="searchBackupSourceDialogVisible = false">取 消</el-button>
+            <el-button @click="clearSearch()">清 空</el-button>
             <el-button type="primary" @click="listBackupSource(true)">
               查 询
             </el-button>
@@ -207,7 +222,6 @@ export default {
         this.backupSourceTotal = res.data.total;
         if (isSearch == true) {
           this.searchBackupSourceDialogVisible = false;
-          this.searchBackupSourceForm = {};
           ElMessage({
             message: "查询成功",
             type: 'success',
@@ -215,6 +229,14 @@ export default {
           })
         }
       })
+    },
+    /**
+     * 清空查询条件
+     */
+    clearSearch() {
+      this.searchBackupSourceDialogVisible = false;
+      this.searchBackupSourceForm = {};
+      this.listBackupSource(true);
     },
     addBackupSourceDialog() {
       this.addOrUpdateBackupSourceTitle = "增加数据源";
