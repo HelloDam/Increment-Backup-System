@@ -92,6 +92,10 @@ public class BackupServiceImpl implements BackupService {
         BackupTask backupTask = new BackupTask(source.getRootPath(), task.getTarget().getTargetRootPath(),
                 sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0");
         backupTaskService.save(backupTask);
+        setProgress(backupTask);
+        log.info("发送任务消息，通知前端任务创建成功");
+        webSocketServer.sendMessage(JSON.toJSONString(backupTask), WebSocketServer.usernameAndSessionMap.get("Admin"));
+
         log.info("任务创建成功，开始备份");
 
         // 记录每个文件路径及其对应的id，如/Users/mac/Dev/BackUpTest/dasdasdasd.txt=>515351
@@ -113,21 +117,8 @@ public class BackupServiceImpl implements BackupService {
         backupTask.setFinishFileNum(sta.getTotalBackupFileNum());
         backupTask.setFinishByteNum(sta.getFinishBackupByteNum());
         backupTaskService.updateById(backupTask);
-
-        // 查询出还没有完成的任务，或者是当前正在执行的任务
-//        QueryWrapper<BackupTask> backupTaskQueryWrapper = new QueryWrapper<>();
-//        backupTaskQueryWrapper.ne("backup_status", 2).or().eq("id", backupTask.getId());
-//        backupTaskQueryWrapper.orderByDesc("create_time");
-//        List<BackupTask> taskList = backupTaskService.list(backupTaskQueryWrapper);
-//        for (BackupTask backupTask2 : taskList) {
-//            if (backupTask2.getId().equals(backupTask.getId())) {
-//                backupTask2.setBackupProgress("100");
-//            } else {
-//                setProgress(backupTask2);
-//            }
-//        }
         setProgress(backupTask);
-        log.info("发送任务消息");
+        log.info("发送任务消息，通知前端任务备份完成");
         webSocketServer.sendMessage(JSON.toJSONString(backupTask), WebSocketServer.usernameAndSessionMap.get("Admin"));
     }
 
@@ -263,7 +254,7 @@ public class BackupServiceImpl implements BackupService {
 //                setProgress(task);
 //            }
             setProgress(backupTask);
-            log.info("发送任务消息");
+            log.info("发送任务消息，通知前端备份进度变化");
             webSocketServer.sendMessage(JSON.toJSONString(backupTask), WebSocketServer.usernameAndSessionMap.get("Admin"));
         }
     }
