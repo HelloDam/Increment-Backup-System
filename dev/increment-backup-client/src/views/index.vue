@@ -1,127 +1,134 @@
 <template>
   <div class="container">
 
-    <el-menu
-        :default-active="activeIndex"
-        class="menuClass"
-        mode="horizontal"
-        :ellipsis="false"
-        @select="handleSelectActive"
-    >
-      <el-menu-item index="0">
-        <img
-            style="width: 100px"
-            src="../assets/element-plus-logo.svg"
-            alt="Element logo"
-        />
-      </el-menu-item>
-      <div class="flex-grow"/>
-      <el-menu-item index="1">
-        <div
-            style="border: #069ad2 solid 1px;height: 30px;border-radius: 5px;padding: 2px 5px;display: flex;align-items: center;justify-items: center">
-          <div>备份中任务</div>
+    <div style="padding: 10px">
+      <el-menu
+          :default-active="activeIndex"
+          class="menuClass"
+          mode="horizontal"
+          :ellipsis="false"
+          @select="handleSelectActive"
+      >
+        <el-menu-item index="0">
+          <img
+              style="width: 100px"
+              src="../assets/EasyBackup.png"
+              alt="Element logo"
+          />
+          <span style="color:#0489bb;font-weight: bold">备份系统</span>
+        </el-menu-item>
+        <div class="flex-grow"/>
+        <el-menu-item index="1">
+          <div
+              style="border: #069ad2 solid 1px;height: 30px;border-radius: 5px;padding: 2px 5px;display: flex;align-items: center;justify-items: center">
+            <div>备份中任务</div>
+          </div>
+          <span class="badge">{{ backupTaskList.length }}</span>
+        </el-menu-item>
+        <el-menu-item index="2">备份</el-menu-item>
+        <el-menu-item index="3">备份任务管理</el-menu-item>
+        <el-menu-item index="4">备份文件管理</el-menu-item>
+        <el-menu-item index="5">备份记录管理</el-menu-item>
+      </el-menu>
+
+      <!--    <div class="head">-->
+      <!--      <div></div>-->
+      <!--      <div style=" font-size: 2rem;font-weight: 500;">-->
+      <!--        文 件 增 量 备 份 系 统-->
+      <!--      </div>-->
+      <!--      <div></div>-->
+      <!--    </div>-->
+      <div class="bodyDiv" v-if="activeIndex==='2'">
+        <div class="table1Div">
+          <BackupSourceTable @changeSourceChange="changeSourceChange()"
+                             ref="backupSourceTable"></BackupSourceTable>
         </div>
-        <span class="badge">{{ backupTaskList.length }}</span>
-      </el-menu-item>
-      <el-menu-item index="2">备份</el-menu-item>
-      <el-menu-item index="3">备份任务管理</el-menu-item>
-      <el-menu-item index="4">备份文件管理</el-menu-item>
-      <el-menu-item index="5">备份记录管理</el-menu-item>
-    </el-menu>
-
-    <!--    <div class="head">-->
-    <!--      <div></div>-->
-    <!--      <div style=" font-size: 2rem;font-weight: 500;">-->
-    <!--        文 件 增 量 备 份 系 统-->
-    <!--      </div>-->
-    <!--      <div></div>-->
-    <!--    </div>-->
-    <div class="bodyDiv" v-if="activeIndex==='2'">
-      <div class="table1Div">
-        <BackupSourceTable @changeSourceChange="changeSourceChange()"
-                           ref="backupSourceTable"></BackupSourceTable>
+        <div style="width: 10px"></div>
+        <div class="table1Div">
+          <BackupTargetTable :selectBackupSource="selectBackupSource"></BackupTargetTable>
+        </div>
       </div>
-      <div style="width: 10px"></div>
-      <div class="table1Div">
-        <BackupTargetTable :selectBackupSource="selectBackupSource"></BackupTargetTable>
+
+      <div v-if="activeIndex==='3'" class="bodyDiv">
+        <div class="table2Div">
+          <BackupTaskTable></BackupTaskTable>
+        </div>
       </div>
-    </div>
 
-    <div v-if="activeIndex==='3'" class="bodyDiv">
-      <div class="table2Div">
-        <BackupTaskTable></BackupTaskTable>
+      <div v-if="activeIndex==='4'" class="bodyDiv">
+        <div class="table2Div">
+          <BackupFileTable></BackupFileTable>
+        </div>
       </div>
-    </div>
 
-    <div v-if="activeIndex==='4'" class="bodyDiv">
-      <div class="table2Div">
-        <BackupFileTable></BackupFileTable>
+      <div v-if="activeIndex==='5'" class="bodyDiv">
+        <div class="table2Div">
+          <BackupFileHistoryTable></BackupFileHistoryTable>
+        </div>
       </div>
-    </div>
-
-    <div v-if="activeIndex==='5'" class="bodyDiv">
-      <div class="table2Div">
-        <BackupFileHistoryTable></BackupFileHistoryTable>
-      </div>
-    </div>
 
 
-    <el-dialog
-        v-model="backupTaskListDialogVisible"
-        title="任务列表"
-        width="85%"
-    >
-      <el-table :data="backupTaskList">
-        <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceRoot" label="备份数据源根目录" width="200"
-                         :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTargetRoot" label="备份目标根目录" width="200"
-                         :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupProgress" label="备份进度" width="200" :show-overflow-tooltip="true">
-          <template #default="scope">
-            <!-- 进度条 -->
-            <el-progress
-                :percentage="scope.row.backupProgress"
-                :stroke-width="15"
-                :status="scope.row.backupStatus==2?'success':null"
-                striped
-                :striped-flow="scope.row.backupStatus==1?true:false"
-                :duration="10"
-            />
-          </template>
-        </el-table-column>
-        <el-table-column prop="backupStatus" label="状态" width="100" :show-overflow-tooltip="true">
-          <template #default="scope">
-            <el-tag class="ml-2" v-if="scope.row.backupStatus==0">刚创建</el-tag>
-            <el-tag class="ml-2" type="warning" v-if="scope.row.backupStatus==1">进行中</el-tag>
-            <el-tag class="ml-2" type="success" v-if="scope.row.backupStatus==2">完 成</el-tag>
-            <el-tag class="ml-2" type="danger" v-if="scope.row.backupStatus==3">失 败</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalFileNum" label="已备份文件数 / 总文件数" width="200"
-                         :show-overflow-tooltip="true">
-          <template #default="scope">
-            <span>{{ scope.row.finishFileNum }} / {{ scope.row.totalFileNum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalByteNum" label="已备份字节数 / 总字节数" width="300"
-                         :show-overflow-tooltip="true">
-          <template #default="scope">
-            <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"
-                         :formatter="formatDate"/>
-        <el-table-column prop="updateTime" label="修改时间" width="180" :show-overflow-tooltip="true"
-                         :formatter="formatDate"/>
-      </el-table>
-      <template #footer>
+      <el-dialog
+          v-model="backupTaskListDialogVisible"
+          title="任务列表"
+          width="85%"
+      >
+        <el-table :data="backupTaskList">
+          <el-table-column type="selection" width="55"/>
+          <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
+          <el-table-column prop="backupSourceRoot" label="备份数据源根目录" width="200"
+                           :show-overflow-tooltip="true"/>
+          <el-table-column prop="backupTargetRoot" label="备份目标根目录" width="200"
+                           :show-overflow-tooltip="true"/>
+          <el-table-column prop="backupProgress" label="备份进度" width="200" :show-overflow-tooltip="true">
+            <template #default="scope">
+              <!-- 进度条 -->
+              <el-progress
+                  :percentage="scope.row.backupProgress"
+                  :stroke-width="15"
+                  :status="scope.row.backupStatus==2?'success':null"
+                  striped
+                  :striped-flow="scope.row.backupStatus==1?true:false"
+                  :duration="10"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column prop="backupStatus" label="状态" width="100" :show-overflow-tooltip="true">
+            <template #default="scope">
+              <el-tag class="ml-2" v-if="scope.row.backupStatus==0">刚创建</el-tag>
+              <el-tag class="ml-2" type="warning" v-if="scope.row.backupStatus==1">进行中</el-tag>
+              <el-tag class="ml-2" type="success" v-if="scope.row.backupStatus==2">完 成</el-tag>
+              <el-tag class="ml-2" type="danger" v-if="scope.row.backupStatus==3">失 败</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalFileNum" label="已备份文件数 / 总文件数" width="200"
+                           :show-overflow-tooltip="true">
+            <template #default="scope">
+              <span>{{ scope.row.finishFileNum }} / {{ scope.row.totalFileNum }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalByteNum" label="已备份字节数 / 总字节数" width="300"
+                           :show-overflow-tooltip="true">
+            <template #default="scope">
+              <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"
+                           :formatter="formatDate"/>
+          <el-table-column prop="updateTime" label="修改时间" width="180" :show-overflow-tooltip="true"
+                           :formatter="formatDate"/>
+        </el-table>
+        <template #footer>
           <span class="dialog-footer">
             <el-button @click="backupTaskListDialogVisible = false">关 闭</el-button>
           </span>
-      </template>
-    </el-dialog>
+        </template>
+      </el-dialog>
+
+
+    </div>
+
+    <AppFooter style="margin-top: 10px"></AppFooter>
 
   </div>
 </template>
@@ -134,9 +141,17 @@ import BackupTaskTable from "../components/BackupTaskTable.vue";
 import BackupFileTable from "../components/BackupFileTable.vue";
 import BackupFileHistoryTable from "../components/BackupFileHistoryTable.vue";
 import backupTaskApi from "../api/backupTaskApi.js";
+import AppFooter from "../components/AppFooter.vue";
 
 export default {
-  components: {BackupSourceTable, BackupTargetTable, BackupTaskTable, BackupFileTable, BackupFileHistoryTable},
+  components: {
+    BackupSourceTable,
+    BackupTargetTable,
+    BackupTaskTable,
+    BackupFileTable,
+    BackupFileHistoryTable,
+    AppFooter
+  },
   data() {
     return {
       // 数据源
@@ -288,9 +303,8 @@ export default {
 <style scoped lang="scss">
 
 .container {
-
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
   background-color: #abc6f8;
   background-image: radial-gradient(closest-side, rgb(255, 255, 255), rgba(235, 105, 78, 0)), radial-gradient(closest-side, rgb(250, 203, 203), rgba(243, 11, 164, 0)), radial-gradient(closest-side, rgb(237, 252, 202), rgba(254, 234, 131, 0)), radial-gradient(closest-side, rgb(197, 248, 241), rgba(170, 142, 245, 0)), radial-gradient(closest-side, rgb(206, 200, 243), rgba(248, 192, 147, 0));
   background-size: 130vmax 130vmax, 80vmax 80vmax, 90vmax 90vmax, 110vmax 110vmax, 90vmax 90vmax;
@@ -298,12 +312,11 @@ export default {
   background-repeat: no-repeat;
   /* 背景颜色4秒循环一次 */
   animation: 4s movement linear infinite;
-
-  padding: 1rem;
   font-family: Arial, Helvetica, sans-serif, Times New Roman;
 
   .menuClass {
     border-radius: 5px;
+    height: 60px;
 
     .badge {
       display: flex;
@@ -325,7 +338,6 @@ export default {
     }
   }
 
-
   .item {
     margin-top: 0px;
     margin-right: 5px;
@@ -342,7 +354,7 @@ export default {
   .bodyDiv {
     margin-top: 10px;
     display: flex;
-    height: 80vh;
+    height: calc(100vh - 20px - 50px - 50px);
 
     .table1Div {
       background: rgba(255, 255, 255, 0.6);
