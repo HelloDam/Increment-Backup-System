@@ -87,8 +87,8 @@
                        v-model:current-page="backupSourceCurrent"
                        v-model:page-size="backupSourceSize"
                        small="small"
-                       @size-change="handlebackupSourceSizeChange"
-                       @current-change="handlebackupSourceCurrentChange"/>
+                       @size-change="handleBackupSourceSizeChange"
+                       @current-change="handleBackupSourceCurrentChange"/>
       </div>
     </div>
     <!-- 添加或修改数据源 -->
@@ -158,7 +158,6 @@
 <script>
 
 import backupSourceApi from "../api/backupSourceApi.js";
-import backupTargetApi from "../api/backupTargetApi.js";
 import {ElMessage} from "element-plus";
 import backupApi from "../api/backupApi.js";
 
@@ -295,6 +294,7 @@ export default {
     removeByBackupSourceIds() {
       backupSourceApi.removeByIds(this.selectBackupSourceIdArr).then(res => {
         this.listBackupSource(false);
+        this.changeSource([]);
         ElMessage({
           message: "删除成功",
           type: 'success',
@@ -306,14 +306,14 @@ export default {
     /**
      * 分页大小改变
      */
-    handlebackupSourceSizeChange(val) {
+    handleBackupSourceSizeChange(val) {
       this.backupSourceSize = val;
       this.listBackupSource(false);
     },
     /**
      * 分页页数改变
      */
-    handlebackupSourceCurrentChange(val) {
+    handleBackupSourceCurrentChange(val) {
       this.backupSourceCurrent = val;
       this.listBackupSource(false);
     },
@@ -323,6 +323,7 @@ export default {
      * @param val 所点击行的数据
      */
     changeSource(val) {
+      console.log("changeSource,val:" + JSON.stringify(val));
       this.selectBackupSource = val;
       this.$emit("changeSourceChange", this.selectBackupSource);
     },

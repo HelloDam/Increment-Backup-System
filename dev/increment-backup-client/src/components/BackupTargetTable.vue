@@ -146,7 +146,7 @@ export default {
   watch: {
     selectBackupSource: {
       handler(newValue, oldValue) {
-        console.log("父组件数据更新")
+        // console.log("父组件数据更新")
         this.listBackupTarget(false);
       },
     }
@@ -159,7 +159,7 @@ export default {
       if (this.selectBackupSource && this.selectBackupSource.length > 0) {
         this.searchBackupTargetForm.current = this.backupTargetCurrent;
         this.searchBackupTargetForm.size = this.backupTargetSize;
-        this.searchBackupTargetForm.backupSourceId = this.selectBackupSource[0].id;
+        this.searchBackupTargetForm.backupSourceId = this.selectBackupSource[this.selectBackupSource.length - 1].id;
         backupTargetApi.list(this.searchBackupTargetForm).then(res => {
           console.log(JSON.stringify(res))
           this.backupTargetList = res.data.records;
@@ -184,8 +184,8 @@ export default {
         console.log("this.selectBackupSource:" + JSON.stringify(this.selectBackupSource))
         this.addOrUpdateBackupTargetTitle = "增加备份目标目录";
         this.addOrUpdateBackupTargetForm = {};
-        this.addOrUpdateBackupTargetForm.backupSourceId = this.selectBackupSource[0].id;
-        this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[0].rootPath;
+        this.addOrUpdateBackupTargetForm.backupSourceId = this.selectBackupSource[this.selectBackupSource - 1].id;
+        this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource - 1].rootPath;
         this.addOrUpdateBackupTargetDialogVisible = true;
         console.log("this.addOrUpdateBackupTargetForm:" + JSON.stringify(this.addOrUpdateBackupTargetForm))
       } else {
@@ -203,7 +203,7 @@ export default {
         backupTargetApi.getById(this.selectBackupTargetIdArr[0]).then(res => {
           console.log("根据id查询备份目标目录：" + JSON.stringify(res));
           this.addOrUpdateBackupTargetForm = res.data;
-          this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[0].rootPath;
+          this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource-1].rootPath;
         })
       } else if (this.selectBackupTargetIdArr.length > 1) {
         ElMessage({
