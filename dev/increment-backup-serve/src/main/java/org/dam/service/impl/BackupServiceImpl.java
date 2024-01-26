@@ -1,7 +1,6 @@
 package org.dam.service.impl;
 
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.lang.hash.Hash;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -84,21 +83,24 @@ public class BackupServiceImpl implements BackupService {
      */
     private void backUpByTask(Task task) {
         BackupSource source = task.getSource();
+        BackupTarget target = task.getTarget();
         Date start = new Date();
         // 找到备份目录下面的所有文件
         Statistic sta = new Statistic(0, 0, 0, 0, new Date().getTime() / 1000);
         getSonFileNum(new File(source.getRootPath()), sta);
-        log.info("当前数据源（id={}）下的总文件数量:{}，总字节数：{}", source.getId(), sta.totalPackupFileNum, sta.totalBackupByteNum);
+        log.info("当前数据源（id={}）下的总文件数量:{}，总字节数：{}", source.getId(), sta.totalBackupFileNum, sta.totalBackupByteNum);
         // 将任务插入到数据库中
         BackupTask backupTask = new BackupTask(source.getRootPath(), task.getTarget().getTargetRootPath(),
-                sta.totalPackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0");
+                sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0");
         backupTaskService.save(backupTask);
         log.info("任务创建成功，开始备份");
 
         // 记录每个文件路径及其对应的id，如/Users/mac/Dev/BackUpTest/dasdasdasd.txt=>515351
         Map<String, Long> filePathAndIdMap = new HashMap<>();
         // 查询出当前数据源中所有已经备份过的文件
-        List<BackupFile> backupFileList = backupFileService.list(new QueryWrapper<BackupFile>().eq("backup_source_id", source.getId()));
+        List<BackupFile> backupFileList = backupFileService.list(new QueryWrapper<BackupFile>().
+                eq("backup_source_id", source.getId()).
+                eq("backup_target_id", target.getId()));
         for (BackupFile backupFile : backupFileList) {
             filePathAndIdMap.put(backupFile.getFilePath(), backupFile.getId());
         }
@@ -111,7 +113,7 @@ public class BackupServiceImpl implements BackupService {
         BackupTask backupTask1 = new BackupTask();
         backupTask1.setId(backupTask.getId());
         backupTask1.setBackupStatus(2);
-        backupTask1.setFinishFileNum(sta.getTotalPackupFileNum());
+        backupTask1.setFinishFileNum(sta.getTotalBackupFileNum());
         backupTask1.setFinishByteNum(sta.getFinishBackupByteNum());
         backupTaskService.updateById(backupTask1);
 
@@ -199,6 +201,7 @@ public class BackupServiceImpl implements BackupService {
             // 第一次拷贝该文件，将文件信息存储到数据库中
             BackupFile backupFile = new BackupFile();
             backupFile.setBackupSourceId(source.getId());
+            backupFile.setBackupTargetId(target.getId());
             backupFile.setFilePath(backupSourceFilePath.replace("\\", "\\\\").replace("'", "\\'"));
             backupFile.setBackupNum(0);
             backupFile.setLastBackupTime(new DateTime());
@@ -244,7 +247,7 @@ public class BackupServiceImpl implements BackupService {
         statistic.finishBackupByteNum += backupSourceFile.length();
         if (new Date().getTime() / 1000 != statistic.timestamp) {
             statistic.timestamp = new Date().getTime() / 1000;
-            log.info("文件数量：拷贝进度:" + statistic.finishBackupFileNum * 100.0 / statistic.totalPackupFileNum + "%  " + statistic.finishBackupFileNum + "/" + statistic.totalPackupFileNum +
+            log.info("文件数量：拷贝进度:" + statistic.finishBackupFileNum * 100.0 / statistic.totalBackupFileNum + "%  " + statistic.finishBackupFileNum + "/" + statistic.totalBackupFileNum +
                     "； 文件大小：拷贝进度:" + statistic.finishBackupByteNum * 100.0 / statistic.totalBackupByteNum + "%  " + statistic.finishBackupByteNum + "/" + statistic.totalBackupByteNum);
             BackupTask backupTask = new BackupTask();
             backupTask.setBackupStatus(1);
@@ -298,7 +301,7 @@ public class BackupServiceImpl implements BackupService {
         // 保存文件备份历史
         BackupFileHistory history = new BackupFileHistory();
         history.setBackupFileId(backupFileId);
-        history.setModifyTime(new Date().getTime());
+        history.setModifyTime(backupSourceFile.lastModified());
         history.setFileSize(backupSourceFile.length());
         history.setBackupStartTime(start);
         history.setBackupEndTime(new Date());
@@ -366,7 +369,7 @@ public class BackupServiceImpl implements BackupService {
             }
             if (f.isFile()) {
                 // --if-- 若是文件，添加到文件夹中
-                sta.totalPackupFileNum++;
+                sta.totalBackupFileNum++;
                 sta.totalBackupByteNum += f.length();
             }
         }

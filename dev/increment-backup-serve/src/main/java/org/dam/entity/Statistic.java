@@ -21,7 +21,7 @@ public class Statistic {
     /**
      * 备份的文件数量
      */
-    public int totalPackupFileNum;
+    public int totalBackupFileNum;
     /**
      * 备份的字节数
      */

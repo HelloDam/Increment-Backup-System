@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import org.dam.entity.base.BaseEntity;
 
@@ -21,7 +23,14 @@ public class BackupFile extends BaseEntity implements Serializable {
     /**
      * 属于哪个数据源
      */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long backupSourceId;
+
+    /**
+     * 属于哪个备份目录
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long backupTargetId;
 
     /**
      * 文件的路径
