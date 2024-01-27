@@ -143,6 +143,7 @@ import BackupFileTable from "../components/BackupFileTable.vue";
 import BackupFileHistoryTable from "../components/BackupFileHistoryTable.vue";
 import backupTaskApi from "../api/backupTaskApi.js";
 import AppFooter from "../components/AppFooter.vue";
+import mouseEffectsUtil from "../utils/mouseEffectsUtil.js"
 
 export default {
   components: {
@@ -269,7 +270,7 @@ export default {
   ,
 
   mounted() {
-
+    mouseEffectsUtil.drawStar();
   }
   ,
 
