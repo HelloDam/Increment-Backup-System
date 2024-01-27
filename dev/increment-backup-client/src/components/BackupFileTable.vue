@@ -24,7 +24,9 @@
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="backupTargetId" label="备份目标目录ID" resizable width="200"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="filePath" label="文件路径" resizable width="auto"
+        <el-table-column prop="sourceFilePath" label="源文件路径" resizable width="auto"
+                         :show-overflow-tooltip="true"/>
+        <el-table-column prop="targetFilePath" label="文件备份目标路径" resizable width="auto"
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="fileType" label="文件类型" resizable width="100"
                          :show-overflow-tooltip="true">
@@ -92,7 +94,10 @@
           <el-input v-model="searchBackupFileForm.backupTargetId" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="源文件目录" :label-width="110">
-          <el-input v-model="searchBackupFileForm.filePath" autocomplete="off"/>
+          <el-input v-model="searchBackupFileForm.sourceFilePath" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="文件备份目标目录" :label-width="110">
+          <el-input v-model="searchBackupFileForm.targetFilePath" autocomplete="off"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -154,7 +159,7 @@ export default {
           ElMessage({
             message: "查询成功",
             type: 'success',
-            duration: 5 * 1000
+            duration: 2 * 1000
           })
         }
       })
@@ -184,13 +189,13 @@ export default {
         ElMessage({
           message: "所选中的数据源数据超过一个，无法修改",
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       } else {
         ElMessage({
           message: "没有选中数据，无法修改",
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       }
     },
@@ -207,7 +212,7 @@ export default {
               ElMessage({
                 message: "修改成功",
                 type: 'success',
-                duration: 5 * 1000
+                duration: 2 * 1000
               })
             }
         )
@@ -222,7 +227,7 @@ export default {
               ElMessage({
                 message: "添加成功",
                 type: 'success',
-                duration: 5 * 1000
+                duration: 2 * 1000
               })
             }
         )
@@ -248,7 +253,7 @@ export default {
         ElMessage({
           message: "删除成功",
           type: 'success',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       })
     },

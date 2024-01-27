@@ -11,7 +11,7 @@
             content="删除无用的数据，如数据源中已经删除的数据，将其从备份目录中删除，并相应删除其备份记录"
             placement="top"
         >
-          <Filter style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#9ca605;"/>
+          <Filter style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#9ca605;" @click="clearBySourceId()"/>
         </el-tooltip>
         <el-tooltip
             class="box-item"
@@ -229,7 +229,7 @@ export default {
           ElMessage({
             message: "查询成功",
             type: 'success',
-            duration: 5 * 1000
+            duration: 2 * 1000
           })
         }
       })
@@ -259,13 +259,13 @@ export default {
         ElMessage({
           message: "所选中的数据源数据超过一个，无法修改",
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       } else {
         ElMessage({
           message: "没有选中数据，无法修改",
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       }
     },
@@ -282,7 +282,7 @@ export default {
               ElMessage({
                 message: "修改成功",
                 type: 'success',
-                duration: 5 * 1000
+                duration: 2 * 1000
               })
             }
         )
@@ -297,7 +297,7 @@ export default {
               ElMessage({
                 message: "添加成功",
                 type: 'success',
-                duration: 5 * 1000
+                duration: 2 * 1000
               })
             }
         )
@@ -324,7 +324,7 @@ export default {
         ElMessage({
           message: "删除成功",
           type: 'success',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       })
     },
@@ -366,31 +366,50 @@ export default {
      * 对指定的数据源进行备份
      */
     backupBySourceId() {
-
-      if (this.selectBackupSourceIdArr.length == 1) {
-        backupApi.backupBySourceId(this.selectBackupSourceIdArr[0]).then(res => {
-          ElMessage({
-            message: "开始备份",
-            type: 'success',
-            duration: 5 * 1000
+      if (this.selectBackupSourceIdArr.length > 0) {
+        for (let i = 0; i < this.selectBackupSourceIdArr.length; i++) {
+          backupApi.backupBySourceId(this.selectBackupSourceIdArr[i]).then(res => {
+            ElMessage({
+              message: "数据源：" + this.selectBackupSourceIdArr[i] + " 开始备份",
+              type: 'success',
+              duration: 2 * 1000
+            })
           })
-        })
-      } else if (this.selectBackupSourceIdArr.length > 1) {
-        ElMessage({
-          message: "所选中的数据源数据超过一个，无法备份",
-          type: 'error',
-          duration: 5 * 1000
-        })
+        }
       } else {
         ElMessage({
           message: "没有选中数据源，无法备份",
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       }
+    },
 
-    }
+    /**
+     * 对指定的数据源删除无效数据
+     */
+    clearBySourceId() {
+      if (this.selectBackupSourceIdArr.length > 0) {
+        for (let i = 0; i < this.selectBackupSourceIdArr.length; i++) {
+          backupApi.clearBySourceId(this.selectBackupSourceIdArr[i]).then(res => {
+            ElMessage({
+              message: "数据源：" + this.selectBackupSourceIdArr[i] + " 开始清理",
+              type: 'success',
+              duration: 2 * 1000
+            })
+          })
+        }
+      } else {
+        ElMessage({
+          message: "没有选中数据源，无法备份",
+          type: 'error',
+          duration: 2 * 1000
+        })
+      }
+    },
+
   },
+
   beforeCreate() {
   },
 

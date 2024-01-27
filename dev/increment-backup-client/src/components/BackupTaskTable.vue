@@ -202,7 +202,7 @@ export default {
           ElMessage({
             message: "查询成功",
             type: 'success',
-            duration: 5 * 1000
+            duration: 2 * 1000
           })
         }
       })
@@ -232,13 +232,13 @@ export default {
         ElMessage({
           message: "所选中的数据源数据超过一个，无法修改",
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       } else {
         ElMessage({
           message: "没有选中数据，无法修改",
           type: 'error',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       }
     },
@@ -255,7 +255,7 @@ export default {
               ElMessage({
                 message: "修改成功",
                 type: 'success',
-                duration: 5 * 1000
+                duration: 2 * 1000
               })
             }
         )
@@ -270,7 +270,7 @@ export default {
               ElMessage({
                 message: "添加成功",
                 type: 'success',
-                duration: 5 * 1000
+                duration: 2 * 1000
               })
             }
         )
@@ -296,7 +296,7 @@ export default {
         ElMessage({
           message: "删除成功",
           type: 'success',
-          duration: 5 * 1000
+          duration: 2 * 1000
         })
       })
     },
