@@ -33,9 +33,14 @@ public class BackupFile extends BaseEntity implements Serializable {
     private Long backupTargetId;
 
     /**
-     * 文件的路径
+     * 源文件的路径
      */
-    private String filePath;
+    private String sourceFilePath;
+
+    /**
+     * 目标目录文件的路径
+     */
+    private String targetFilePath;
 
     /**
      * 备份数量

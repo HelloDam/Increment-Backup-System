@@ -47,7 +47,12 @@ public class BackupController {
         return Results.success();
     }
 
-    public Result clear() {
+    /**
+     * 对指定的数据源删除无效数据
+     */
+    @GetMapping("/clearBySourceId/{sourceId}")
+    public Result clearBySourceId(@PathVariable String sourceId) {
+        backupService.clearBySourceId(sourceId);
         return Results.success();
     }
 

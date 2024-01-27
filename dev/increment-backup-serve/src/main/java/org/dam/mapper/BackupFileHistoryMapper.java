@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Param;
 import org.dam.entity.BackupFileHistory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
 * @author mac
 * @description 针对表【backup_file_history】的数据库操作Mapper
@@ -13,6 +15,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface BackupFileHistoryMapper extends BaseMapper<BackupFileHistory> {
 
     BackupFileHistory getLastBackupHistory(@Param("fileId") long fileId);
+
+    void removeByFileIds(@Param("removeBackupFileIdList") List<Long> removeBackupFileIdList);
 }
 
 

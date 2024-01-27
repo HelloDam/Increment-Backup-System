@@ -35,10 +35,13 @@ public class BackupFileServiceImpl extends ServiceImpl<BackupFileMapper, BackupF
             queryWrapper.like("backup_source_id", request.getBackupSourceId());
         }
         if (request.getBackupTargetId() != null) {
-                queryWrapper.like("backup_target_id", request.getBackupTargetId());
+            queryWrapper.like("backup_target_id", request.getBackupTargetId());
         }
-        if (!StringUtils.isEmpty(request.getFilePath())) {
-            queryWrapper.like("file_path", request.getFilePath());
+        if (!StringUtils.isEmpty(request.getSourceFilePath())) {
+            queryWrapper.like("source_file_path", request.getSourceFilePath());
+        }
+        if (!StringUtils.isEmpty(request.getTargetFilePath())) {
+            queryWrapper.like("target_file_path", request.getTargetFilePath());
         }
 
         IPage<BackupFile> page = baseMapper.selectPage(new Page(request.getCurrent(), request.getSize()), queryWrapper);

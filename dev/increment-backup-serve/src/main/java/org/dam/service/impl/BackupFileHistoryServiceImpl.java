@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author mac
@@ -56,6 +57,16 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
         IPage<BackupFileHistory> page = baseMapper.selectPage(new Page(request.getCurrent(), request.getSize()), queryWrapper);
 
         return PageUtil.convert(page);
+    }
+
+    @Override
+    public void removeByFileIds(List<Long> removeBackupFileIdList) {
+        baseMapper.removeByFileIds(removeBackupFileIdList);
+    }
+
+    @Override
+    public List<BackupFileHistory> listFileHistoryListByFileIds(List<Long> removeBackupFileIdList) {
+        return baseMapper.selectList(new QueryWrapper<BackupFileHistory>().in("backup_file_id", removeBackupFileIdList));
     }
 
 

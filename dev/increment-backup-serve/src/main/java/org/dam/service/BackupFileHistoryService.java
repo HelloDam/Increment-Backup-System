@@ -6,6 +6,8 @@ import org.dam.entity.BackupFileHistory;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.dam.entity.request.BackupFileHistoryRequest;
 
+import java.util.List;
+
 /**
  * @author mac
  * @description 针对表【backup_file_history】的数据库操作Service
@@ -16,4 +18,8 @@ public interface BackupFileHistoryService extends IService<BackupFileHistory> {
     BackupFileHistory getLastBackupHistory(long fileId);
 
     PageResponse<BackupFileHistory> pageBackupFileHistory(BackupFileHistoryRequest request);
+
+    void removeByFileIds(List<Long> removeBackupFileIdList);
+
+    List<BackupFileHistory> listFileHistoryListByFileIds(List<Long> removeBackupFileIdList);
 }

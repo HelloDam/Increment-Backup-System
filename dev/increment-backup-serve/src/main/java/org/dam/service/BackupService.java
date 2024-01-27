@@ -6,4 +6,6 @@ package org.dam.service;
  */
 public interface BackupService {
     void backupBySourceId(String sourceId);
+
+    void clearBySourceId(String sourceId);
 }
