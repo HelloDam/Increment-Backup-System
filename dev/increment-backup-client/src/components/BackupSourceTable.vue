@@ -176,6 +176,10 @@ import backupSourceApi from "../api/backupSourceApi.js";
 import {ElMessage} from "element-plus";
 import backupApi from "../api/backupApi.js";
 
+const addOrUpdateBackupSourceForm = {
+  backupType: '0'
+}
+
 export default {
   components: {},
   data() {
@@ -241,7 +245,7 @@ export default {
     addBackupSourceDialog() {
       this.addOrUpdateBackupSourceTitle = "增加数据源";
       this.addOrUpdateBackupSourceDialogVisible = true;
-      this.addOrUpdateBackupSourceForm = {};
+      this.addOrUpdateBackupSourceForm = addOrUpdateBackupSourceForm;
     },
     updateBackupSourceDialog() {
       if (this.selectBackupSourceIdArr.length == 1) {
