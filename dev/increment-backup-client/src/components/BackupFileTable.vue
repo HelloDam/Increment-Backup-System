@@ -2,7 +2,7 @@
   <div>
     <div class="tableTitle">
       <div>
-        数据源目录管理
+        备份文件管理
       </div>
       <div>
         <!--        <CirclePlus style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#0368c5;"-->
@@ -26,8 +26,21 @@
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="filePath" label="文件路径" resizable width="auto"
                          :show-overflow-tooltip="true"/>
+        <el-table-column prop="fileType" label="文件类型" resizable width="100"
+                         :show-overflow-tooltip="true">
+          <template #default="scope">
+            <el-tag class="ml-2" v-if="scope.row.fileType==0">目录</el-tag>
+            <el-tag class="ml-2" type="success" v-if="scope.row.fileType==1">文件</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="backupNum" label="备份次数" resizable width="100"
-                         :show-overflow-tooltip="true"/>
+                         :show-overflow-tooltip="true">
+          <template #default="scope">
+            <span>
+                    {{ scope.row.fileType == 0 ? '--' : scope.row.backupNum }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="lastBackupTime" label="上次备份时间" width="180" :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
       </el-table>
