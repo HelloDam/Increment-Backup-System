@@ -162,6 +162,10 @@ export default {
       backupTaskList: [],
       activeIndex: '2',
       backupTaskListDialogVisible: false,
+      // websocket
+      socket: undefined,
+      lockReconnect: false,
+      heartbeatTime: 1000,
     };
   },
   computed: {},
@@ -197,13 +201,13 @@ export default {
         console.log("您的浏览器支持WebSocket协议");
         let socketUrl = "ws://localhost:8899/websocket/Admin";
         // 开启一个websocket服务
-        socket = new WebSocket(socketUrl);
+        _this.socket = new WebSocket(socketUrl);
         //打开日志事件
-        socket.onopen = function () {
+        _this.socket.onopen = function () {
           console.log("websocket已打开");
         };
         //浏览器端收消息，获得从服务端发送过来的文本消息
-        socket.onmessage = function (msg) {
+        _this.socket.onmessage = function (msg) {
           // 对收到的json数据进行解析
           // let data = JSON.parse(JSON.stringify(msg));
           // console.log("收到备份进度消息：" + JSON.stringify(msg));
@@ -222,11 +226,11 @@ export default {
           console.log("收到备份任务进度消息：");
         };
         //关闭事件
-        socket.onclose = function () {
+        _this.socket.onclose = function () {
           console.log("websocket已关闭");
         };
         //发生了错误事件
-        socket.onerror = function () {
+        _this.socket.onerror = function () {
           console.log("websocket发生错误");
         }
       }
@@ -253,13 +257,47 @@ export default {
       let date = new Date(cellValue);
       return date.toLocaleDateString() + " " + date.toLocaleTimeString();
     },
+
+    /**
+     * 重新连接
+     */
+    reconnect() {
+      // console.log("重连");
+      // 防止重复连接
+      if (this.lockReconnect == true) {
+        return;
+      }
+      // 锁定，防止重复连接
+      this.lockReconnect = true;
+      this.initWebSocket();
+      // 连接完成，设置为false
+      this.lockReconnect = false;
+    },
+    /**
+     * 心跳，监测websocket是否锻炼
+     */
+    headbeat() {
+      // console.log("websocket心跳");
+      let that = this;
+      setTimeout(function () {
+        if (that.socket !== undefined && that.socket.readyState === 1) {
+          // 调用启动下一轮的心跳
+          that.headbeat();
+        } else {
+          // websocket还没有连接成功，重连
+          that.reconnect();
+          that.headbeat();
+        }
+      }, that.heartbeatTime);
+    },
+
   },
   beforeCreate() {
   }
   ,
 
   created() {
-    this.initWebSocket();
+    this.headbeat();
     this.listProcessingTask();
   }
   ,
