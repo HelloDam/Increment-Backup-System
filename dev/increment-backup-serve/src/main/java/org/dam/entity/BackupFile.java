@@ -43,6 +43,11 @@ public class BackupFile extends BaseEntity implements Serializable {
     private Integer backupNum;
 
     /**
+     * 文件类型 0：目录 1：文件
+     */
+    private Integer fileType;
+
+    /**
      * 最后一次备份时间
      */
     private Date lastBackupTime;
