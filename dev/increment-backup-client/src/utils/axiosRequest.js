@@ -33,7 +33,7 @@ service.interceptors.response.use(
             ElMessage({
                 message: res.message || '请求出错了',
                 type: 'error',
-                duration: 5 * 1000
+                duration: 2 * 1000
             })
 
             return Promise.reject(new Error(res.message || '请求出错了'))
@@ -48,7 +48,7 @@ service.interceptors.response.use(
         ElMessage({
             message: error.message,
             type: 'error',
-            duration: 5 * 1000
+            duration: 2 * 1000
         })
         return Promise.reject(error)
     }
