@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 import org.dam.common.utils.FileUtils;
 
@@ -495,7 +496,7 @@ public class BackupServiceImpl implements BackupService {
         }
         List<Task> taskList = backupSourceList.stream().map(item -> {
             return new Task(source, item);
-        }).toList();
+        }).collect(Collectors.toList());
         return taskList;
     }
 
