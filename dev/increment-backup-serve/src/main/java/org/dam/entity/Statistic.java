@@ -27,8 +27,8 @@ public class Statistic {
      */
     public long totalBackupByteNum;
     /**
-     * 记录时间戳
+     * 记录秒数
      */
-    public long timestamp;
+    public long second;
 
 }
