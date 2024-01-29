@@ -53,7 +53,8 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
         if (!StringUtils.isEmpty(request.getBackupSourceFilePath())) {
             queryWrapper.like("backup_source_file_path", request.getBackupSourceFilePath());
         }
-
+        // 根据时间降序排序
+        queryWrapper.orderBy(true, false, "create_time");
         IPage<BackupFileHistory> page = baseMapper.selectPage(new Page(request.getCurrent(), request.getSize()), queryWrapper);
 
         return PageUtil.convert(page);
@@ -68,7 +69,6 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
     public List<BackupFileHistory> listFileHistoryListByFileIds(List<Long> removeBackupFileIdList) {
         return baseMapper.selectList(new QueryWrapper<BackupFileHistory>().in("backup_file_id", removeBackupFileIdList));
     }
-
 
 }
 

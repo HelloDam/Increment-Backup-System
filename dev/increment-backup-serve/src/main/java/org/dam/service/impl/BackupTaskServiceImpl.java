@@ -55,6 +55,8 @@ public class BackupTaskServiceImpl extends ServiceImpl<BackupTaskMapper, BackupT
         if (request.getBackupStatus() != null) {
             queryWrapper.eq("backup_status", request.getBackupStatus());
         }
+        // 根据时间降序排序
+        queryWrapper.orderBy(true, false, "create_time");
         Page pageParam = new Page(request.getCurrent(), request.getSize());
         IPage<BackupTask> page = baseMapper.selectPage(pageParam, queryWrapper);
         for (BackupTask task : page.getRecords()) {

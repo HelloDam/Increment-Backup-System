@@ -43,7 +43,8 @@ public class BackupFileServiceImpl extends ServiceImpl<BackupFileMapper, BackupF
         if (!StringUtils.isEmpty(request.getTargetFilePath())) {
             queryWrapper.like("target_file_path", request.getTargetFilePath());
         }
-
+        // 根据时间降序排序
+        queryWrapper.orderBy(true, false, "create_time");
         IPage<BackupFile> page = baseMapper.selectPage(new Page(request.getCurrent(), request.getSize()), queryWrapper);
 
         return PageUtil.convert(page);
