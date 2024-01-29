@@ -39,6 +39,11 @@ public class BackupSource extends BaseEntity implements Serializable {
      */
     private Integer backupNum = 0;
 
+    /**
+     * 是否压缩 0：不压缩 1：压缩
+     */
+    private Integer isCompress;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
