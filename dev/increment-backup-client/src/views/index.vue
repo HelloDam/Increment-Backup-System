@@ -121,10 +121,10 @@
               <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"
-                           :formatter="formatDate"/>
-          <el-table-column prop="updateTime" label="修改时间" width="180" :show-overflow-tooltip="true"
-                           :formatter="formatDate"/>
+          <!--          <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"-->
+          <!--                           :formatter="formatDate"/>-->
+          <!--          <el-table-column prop="updateTime" label="修改时间" width="180" :show-overflow-tooltip="true"-->
+          <!--                           :formatter="formatDate"/>-->
         </el-table>
         <template #footer>
           <span class="dialog-footer">
@@ -152,6 +152,7 @@ import backupTaskApi from "../api/backupTaskApi.js";
 import AppFooter from "../components/AppFooter.vue";
 import mouseEffectsUtil from "../utils/mouseEffectsUtil.js";
 import FileMessageTree from "../components/FileMessageTree.vue";
+import {ElNotification} from "element-plus";
 
 export default {
   components: {
@@ -230,7 +231,8 @@ export default {
           // let data = JSON.parse(JSON.stringify(msg));
           // console.log("收到备份进度消息：" + JSON.stringify(msg));
           // console.log(msg);
-          let task = JSON.parse(msg.data);
+          let dataMap = JSON.parse(msg.data);
+          let task = dataMap.backupTask;
           let isExit = false;
           for (let i = 0; i < _this.backupTaskList.length; i++) {
             if (_this.backupTaskList[i].id === task.id) {
@@ -243,7 +245,13 @@ export default {
             task.backupProgress = parseFloat(task.backupProgress);
             _this.backupTaskList.push(task);
           }
-          console.log("收到备份任务进度消息：");
+          if (dataMap.content && dataMap.content === '任务备份完成') {
+            ElNotification({
+              title: "备份任务通知",
+              message: dataMap.content,
+            })
+          }
+          // console.log("收到备份任务进度消息：");
         };
         //关闭事件
         _this.socket.onclose = function () {
