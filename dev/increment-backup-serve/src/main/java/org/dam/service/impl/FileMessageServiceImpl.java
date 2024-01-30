@@ -50,6 +50,18 @@ public class FileMessageServiceImpl extends ServiceImpl<FileMessageMapper, FileM
     }
 
     /**
+     * 根据数据源ID和父ID查询出所有 fileMessage 数据
+     *
+     * @param sourceId
+     * @param fatherId
+     * @return
+     */
+    @Override
+    public List<FileMessage> listChildrenBySourceIdAndFatherId(Long sourceId, Long fatherId) {
+        return baseMapper.selectList(new QueryWrapper<FileMessage>().eq("backup_source_id", sourceId).eq("father_id", fatherId));
+    }
+
+    /**
      * 递归方法：将文件的子文件id添加到待删除ID集合中
      *
      * @param removeFileMessageIdList

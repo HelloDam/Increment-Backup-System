@@ -50,7 +50,7 @@ public class FileMessage extends BaseEntity implements Serializable {
     /**
      * 文件大小 byte
      */
-    private Integer fileLength;
+    private Long fileLength;
 
     /**
      * 父文件，如果没有设置为0
@@ -62,6 +62,16 @@ public class FileMessage extends BaseEntity implements Serializable {
      * 是否压缩 0：不压缩 1：压缩
      */
     private Integer isCompress;
+
+    /**
+     * 文件类型 0：目录 1：文件
+     */
+    private Integer fileType;
+
+    /**
+     * 是否包含子文件 0：不包含 1：包含
+     */
+    private Integer isContainFile;
 
     /**
      * 子文件

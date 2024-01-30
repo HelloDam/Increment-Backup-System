@@ -58,6 +58,8 @@ public class BackupServiceImpl implements BackupService {
     @Autowired
     private FileMessageService fileMessageService;
 
+    private Random random = new Random();
+
     /**
      * 对指定的备份源进行备份
      *
@@ -154,15 +156,7 @@ public class BackupServiceImpl implements BackupService {
         getSonFileNum(new File(backupSource.getRootPath()), sta);
         log.info("当前数据源（id={}）下的总文件数量:{}，总字节数：{}", backupSource.getId(), sta.totalBackupFileNum, sta.totalBackupByteNum);
         // 将任务插入到数据库中
-        String targetRootPath;
-        if (backupSource.getBackupType() == 1) {
-            targetRootPath = "分散备份：\n";
-            for (BackupTarget backupTarget : task.getTargetList()) {
-                targetRootPath += backupTarget.getTargetRootPath() + "\n";
-            }
-        } else {
-            targetRootPath = target.getTargetRootPath();
-        }
+        String targetRootPath = getTargetRootPath(task, backupSource, target);
         BackupTask backupTask = new BackupTask(backupSource.getRootPath(), targetRootPath,
                 sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0", 0L, new Date());
         backupTaskService.save(backupTask);
@@ -191,7 +185,7 @@ public class BackupServiceImpl implements BackupService {
         // 查询出文件信息的树形结构
         List<FileMessage> fileMessageList = fileMessageService.list(new QueryWrapper<FileMessage>().
                 eq("backup_source_id", backupSource.getId()).eq("father_id", 0L));
-        backUpAllFiles(new File(backupSource.getRootPath()), backupSource, target, task.getTargetList(), filePathAndIdMap, sta,
+        backUpAllFiles(task, new File(backupSource.getRootPath()), backupSource, target, task.getTargetList(), filePathAndIdMap, sta,
                 "", backupTask.getId(), backupTask.getCreateTime(),
                 0L, fileMessageList);
 
@@ -208,6 +202,27 @@ public class BackupServiceImpl implements BackupService {
     }
 
     /**
+     * 获取备份目标目录
+     *
+     * @param task
+     * @param backupSource
+     * @param target
+     * @return
+     */
+    private static String getTargetRootPath(Task task, BackupSource backupSource, BackupTarget target) {
+        String targetRootPath;
+        if (backupSource.getBackupType() == 1) {
+            targetRootPath = "分散备份：\n";
+            for (BackupTarget backupTarget : task.getTargetList()) {
+                targetRootPath += backupTarget.getTargetRootPath() + "\n";
+            }
+        } else {
+            targetRootPath = target.getTargetRootPath();
+        }
+        return targetRootPath;
+    }
+
+    /**
      * 将一个 父文件夹 的所有数据备份到目标目录中
      *
      * @param fatherFile
@@ -217,7 +232,7 @@ public class BackupServiceImpl implements BackupService {
      * @param statistic
      * @param middlePath
      */
-    private void backUpAllFiles(File fatherFile, BackupSource backupSource, BackupTarget backupTarget, List<BackupTarget> targetList,
+    private void backUpAllFiles(Task task, File fatherFile, BackupSource backupSource, BackupTarget backupTarget, List<BackupTarget> targetList,
                                 Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath,
                                 Long backupTaskId, Date taskBackupStartTime,
                                 Long fatherId, List<FileMessage> fileMessageList) {
@@ -280,9 +295,11 @@ public class BackupServiceImpl implements BackupService {
                     fileMessage.setTargetFilePath(null);
                     // 目录的后缀为空
                     fileMessage.setFileSuffix(null);
-                    fileMessage.setFileLength(0);
+                    fileMessage.setFileLength(0L);
                     fileMessage.setFatherId(fatherId);
                     fileMessage.setIsCompress(backupSource.getIsCompress());
+                    fileMessage.setFileType(0);
+                    fileMessage.setIsContainFile(file.listFiles().length > 0 ? 1 : 0);
                     fileMessageService.save(fileMessage);
                     curFileMessageId = fileMessage.getId();
                 } else if (backupSource.getBackupType() == 1 && fileNameAndFileMessageMap.get(file.getName()) != null) {
@@ -298,14 +315,14 @@ public class BackupServiceImpl implements BackupService {
                             eq("backup_source_id", backupSource.getId()).
                             eq("father_id", curFileMessageId));
                 }
-                backUpAllFiles(file, backupSource, backupTarget, targetList, filePathAndIdMap, statistic,
+                backUpAllFiles(task, file, backupSource, backupTarget, targetList, filePathAndIdMap, statistic,
                         middlePath + file.getName() + File.separator, backupTaskId, taskBackupStartTime,
                         curFileMessageId, children);
             }
             if (file.isFile()) {
                 // --if-- 若是文件，执行备份操作
                 try {
-                    execBackUp(backupSource, backupTarget, targetList, file.toString(), filePathAndIdMap,
+                    execBackUp(task, backupSource, backupTarget, targetList, file.toString(), filePathAndIdMap,
                             statistic, middlePath, backupTaskId, taskBackupStartTime, fatherId, fileNameAndFileMessageMap);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -344,7 +361,7 @@ public class BackupServiceImpl implements BackupService {
      * @throws SQLException
      * @throws IOException
      */
-    private void execBackUp(BackupSource source, BackupTarget target, List<BackupTarget> targetList, String backupSourceFilePath,
+    private void execBackUp(Task task, BackupSource source, BackupTarget target, List<BackupTarget> targetList, String backupSourceFilePath,
                             Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath,
                             Long backupTaskId, Date taskBackupStartTime,
                             Long fatherId, HashMap<String, FileMessage> fileNameAndFileMessageMap) throws SQLException, IOException {
@@ -371,25 +388,23 @@ public class BackupServiceImpl implements BackupService {
             } else {
                 fileMessage.setFileSuffix("该文件无后缀");
             }
-
-            fileMessage.setFileLength(0);
+            fileMessage.setFileLength(backupSourceFile.length());
             fileMessage.setFatherId(fatherId);
             fileMessage.setIsCompress(source.getIsCompress());
+            fileMessage.setFileType(1);
+            fileMessage.setIsContainFile(0);
             fileMessageService.save(fileMessage);
         }
 
         long fileId;
+        long targetId = source.getBackupType() == 0 ? target.getId() : 0;
         if (!filePathAndIdMap.containsKey(backupSourceFilePath)) {
             // --if-- 文件还没有备份过，将其插入到数据库中，并取出id
 
             // 第一次拷贝该文件，将文件信息存储到数据库中
             BackupFile backupFile = new BackupFile();
             backupFile.setBackupSourceId(source.getId());
-            if (source.getBackupType() == 0) {
-                backupFile.setBackupTargetId(target.getId());
-            } else {
-                backupFile.setBackupTargetId(0L);
-            }
+            backupFile.setBackupTargetId(targetId);
             backupFile.setSourceFilePath(backupSourceFilePath.replace("\\", "\\\\").replace("'", "\\'"));
             backupFile.setTargetFilePath(targetFilePath);
             backupFile.setBackupNum(0);
@@ -425,7 +440,7 @@ public class BackupServiceImpl implements BackupService {
         // 执行具体的备份
         System.out.println("开始执行备份");
         if (isNeedBackup) {
-            if (!execBackupSingleFile(backupSourceFilePath, target, targetFilePath, fileId, backupTaskId)) {
+            if (!execBackupSingleFile(backupSourceFilePath, targetId, targetFilePath, fileId, backupTaskId)) {
                 log.error("备份出错");
                 return;
             } else {
@@ -438,11 +453,13 @@ public class BackupServiceImpl implements BackupService {
         statistic.finishBackupFileNum++;
         statistic.finishBackupByteNum += backupSourceFile.length();
         long curTime = System.currentTimeMillis();
-        if (curTime != statistic.second * 1000) {
+        if ((curTime / 1000) != statistic.second) {
             statistic.second = curTime / 1000;
             log.info("文件数量：拷贝进度:" + statistic.finishBackupFileNum * 100.0 / statistic.totalBackupFileNum + "%  " + statistic.finishBackupFileNum + "/" + statistic.totalBackupFileNum +
                     "； 文件大小：拷贝进度:" + statistic.finishBackupByteNum * 100.0 / statistic.totalBackupByteNum + "%  " + statistic.finishBackupByteNum + "/" + statistic.totalBackupByteNum);
             BackupTask backupTask = new BackupTask();
+            backupTask.setBackupSourceRoot(source.getRootPath());
+            backupTask.setBackupTargetRoot(getTargetRootPath(task, source, target));
             backupTask.setBackupStatus(1);
             backupTask.setId(backupTaskId);
             backupTask.setFinishFileNum(statistic.finishBackupFileNum);
@@ -479,7 +496,7 @@ public class BackupServiceImpl implements BackupService {
      * @return
      * @throws IOException
      */
-    private boolean execBackupSingleFile(String sourceFilePath, BackupTarget target, String targetFilePath, long backupFileId, long backupTaskId) throws IOException {
+    private boolean execBackupSingleFile(String sourceFilePath, long targetId, String targetFilePath, long backupFileId, long backupTaskId) throws IOException {
         Date start = new Date();
         File backupSourceFile = new File(sourceFilePath);
         FileInputStream sourceFileStream = new FileInputStream(backupSourceFile);
@@ -491,8 +508,8 @@ public class BackupServiceImpl implements BackupService {
         }
 
         try {
-            log.info("备份文件，从" + sourceFilePath + "到" + targetFilePath);
             backupWithFileChannel(backupSourceFile, new File(targetFilePath));
+            log.info("备份文件成功，从" + sourceFilePath + "到" + targetFilePath);
         } catch (Exception e) {
             log.info("备份文件失败，从" + sourceFilePath + " 到 " + targetFilePath);
             return false;
@@ -506,7 +523,7 @@ public class BackupServiceImpl implements BackupService {
         history.setBackupEndTime(new Date());
         history.setBackupSourceFilePath(sourceFilePath);
         history.setBackupTargetFilePath(targetFilePath);
-        history.setBackupTargetRootId(target.getBackupSourceId());
+        history.setBackupTargetRootId(targetId);
         history.setMd5(md5str);
         history.setBackupTaskId(backupTaskId);
         backupFileHistoryService.save(history);
@@ -624,19 +641,23 @@ public class BackupServiceImpl implements BackupService {
      * @return
      */
     private BackupTarget getBestBackupTarget(long needSpace, List<BackupTarget> targetList) {
-        BackupTarget bestBackupTarget = null;
+        List<BackupTarget> bestTargetList = new ArrayList<>();
         long maxSpace = 0;
         // 找到剩余空间足够且最大的那个目录
         for (BackupTarget backupTarget : targetList) {
             File file = new File(backupTarget.getTargetRootPath());
             if (file.getFreeSpace() > needSpace && file.getFreeSpace() > maxSpace) {
-                bestBackupTarget = backupTarget;
+                maxSpace = file.getFreeSpace();
+                bestTargetList.clear();
+                bestTargetList.add(backupTarget);
+            } else if (file.getFreeSpace() > needSpace && file.getFreeSpace() == maxSpace) {
+                bestTargetList.add(backupTarget);
             }
         }
-        if (bestBackupTarget == null) {
+        if (bestTargetList.size() == 0) {
             throw new ServiceException("所有备份目标目录下面都没有足够的空间，无法再执行备份");
         }
-        return bestBackupTarget;
+        return bestTargetList.get(random.nextInt(bestTargetList.size()));
     }
 
 }
