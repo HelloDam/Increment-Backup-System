@@ -40,6 +40,7 @@ public class BackupController {
             sourceIDSet.add(sourceId);
         }
 
+        //todo 使用了异步之后，报错不会显示出来，而是直接卡住
         CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
             backupService.backupBySourceId(sourceId);
         }, executor);
