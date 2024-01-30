@@ -17,4 +17,6 @@ public interface FileMessageService extends IService<FileMessage> {
     void recursionRemoveFileMessage(List<Long> removeFileMessageIdList);
 
     List<FileMessage> listChildrenBySourceIdAndFatherId(Long sourceId, Long fatherId);
+
+    void unCompress(Long fileMessageId);
 }

@@ -53,6 +53,11 @@ public class FileMessage extends BaseEntity implements Serializable {
     private Long fileLength;
 
     /**
+     * 压缩之后的文件大小 byte
+     */
+    private Long fileLengthAfterCompress;
+
+    /**
      * 父文件，如果没有设置为0
      */
     @JsonSerialize(using = ToStringSerializer.class)

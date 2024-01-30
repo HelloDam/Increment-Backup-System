@@ -2,11 +2,14 @@ package org.dam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.dam.common.constant.SystemConstant;
+import org.dam.common.utils.compress.GzipCompressUtil;
 import org.dam.entity.FileMessage;
 import org.dam.service.FileMessageService;
 import org.dam.mapper.FileMessageMapper;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,6 +62,26 @@ public class FileMessageServiceImpl extends ServiceImpl<FileMessageMapper, FileM
     @Override
     public List<FileMessage> listChildrenBySourceIdAndFatherId(Long sourceId, Long fatherId) {
         return baseMapper.selectList(new QueryWrapper<FileMessage>().eq("backup_source_id", sourceId).eq("father_id", fatherId));
+    }
+
+    /**
+     * 根据ID对指定的fileMessage进行解压操作，如果是目录，则递归解压其所有子文件
+     * @param fileMessageId
+     */
+    @Override
+    public void unCompress(Long fileMessageId) {
+        FileMessage fileMessage = baseMapper.selectOne(new QueryWrapper<FileMessage>().eq("id", fileMessageId));
+        if (fileMessage.getFileType() == 1 && fileMessage.getIsCompress() == 1) {
+            // --if-- 是文件，直接解压
+            String targetFilePath = fileMessage.getTargetFilePath().substring(0, fileMessage.getTargetFilePath().lastIndexOf(".")) + fileMessage.getFileSuffix();
+            GzipCompressUtil.unCompressFile(new File(fileMessage.getTargetFilePath()), targetFilePath);
+        } else {
+            // --if-- 是目录，解压子文件
+            List<FileMessage> sonList = baseMapper.selectList(new QueryWrapper<FileMessage>().eq("father_id", fileMessageId));
+            for (FileMessage message : sonList) {
+                unCompress(message.getId());
+            }
+        }
     }
 
     /**
