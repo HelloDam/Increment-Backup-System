@@ -1,6 +1,5 @@
-package org.dam.common.utils.comgress;
+package org.dam.common.utils.compress;
 
-import net.jpountz.lz4.*;
 import org.anarres.lzo.*;
 import org.dam.common.utils.FileUtils;
 
@@ -13,7 +12,7 @@ import java.io.IOException;
  * @Author dam
  * @create 2024/1/28 18:00
  */
-public class Lz4CompressUtil {
+public class LzoCompressUtil {
 
     public static boolean compressFile(File sourceFile, String targetPath) {
         try {
@@ -27,28 +26,28 @@ public class Lz4CompressUtil {
     }
 
     public static byte[] compress(byte srcBytes[]) throws IOException {
-        LZ4Factory factory = LZ4Factory.fastestInstance();
-        ByteArrayOutputStream byteOutput = new ByteArrayOutputStream();
-        LZ4Compressor compressor = factory.fastCompressor();
-        LZ4BlockOutputStream compressedOutput = new LZ4BlockOutputStream(
-                byteOutput, 2048, compressor);
-        compressedOutput.write(srcBytes);
-        compressedOutput.close();
-        return byteOutput.toByteArray();
+        LzoCompressor compressor = LzoLibrary.getInstance().newCompressor(
+                LzoAlgorithm.LZO1X, null);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        LzoOutputStream cs = new LzoOutputStream(os, compressor);
+        cs.write(srcBytes);
+        cs.close();
+
+        return os.toByteArray();
     }
 
     public static byte[] uncompress(byte[] bytes) throws IOException {
-        LZ4Factory factory = LZ4Factory.fastestInstance();
+        LzoDecompressor decompressor = LzoLibrary.getInstance()
+                .newDecompressor(LzoAlgorithm.LZO1X, null);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        LZ4FastDecompressor decompresser = factory.fastDecompressor();
-        LZ4BlockInputStream lzis = new LZ4BlockInputStream(
-                new ByteArrayInputStream(bytes), decompresser);
+        ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+        LzoInputStream us = new LzoInputStream(is, decompressor);
         int count;
         byte[] buffer = new byte[2048];
-        while ((count = lzis.read(buffer)) != -1) {
+        while ((count = us.read(buffer)) != -1) {
             baos.write(buffer, 0, count);
         }
-        lzis.close();
         return baos.toByteArray();
     }
 

@@ -1,4 +1,4 @@
-package org.dam.common.utils.comgress;
+package org.dam.common.utils.compress;
 
 import java.io.IOException;
 import java.util.zip.ZipInputStream;

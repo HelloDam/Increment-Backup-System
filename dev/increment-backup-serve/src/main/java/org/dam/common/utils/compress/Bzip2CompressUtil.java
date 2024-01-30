@@ -1,4 +1,4 @@
-package org.dam.common.utils.comgress;
+package org.dam.common.utils.compress;
 
 import org.dam.common.utils.FileUtils;
 
@@ -6,13 +6,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * @Author dam
  * @create 2024/1/28 18:00
  */
-public class GzipCompressUtil {
+public class Bzip2CompressUtil {
 
     public static boolean compressFile(File sourceFile, String targetPath) {
         try {
@@ -25,7 +26,7 @@ public class GzipCompressUtil {
         return false;
     }
 
-    public static byte[] compress(byte[] srcBytes) {
+    public static byte[] compress(byte srcBytes[]) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         GZIPOutputStream gzip;
         try {
@@ -54,4 +55,5 @@ public class GzipCompressUtil {
 
         return out.toByteArray();
     }
+
 }

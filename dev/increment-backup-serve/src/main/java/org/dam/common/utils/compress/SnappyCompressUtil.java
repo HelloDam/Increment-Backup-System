@@ -1,14 +1,10 @@
-package org.dam.common.utils.comgress;
+package org.dam.common.utils.compress;
 
 import org.dam.common.utils.FileUtils;
 import org.xerial.snappy.Snappy;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * @Author dam
