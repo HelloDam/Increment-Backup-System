@@ -71,8 +71,10 @@
         <el-table-column prop="backupNum" label="备份次数" width="100" resizable :show-overflow-tooltip="true"/>
         <el-table-column prop="backupType" label="备份类型" width="250" resizable :show-overflow-tooltip="true">
           <template #default="scope">
-            <el-tag class="ml-2" v-if="scope.row.backupType==0">数据全部备份到多个目标目录中</el-tag>
-            <el-tag class="ml-2" type="success" v-if="scope.row.backupType==1" @click="seeFileMessage(scope.row.id)">
+            <el-tag v-if="scope.row.backupType==0" @click="seeFileMessage(scope.row.id)">
+              数据全部备份到多个目标目录中
+            </el-tag>
+            <el-tag type="success" v-if="scope.row.backupType==1" @click="seeFileMessage(scope.row.id)">
               数据分散备份到多个目标目录中
             </el-tag>
           </template>
@@ -120,7 +122,7 @@
         </el-form-item>
         <el-form-item label="是 否 压 缩" :label-width="110">
           <el-radio-group v-model="addOrUpdateBackupSourceForm.isCompress" class="ml-4">
-            <el-radio v-for="item in isCompressOptions" :label="item.value" size="default">{{item.label}}</el-radio>
+            <el-radio v-for="item in isCompressOptions" :label="item.value" size="default">{{ item.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -205,7 +207,7 @@ export default {
           label: '数据源的数据分散备份到多个目标目录中',
         }
       ],
-      isCompressOptions:[
+      isCompressOptions: [
         {
           value: 0,
           label: '否',
