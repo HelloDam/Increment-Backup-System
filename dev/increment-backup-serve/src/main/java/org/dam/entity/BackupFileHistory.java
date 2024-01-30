@@ -22,6 +22,7 @@ public class BackupFileHistory implements Serializable {
      * id
      */
     @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
