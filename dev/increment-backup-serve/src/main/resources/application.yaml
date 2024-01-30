@@ -15,9 +15,9 @@ spring:
     resources:
       static-locations: classpath:/static/dist
 
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # 线程池设置
 ibs:
