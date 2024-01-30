@@ -41,6 +41,7 @@
       <div class="bodyDiv" v-if="activeIndex==='2'">
         <div class="table1Div">
           <BackupSourceTable @changeSourceChange="changeSourceChange()"
+                             @fileMessageSourceChange="fileMessageSourceChange()"
                              ref="backupSourceTable"></BackupSourceTable>
         </div>
         <div style="width: 10px"></div>
@@ -64,6 +65,12 @@
       <div v-if="activeIndex==='5'" class="bodyDiv">
         <div class="table2Div">
           <BackupFileHistoryTable></BackupFileHistoryTable>
+        </div>
+      </div>
+
+      <div v-if="activeIndex==='10'" class="bodyDiv">
+        <div class="table2Div">
+          <FileMessageTree :fileMessageSourceId="fileMessageSourceId"></FileMessageTree>
         </div>
       </div>
 
@@ -143,10 +150,12 @@ import BackupFileTable from "../components/BackupFileTable.vue";
 import BackupFileHistoryTable from "../components/BackupFileHistoryTable.vue";
 import backupTaskApi from "../api/backupTaskApi.js";
 import AppFooter from "../components/AppFooter.vue";
-import mouseEffectsUtil from "../utils/mouseEffectsUtil.js"
+import mouseEffectsUtil from "../utils/mouseEffectsUtil.js";
+import FileMessageTree from "../components/FileMessageTree.vue";
 
 export default {
   components: {
+    FileMessageTree,
     BackupSourceTable,
     BackupTargetTable,
     BackupTaskTable,
@@ -158,6 +167,7 @@ export default {
     return {
       // 数据源
       selectBackupSource: {},
+      fileMessageSourceId: '',
       // 备份任务列表
       backupTaskList: [],
       activeIndex: '2',
@@ -177,6 +187,14 @@ export default {
     changeSourceChange() {
       console.log("子组件选中数据源更新");
       this.selectBackupSource = this.$refs.backupSourceTable.selectBackupSource;
+    },
+    /**
+     * 查看指定数据源的文件结构
+     */
+    fileMessageSourceChange() {
+      console.log("fileMessageSourceChange");
+      this.fileMessageSourceId = this.$refs.backupSourceTable.fileMessageSourceId;
+      this.activeIndex = '10';
     },
     /**
      * 查询正在处理的任务
@@ -216,11 +234,13 @@ export default {
           let isExit = false;
           for (let i = 0; i < _this.backupTaskList.length; i++) {
             if (_this.backupTaskList[i].id === task.id) {
+              task.backupProgress = parseFloat(task.backupProgress);
               _this.backupTaskList[i] = task;
               isExit = true;
             }
           }
           if (isExit === false) {
+            task.backupProgress = parseFloat(task.backupProgress);
             _this.backupTaskList.push(task);
           }
           console.log("收到备份任务进度消息：");
@@ -239,12 +259,12 @@ export default {
      * 切换所激活主题
      */
     handleSelectActive(activeIndex) {
-      console.log("handleSelectActive:" + JSON.stringify(activeIndex));
+      // console.log("handleSelectActive:" + JSON.stringify(activeIndex));
       if (activeIndex === '1') {
-        console.log("查看任务列表");
-        for (let i = 0; i < this.backupTaskList.length; i++) {
-          console.log(JSON.stringify(this.backupTaskList[i]));
-        }
+        // console.log("查看任务列表");
+        // for (let i = 0; i < this.backupTaskList.length; i++) {
+        //   console.log(JSON.stringify(this.backupTaskList[i]));
+        // }
         this.backupTaskListDialogVisible = true;
       } else {
         this.activeIndex = activeIndex;
@@ -412,6 +432,44 @@ export default {
       padding: 5px;
       width: calc(100% - 10px);
       height: 100%;
+
+      //添加垂直滚动条
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* 定义滚动条的轨道和滑块样式 */
+    .table2Div:hover::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+    }
+
+    .table2Div:hover::-webkit-scrollbar-thumb {
+      background-color: #D2D2D2;
+      border-radius: 5px;
+    }
+
+    .table2Div:hover::-webkit-scrollbar-button {
+      background-color: #D2D2D2;
+      height: 5px;
+    }
+
+    /* 隐藏滚动条 */
+    .table2Div::-webkit-scrollbar {
+      // 隐藏滚动条宽度
+      // width: 0 !important;
+      // 隐藏滚动条高度
+      // height: 0 !important;
+      // 隐藏滚动条背景
+      background-color: transparent;
+      width: 10px;
+      height: 5px;
+    }
+
+    /* 鼠标进来的时候显示滚动条 */
+    .table2Div:hover::-webkit-scrollbar {
+      // background-color: #f1f1f1;
+      width: 10px;
+      height: 5px;
     }
   }
 }
