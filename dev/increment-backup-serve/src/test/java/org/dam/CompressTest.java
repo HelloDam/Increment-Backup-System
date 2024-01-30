@@ -1,7 +1,7 @@
 package org.dam;
 
-import org.dam.common.utils.comgress.Lz4CompressUtil;
-import org.dam.common.utils.comgress.SnappyCompressUtil;
+import org.dam.common.utils.compress.GzipCompressUtil;
+import org.dam.common.utils.compress.SnappyCompressUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -59,6 +59,7 @@ public class CompressTest {
         try {
             String sourceFilePath = "/Users/dam/File/备份测试/source/word文档.doc";
             String targetFilePath = "/Users/dam/File/备份测试/target/word文档.zip";
+            String uncompressTargetFilePath = "/Users/dam/File/备份测试/target/word文档.doc";
 
             long start = System.currentTimeMillis();
 
@@ -85,6 +86,7 @@ public class CompressTest {
              * 压缩时间：42ms
              */
 //            GzipCompressUtil.compressFile(new File(sourceFilePath), targetFilePath);
+            GzipCompressUtil.unCompressFile(new File(targetFilePath), uncompressTargetFilePath);
 
             /**
              * 压缩前：2195 kb
@@ -116,7 +118,7 @@ public class CompressTest {
              * 压缩程度：31.2273 %
              * 压缩时间：60ms
              */
-            Lz4CompressUtil.compressFile(new File(sourceFilePath), targetFilePath);
+//            Lz4CompressUtil.compressFile(new File(sourceFilePath), targetFilePath);
 
             File sourceFile = new File(sourceFilePath);
             File targetFile = new File(targetFilePath);
