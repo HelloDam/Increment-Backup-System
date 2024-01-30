@@ -72,7 +72,8 @@
         <el-table-column prop="backupType" label="备份类型" width="250" resizable :show-overflow-tooltip="true">
           <template #default="scope">
             <el-tag class="ml-2" v-if="scope.row.backupType==0">数据全部备份到多个目标目录中</el-tag>
-            <el-tag class="ml-2" type="success" v-if="scope.row.backupType==1">数据分散备份到多个目标目录中
+            <el-tag class="ml-2" type="success" v-if="scope.row.backupType==1" @click="seeFileMessage(scope.row.id)">
+              数据分散备份到多个目标目录中
             </el-tag>
           </template>
         </el-table-column>
@@ -107,7 +108,6 @@
         <el-form-item label="备 份 类 型" :label-width="110">
           <el-select
               v-model="addOrUpdateBackupSourceForm.backupType"
-              class="m-2"
               placeholder="请选择备份类型"
           >
             <el-option
@@ -117,6 +117,11 @@
                 :value="item.value"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="是 否 压 缩" :label-width="110">
+          <el-radio-group v-model="addOrUpdateBackupSourceForm.isCompress" class="ml-4">
+            <el-radio v-for="item in isCompressOptions" :label="item.value" size="default">{{item.label}}</el-radio>
+          </el-radio-group>
         </el-form-item>
 
       </el-form>
@@ -177,7 +182,8 @@ import {ElMessage} from "element-plus";
 import backupApi from "../api/backupApi.js";
 
 const addOrUpdateBackupSourceForm = {
-  backupType: '0'
+  backupType: 0,
+  isCompress: 0
 }
 
 export default {
@@ -191,12 +197,22 @@ export default {
       addOrUpdateBackupSourceForm: {},
       backupTypeOptions: [
         {
-          value: '0',
+          value: 0,
           label: '数据源的数据全部备份到每个目标目录中',
         },
         {
-          value: '1',
+          value: 1,
           label: '数据源的数据分散备份到多个目标目录中',
+        }
+      ],
+      isCompressOptions:[
+        {
+          value: 0,
+          label: '否',
+        },
+        {
+          value: 1,
+          label: '是',
         }
       ],
       // 查询数据源
@@ -209,6 +225,7 @@ export default {
       selectBackupSourceIdArr: [],
 
       selectBackupSource: '',
+      fileMessageSourceId: '',
     };
   },
   computed: {},
@@ -407,7 +424,15 @@ export default {
         })
       }
     },
-
+    /**
+     * 查看sourceId对应的文件结构
+     * @param sourceId
+     */
+    seeFileMessage(sourceId) {
+      console.log("seeFileMessage：" + sourceId);
+      this.fileMessageSourceId = sourceId;
+      this.$emit("fileMessageSourceChange", this.fileMessageSourceId);
+    }
   },
 
   beforeCreate() {
