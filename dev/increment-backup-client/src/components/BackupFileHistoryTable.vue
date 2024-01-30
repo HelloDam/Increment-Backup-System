@@ -23,11 +23,11 @@
         <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
         <el-table-column prop="backupFileId" label="对应的备份文件id" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceFilePath" label="源文件目录" width="200" resizable
+        <el-table-column prop="backupSourceFilePath" label="源文件目录" width="350" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTargetFilePath" label="文件目标目录" width="200" resizable
+        <el-table-column prop="backupTargetFilePath" label="文件目标目录" width="350" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="md5" label="md5" width="200" resizable
+        <el-table-column prop="md5" label="md5" width="300" resizable
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="backupTaskId" label="所属任务ID" width="200" resizable
                          :show-overflow-tooltip="true"/>
