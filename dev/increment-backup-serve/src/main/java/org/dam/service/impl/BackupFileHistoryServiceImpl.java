@@ -54,7 +54,7 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
             queryWrapper.like("backup_source_file_path", request.getBackupSourceFilePath());
         }
         // 根据时间降序排序
-        queryWrapper.orderBy(true, false, "create_time");
+        queryWrapper.orderBy(true, false, "backup_end_time");
         IPage<BackupFileHistory> page = baseMapper.selectPage(new Page(request.getCurrent(), request.getSize()), queryWrapper);
 
         return PageUtil.convert(page);
