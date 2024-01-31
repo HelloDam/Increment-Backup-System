@@ -77,7 +77,10 @@
             </div>
 
             <div style="float: right;margin-right: 30px">
-              <el-button type="primary" plain @click="compress(data)" size="small" v-if="data.isCompress===1">解压
+              <el-button type="primary" plain @click="compress(data)" size="small" v-if="data.isCompress===1">解 压
+              </el-button>
+              <el-button type="primary" plain @click="downloadUnCompressFile(data)" size="small"
+                         v-if="data.fileType===1&&data.isCompress===1">下 载
               </el-button>
             </div>
           </div>
@@ -93,6 +96,7 @@ import fileMessageApi from "../api/fileMessageApi.js";
 import compressApi from "../api/compressApi.js";
 import {Expand} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
+import {BASE_URL} from "../utils/axiosRequest.js";
 
 export default {
   components: {Expand},
@@ -153,6 +157,22 @@ export default {
           duration: 2 * 1000
         })
       })
+    },
+
+    /**
+     * 下载解压后的文件
+     */
+    downloadUnCompressFile(fileMessage) {
+      let a = document.createElement("a");
+      a.setAttribute("download", "");
+      a.setAttribute("target", "_blank");
+      a.setAttribute(
+          "href",
+          `${BASE_URL}/compress/downloadUnCompressFile/${fileMessage.id}`
+      );
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     },
 
     /**

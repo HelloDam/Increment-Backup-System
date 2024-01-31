@@ -3,6 +3,8 @@ package org.dam.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.dam.common.constant.SystemConstant;
+import org.dam.common.exception.ClientException;
+import org.dam.common.utils.FileUtils;
 import org.dam.common.utils.compress.GzipCompressUtil;
 import org.dam.entity.FileMessage;
 import org.dam.service.FileMessageService;
@@ -10,6 +12,7 @@ import org.dam.mapper.FileMessageMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,13 +77,33 @@ public class FileMessageServiceImpl extends ServiceImpl<FileMessageMapper, FileM
         if (fileMessage.getFileType() == 1 && fileMessage.getIsCompress() == 1) {
             // --if-- 是文件，直接解压
             String targetFilePath = fileMessage.getTargetFilePath().substring(0, fileMessage.getTargetFilePath().lastIndexOf(".")) + fileMessage.getFileSuffix();
-            GzipCompressUtil.unCompressFile(new File(fileMessage.getTargetFilePath()), targetFilePath);
+            File file = new File(fileMessage.getTargetFilePath());
+            if (!file.exists()){
+                throw new ClientException("压缩包丢失，解压失败");
+            }
+            GzipCompressUtil.unCompressFile(file, targetFilePath);
         } else {
             // --if-- 是目录，解压子文件
             List<FileMessage> sonList = baseMapper.selectList(new QueryWrapper<FileMessage>().eq("father_id", fileMessageId));
             for (FileMessage message : sonList) {
                 unCompress(message.getId());
             }
+        }
+    }
+
+    @Override
+    public byte[] downloadUnCompressFile(FileMessage fileMessage) {
+        byte[] fileBytes;
+        try {
+            File file = new File(fileMessage.getTargetFilePath());
+            if (!file.exists()){
+                throw new ClientException("压缩包丢失，解压失败");
+            }
+            fileBytes = FileUtils.getFileBytes(file);
+            byte[] compressedBytes = GzipCompressUtil.uncompress(fileBytes);
+            return compressedBytes;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
