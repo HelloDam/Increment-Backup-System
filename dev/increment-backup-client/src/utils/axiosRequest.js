@@ -26,20 +26,22 @@ service.interceptors.request.use(
 // 相应拦截器
 service.interceptors.response.use(
     response => {
-        const res = response.data
-        // alert("res：" + JSON.stringify(res))
-
-        if (res.code !== '0') {
-            ElMessage({
-                message: res.message || '请求出错了',
-                type: 'error',
-                duration: 2 * 1000
-            })
-
+        const res = response.data;
+        if (res.code) {
+            console.log("res：" + JSON.stringify(res));
+            if (res.code !== '0') {
+                ElMessage({
+                    message: res.message || '请求出错了',
+                    type: 'error',
+                    duration: 2 * 1000
+                })
+                return Promise.reject(new Error(res.message || '请求出错了'))
+            } else {
+                // return res
+                return Promise.resolve(res)
+            }
+        }else {
             return Promise.reject(new Error(res.message || '请求出错了'))
-        } else {
-            // return res
-            return Promise.resolve(res)
         }
     },
     error => {
