@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface BackupSourceMapper extends BaseMapper<BackupSource> {
 
-    void updateBackupNum(@Param("sourceId") String sourceId);
+    void updateBackupNum(@Param("sourceId") Long sourceId);
 }
 
 

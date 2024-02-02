@@ -60,7 +60,7 @@ public class BackupSourceServiceImpl extends ServiceImpl<BackupSourceMapper, Bac
     }
 
     @Override
-    public void updateBackupNum(String sourceId) {
+    public void updateBackupNum(Long sourceId) {
         baseMapper.updateBackupNum(sourceId);
     }
 
