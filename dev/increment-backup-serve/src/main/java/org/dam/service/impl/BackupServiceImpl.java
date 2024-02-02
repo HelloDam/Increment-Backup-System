@@ -68,9 +68,7 @@ public class BackupServiceImpl implements BackupService {
      * @param sourceId
      */
     @Override
-    public void backupBySourceId(String sourceId) {
-        // 检查 备份源目录是否存在 和 准备好备份目标目录
-        List<Task> taskList = checkSourceAndTarget(sourceId);
+    public void backupBySourceId(Long sourceId, List<Task> taskList) {
         // 更新数据源备份次数
         backupSourceService.updateBackupNum(sourceId);
         // 执行备份
@@ -86,9 +84,20 @@ public class BackupServiceImpl implements BackupService {
                 isRecordFileMessage = true;
 //                isRecordFileMessage = task.getSource().getBackupType() == 1 || task.getSource().getIsCompress() == 1;
             }
-            futureArr[i] = CompletableFuture.runAsync(() -> backUpByTask(task, isRecordFileMessage), executor);
+            futureArr[i] = CompletableFuture.runAsync(() -> backUpByTask(task, isRecordFileMessage), executor).exceptionally(e -> {
+                log.error(e.getMessage());
+                if (backupController.sourceIDSet.contains(sourceId)) {
+                    backupController.sourceIDSet.remove(sourceId);
+                }
+                Map<String, Object> dataMap = new HashMap<>();
+                dataMap.put("content", "任务备份失败");
+                dataMap.put("message", e.getMessage());
+                webSocketServer.sendMessage(JSON.toJSONString(dataMap), WebSocketServer.usernameAndSessionMap.get("Admin"));
+                return null;
+            });
         }
         CompletableFuture.allOf(futureArr).join();
+        log.error("备份失败，被迫结束");
 
         // 计算完成，移除相应数据源ID
         if (backupController.sourceIDSet.contains(sourceId)) {
@@ -103,7 +112,7 @@ public class BackupServiceImpl implements BackupService {
      * @param sourceId
      */
     @Override
-    public void clearBySourceId(String sourceId) {
+    public void clearBySourceId(Long sourceId) {
         long current = 1;
         // 存储要删除的文件
         List<Long> removeBackupFileIdList = new ArrayList<>();
@@ -113,7 +122,7 @@ public class BackupServiceImpl implements BackupService {
             // 分页查询出数据，即分批检查，避免数据量太大，占用太多内存
             backupFileRequest.setCurrent(current);
             backupFileRequest.setSize(1000L);
-            backupFileRequest.setBackupSourceId(Long.parseLong(sourceId));
+            backupFileRequest.setBackupSourceId(sourceId);
             PageResponse<BackupFile> backupFilePageResponse = backupFileService.pageBackupFile(backupFileRequest);
 
             if (backupFilePageResponse.getRecords().size() > 0) {
@@ -678,7 +687,8 @@ public class BackupServiceImpl implements BackupService {
      *
      * @param sourceId
      */
-    private List<Task> checkSourceAndTarget(String sourceId) {
+    @Override
+    public List<Task> checkSourceAndTarget(Long sourceId) {
         BackupSource source = backupSourceService.getById(sourceId);
         if (source == null) {
             throw new ClientException("id对应备份源信息不存在于数据库中");
