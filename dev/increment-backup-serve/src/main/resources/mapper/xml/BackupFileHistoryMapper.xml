@@ -4,19 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.dam.mapper.BackupFileHistoryMapper">
 
-    <resultMap id="BaseResultMap" type="org.dam.entity.BackupFileHistory">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="backupFileId" column="backup_file_id" jdbcType="BIGINT"/>
-            <result property="modifyTime" column="modify_time" jdbcType="BIGINT"/>
-            <result property="fileSize" column="file_size" jdbcType="BIGINT"/>
-            <result property="backupStartTime" column="backup_start_time" jdbcType="TIMESTAMP"/>
-            <result property="backupEndTime" column="backup_end_time" jdbcType="TIMESTAMP"/>
-            <result property="backupTargetPath" column="backup_target_path" jdbcType="VARCHAR"/>
-            <result property="backupTargetRootId" column="backup_target_root_id" jdbcType="BIGINT"/>
-            <result property="md5" column="md5" jdbcType="CHAR"/>
-            <result property="backupId" column="backup_id" jdbcType="BIGINT"/>
-    </resultMap>
-
     <sql id="Base_Column_List">
         id,backup_file_id,modify_time,
         file_size,backup_start_time,backup_end_time,
