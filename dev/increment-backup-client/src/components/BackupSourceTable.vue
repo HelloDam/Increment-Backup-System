@@ -264,6 +264,7 @@ export default {
     addBackupSourceDialog() {
       this.addOrUpdateBackupSourceTitle = "增加数据源";
       this.addOrUpdateBackupSourceDialogVisible = true;
+      this.addOrUpdateBackupSourceForm = {};
       this.addOrUpdateBackupSourceForm = addOrUpdateBackupSourceForm;
     },
     updateBackupSourceDialog() {
