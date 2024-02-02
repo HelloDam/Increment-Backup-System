@@ -229,28 +229,37 @@ export default {
         _this.socket.onmessage = function (msg) {
           // 对收到的json数据进行解析
           // let data = JSON.parse(JSON.stringify(msg));
-          // console.log("收到备份进度消息：" + JSON.stringify(msg));
-          // console.log(msg);
           let dataMap = JSON.parse(msg.data);
-          let task = dataMap.backupTask;
-          let isExit = false;
-          for (let i = 0; i < _this.backupTaskList.length; i++) {
-            if (_this.backupTaskList[i].id === task.id) {
-              task.backupProgress = parseFloat(task.backupProgress);
-              _this.backupTaskList[i] = task;
-              isExit = true;
+          console.log("收到备份进度消息：" + JSON.stringify(dataMap));
+          if (dataMap.backupTask) {
+            let task = dataMap.backupTask;
+            let isExit = false;
+            for (let i = 0; i < _this.backupTaskList.length; i++) {
+              if (_this.backupTaskList[i].id === task.id) {
+                task.backupProgress = parseFloat(task.backupProgress);
+                _this.backupTaskList[i] = task;
+                isExit = true;
+              }
             }
-          }
-          if (isExit === false) {
-            task.backupProgress = parseFloat(task.backupProgress);
-            _this.backupTaskList.push(task);
+            if (isExit === false) {
+              task.backupProgress = parseFloat(task.backupProgress);
+              _this.backupTaskList.push(task);
+            }
           }
           if (dataMap.content && dataMap.content === '任务备份完成') {
             ElNotification({
-              title: "备份任务通知",
+              title: "任务备份成功通知",
+              type: 'success',
               message: dataMap.content,
             })
+          } else if (dataMap.content && dataMap.content === '任务备份失败') {
+            ElNotification({
+              title: "任务备份失败通知",
+              type: 'error',
+              message: dataMap.message,
+            })
           }
+
           // console.log("收到备份任务进度消息：");
         };
         //关闭事件
