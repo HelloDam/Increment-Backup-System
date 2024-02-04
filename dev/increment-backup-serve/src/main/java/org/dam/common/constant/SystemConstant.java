@@ -6,4 +6,6 @@ package org.dam.common.constant;
  */
 public class SystemConstant {
     public static final String ZIP_SUFFIX = ".easyBackupZip";
+
+    public static final String SPLIT_STR = "&&&";
 }
