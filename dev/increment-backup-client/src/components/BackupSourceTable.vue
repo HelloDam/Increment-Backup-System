@@ -46,7 +46,6 @@
             content="修改数据源"
             placement="top"
         >
-
           <Edit style="width: 1.3em; height: 1.3em; margin-right: 8px;color:#069a1e"
                 @click="updateBackupSourceDialog()"/>
         </el-tooltip>
@@ -313,7 +312,6 @@ export default {
               this.listBackupSource(false);
               // 情况表单
               this.addOrUpdateBackupSourceForm = {};
-
               ElMessage({
                 message: "添加成功",
                 type: 'success',
