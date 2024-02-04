@@ -29,15 +29,14 @@
         <el-menu-item index="3">备份任务管理</el-menu-item>
         <el-menu-item index="4">备份文件管理</el-menu-item>
         <el-menu-item index="5">备份记录管理</el-menu-item>
+        <el-menu-item index="6">
+          <el-icon>
+            <Setting/>
+          </el-icon>
+        </el-menu-item>
+
       </el-menu>
 
-      <!--    <div class="head">-->
-      <!--      <div></div>-->
-      <!--      <div style=" font-size: 2rem;font-weight: 500;">-->
-      <!--        文 件 增 量 备 份 系 统-->
-      <!--      </div>-->
-      <!--      <div></div>-->
-      <!--    </div>-->
       <div class="bodyDiv" v-if="activeIndex==='2'">
         <div class="table1Div">
           <BackupSourceTable @changeSourceChange="changeSourceChange()"
@@ -74,7 +73,7 @@
         </div>
       </div>
 
-
+      <!-- 执行中任务列表-->
       <el-dialog
           v-model="backupTaskListDialogVisible"
           title="任务列表"
@@ -132,12 +131,16 @@
           </span>
         </template>
       </el-dialog>
-
-
+      <!-- 系统参数设置 -->
+      <el-dialog
+          v-model="sysParamDialogVisible"
+          title=""
+          width="85%"
+      >
+        <SysParam @closeSysParamDialog="this.sysParamDialogVisible=false"></SysParam>
+      </el-dialog>
     </div>
-
     <AppFooter style="margin-top: 10px"></AppFooter>
-
   </div>
 </template>
 
@@ -152,7 +155,8 @@ import backupTaskApi from "../api/backupTaskApi.js";
 import AppFooter from "../components/AppFooter.vue";
 import mouseEffectsUtil from "../utils/mouseEffectsUtil.js";
 import FileMessageTree from "../components/FileMessageTree.vue";
-import {ElNotification} from "element-plus";
+import {ElMessage, ElNotification} from "element-plus";
+import SysParam from "../components/SysParam.vue";
 
 export default {
   components: {
@@ -162,7 +166,8 @@ export default {
     BackupTaskTable,
     BackupFileTable,
     BackupFileHistoryTable,
-    AppFooter
+    AppFooter,
+    SysParam
   },
   data() {
     return {
@@ -171,8 +176,11 @@ export default {
       fileMessageSourceId: '',
       // 备份任务列表
       backupTaskList: [],
-      activeIndex: '2',
       backupTaskListDialogVisible: false,
+      // 系统参数
+      sysParamDialogVisible: false,
+      // 页面切换
+      activeIndex: '2',
       // websocket
       socket: undefined,
       lockReconnect: false,
@@ -189,6 +197,7 @@ export default {
       console.log("子组件选中数据源更新");
       this.selectBackupSource = this.$refs.backupSourceTable.selectBackupSource;
     },
+
     /**
      * 查看指定数据源的文件结构
      */
@@ -197,6 +206,7 @@ export default {
       this.fileMessageSourceId = this.$refs.backupSourceTable.fileMessageSourceId;
       this.activeIndex = '10';
     },
+
     /**
      * 查询正在处理的任务
      */
@@ -259,7 +269,6 @@ export default {
               message: dataMap.message,
             })
           }
-
           // console.log("收到备份任务进度消息：");
         };
         //关闭事件
@@ -272,6 +281,7 @@ export default {
         }
       }
     },
+
     /**
      * 切换所激活主题
      */
@@ -283,10 +293,13 @@ export default {
         //   console.log(JSON.stringify(this.backupTaskList[i]));
         // }
         this.backupTaskListDialogVisible = true;
+      } else if (activeIndex === '6') {
+        this.sysParamDialogVisible = true;
       } else {
         this.activeIndex = activeIndex;
       }
     },
+
     /**
      * 格式化日期和时间
      */
@@ -310,6 +323,7 @@ export default {
       // 连接完成，设置为false
       this.lockReconnect = false;
     },
+
     /**
      * 心跳，监测websocket是否锻炼
      */
