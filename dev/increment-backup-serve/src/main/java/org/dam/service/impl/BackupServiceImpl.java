@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.dam.common.constant.SystemConstant;
+import org.dam.common.constant.SystemParamEnum;
 import org.dam.common.exception.ClientException;
 import org.dam.common.exception.ServiceException;
 import org.dam.common.page.PageResponse;
@@ -59,6 +60,8 @@ public class BackupServiceImpl implements BackupService {
     private BackupController backupController;
     @Autowired
     private FileMessageService fileMessageService;
+    @Autowired
+    private SysParamService sysParamService;
 
     private Random random = new Random();
 
@@ -71,6 +74,9 @@ public class BackupServiceImpl implements BackupService {
     public void backupBySourceId(Long sourceId, List<Task> taskList) {
         // 更新数据源备份次数
         backupSourceService.updateBackupNum(sourceId);
+        // 查询忽略文件和忽略目录
+        List<String> ignoreFileList = sysParamService.getIgnoreFileOrIgnoreDir(SystemParamEnum.IGNORE_FILE_NAME.getParamName());
+        List<String> ignoreDirectoryList = sysParamService.getIgnoreFileOrIgnoreDir(SystemParamEnum.IGNORE_DIRECTORY_NAME.getParamName());
         // 执行备份
         CompletableFuture[] futureArr = new CompletableFuture[taskList.size()];
         for (int i = 0; i < taskList.size(); i++) {
@@ -84,7 +90,7 @@ public class BackupServiceImpl implements BackupService {
                 isRecordFileMessage = true;
 //                isRecordFileMessage = task.getSource().getBackupType() == 1 || task.getSource().getIsCompress() == 1;
             }
-            futureArr[i] = CompletableFuture.runAsync(() -> backUpByTask(task, isRecordFileMessage), executor).exceptionally(e -> {
+            futureArr[i] = CompletableFuture.runAsync(() -> backUpByTask(task, isRecordFileMessage, ignoreFileList, ignoreDirectoryList), executor).exceptionally(e -> {
                 log.error(e.getMessage());
                 if (backupController.sourceIDSet.contains(sourceId)) {
                     backupController.sourceIDSet.remove(sourceId);
@@ -97,7 +103,6 @@ public class BackupServiceImpl implements BackupService {
             });
         }
         CompletableFuture.allOf(futureArr).join();
-        log.error("备份失败，被迫结束");
 
         // 计算完成，移除相应数据源ID
         if (backupController.sourceIDSet.contains(sourceId)) {
@@ -167,8 +172,11 @@ public class BackupServiceImpl implements BackupService {
      * 备份一个数据源的数据
      *
      * @param task
+     * @param ignoreFileList      忽略文件名列表
+     * @param ignoreDirectoryList 忽略目录名列表
      */
-    private void backUpByTask(Task task, boolean isRecordFileMessage) {
+    private void backUpByTask(Task task, boolean isRecordFileMessage,
+                              List<String> ignoreFileList, List<String> ignoreDirectoryList) {
         BackupSource backupSource = task.getSource();
         BackupTarget target = task.getTarget();
         // 找到备份目录下面的所有文件
@@ -209,7 +217,7 @@ public class BackupServiceImpl implements BackupService {
                 eq("backup_source_id", backupSource.getId()).eq("father_id", 0L));
         backUpAllFiles(task, isRecordFileMessage, new File(backupSource.getRootPath()), backupSource, target, task.getTargetList(), filePathAndIdMap, sta,
                 "", backupTask.getId(), backupTask.getCreateTime(),
-                0L, fileMessageList);
+                0L, fileMessageList, ignoreFileList, ignoreDirectoryList);
 
         // 备份结束，修改备份任务的状态为完成
         backupTask.setBackupStatus(2);
@@ -257,10 +265,12 @@ public class BackupServiceImpl implements BackupService {
      * @param statistic
      * @param middlePath
      */
-    private void backUpAllFiles(Task task, boolean isRecordFileMessage, File fatherFile, BackupSource backupSource, BackupTarget backupTarget, List<BackupTarget> targetList,
+    private void backUpAllFiles(Task task, boolean isRecordFileMessage, File fatherFile,
+                                BackupSource backupSource, BackupTarget backupTarget, List<BackupTarget> targetList,
                                 Map<String, Long> filePathAndIdMap, Statistic statistic, String middlePath,
                                 Long backupTaskId, Date taskBackupStartTime,
-                                Long fatherId, List<FileMessage> fileMessageList) {
+                                Long fatherId, List<FileMessage> fileMessageList,
+                                List<String> ignoreFileList, List<String> ignoreDirectoryList) {
         if (fatherFile.getName().contains("second-hand-market-front")) {
             int temp = 0;
         }
@@ -287,6 +297,16 @@ public class BackupServiceImpl implements BackupService {
 //            }
 
             if (file.isDirectory()) {
+                boolean isContain = false;
+                for (String ignoreDirectory : ignoreDirectoryList) {
+                    if (file.getName().equals(ignoreDirectory)) {
+                        isContain = true;
+                        break;
+                    }
+                }
+                if (isContain) {
+                    continue;
+                }
                 // --if-- 若是目录，先在目标目录下创建目录，然后递归备份文件
                 String targetFilePath = getTargetFilePath(backupSource, backupTarget, targetList, middlePath, file);
 
@@ -348,9 +368,21 @@ public class BackupServiceImpl implements BackupService {
                 backUpAllFiles(task, isRecordFileMessage, file, backupSource, backupTarget,
                         targetList, filePathAndIdMap, statistic,
                         middlePath + file.getName() + File.separator, backupTaskId, taskBackupStartTime,
-                        curFileMessageId, children);
+                        curFileMessageId, children,
+                        ignoreFileList, ignoreDirectoryList);
             }
             if (file.isFile()) {
+                boolean isContain = false;
+                for (String ignoreFile : ignoreFileList) {
+                    if (file.getName().equals(ignoreFile)) {
+                        isContain = true;
+                        break;
+                    }
+                }
+                if (isContain) {
+                    continue;
+                }
+
                 if (file.getName().contains(".DS_Store")) {
                     // 跳过Macos的Finder文件
                     continue;
