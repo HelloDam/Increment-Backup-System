@@ -32,7 +32,7 @@
               <el-tag type="success" effect="dark" size="small" style="font-weight: bold" v-if="data.fileType===1">
                 {{ node.label }}
               </el-tag>
-              <el-tag size="small" style="margin-left: 10px" v-if="data.fileType===1">
+              <el-tag size="small" style="margin-left: 10px" v-if="data.fileType===1" @click="copyUrl(data.targetFilePath)">
                 {{ data.targetFilePath }}
               </el-tag>
               <!--文件后缀-->
@@ -173,6 +173,23 @@ export default {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+    },
+
+    /**
+     * 复制
+     * @param text
+     */
+    copyUrl(text) {
+      let eInput = document.createElement('input')
+      eInput.value = text
+      document.body.appendChild(eInput)
+      eInput.select()
+      let copyText = document.execCommand('Copy')
+      eInput.style.display = 'none'
+      if (copyText) {
+        // console.log(eInput.value)
+        ElMessage.success('链接复制成功!')
+      }
     },
 
     /**
