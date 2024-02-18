@@ -46,15 +46,54 @@
     <div class="table">
       <el-table :data="backupTargetList" @selection-change="handleBackupTargetSelectionChange" border>
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceId" label="数据源ID" width="200" resizable
-                         :show-overflow-tooltip="true"/>
-        <el-table-column prop="targetRootPath" label="目标目录路径" width="300" resizable
-                         :show-overflow-tooltip="true"/>
-        <el-table-column prop="createTime" label="创建时间" width="180" resizable :show-overflow-tooltip="true"
-                         :formatter="formatDate"/>
-        <el-table-column prop="updateTime" label="修改时间" width="180" resizable :show-overflow-tooltip="true"
-                         :formatter="formatDate"/>
+        <el-table-column prop="targetRootPath" label="目标目录信息" width="auto" resizable
+                         :show-overflow-tooltip="true">
+          <template #default="scope">
+            <div style="display: flex;align-items: center;">
+              <div>
+                <el-tooltip :content=scope.row.targetRootPath
+                >
+                  <div style="color: #4783e5;display: flex;align-items: center">
+                    {{ truncateString(scope.row.targetRootPath, 50) }}
+                    <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
+                          @click="copyFilePath(scope.row.rootPath)"/>
+                  </div>
+                </el-tooltip>
+                <div style="color: #a4a4a4;font-size: 12px;display: flex;align-items: center">
+                  <div
+                      style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                    id
+                  </div>
+                  <span style="margin-left: 3px">
+                    {{ scope.row.id }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="相关时间" width="180" resizable :show-overflow-tooltip="true">
+          <template #default="scope">
+            <div style="font-size: 12px;display: flex;align-items: center">
+              <div
+                  style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                创建
+              </div>
+              <span style="margin-left: 5px">
+                {{ scope.row.createTime }}
+              </span>
+            </div>
+            <div style="font-size: 12px;display: flex;align-items: center">
+              <div
+                  style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                修改
+              </div>
+              <span style="margin-left: 5px">
+                {{ scope.row.updateTime }}
+              </span>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
       <div style="padding: 10px">
         <el-pagination background layout="total, sizes, prev, pager, next, jumper" :page-sizes="[10, 20, 30, 40]"
@@ -201,9 +240,9 @@ export default {
         this.addOrUpdateBackupTargetTitle = "修改备份目标目录";
         this.addOrUpdateBackupTargetDialogVisible = true;
         backupTargetApi.getById(this.selectBackupTargetIdArr[0]).then(res => {
-          // console.log("根据id查询备份目标目录：" + JSON.stringify(res));
+          console.log("根据id查询备份目标目录：" + JSON.stringify(res));
           this.addOrUpdateBackupTargetForm = res.data;
-          this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource-1].rootPath;
+          this.addOrUpdateBackupTargetForm.rootPath = this.selectBackupSource[this.selectBackupSource.length - 1].rootPath;
         })
       } else if (this.selectBackupTargetIdArr.length > 1) {
         ElMessage({
@@ -298,6 +337,30 @@ export default {
     formatDate(row, column, cellValue, index) {
       let date = new Date(cellValue);
       return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    },
+
+    truncateString(str, num) {
+      if (str.length <= num) {
+        return str;
+      } else {
+        return str.slice(0, num) + "...";
+      }
+    },
+
+    /**
+     * 复制文件路径
+     * @param text
+     */
+    copyFilePath(text) {
+      let eInput = document.createElement('input')
+      eInput.value = text
+      document.body.appendChild(eInput)
+      eInput.select()
+      let copyText = document.execCommand('Copy')
+      eInput.style.display = 'none'
+      if (copyText) {
+        ElMessage.success('备份目标目录路径复制成功!')
+      }
     },
   },
   beforeCreate() {
