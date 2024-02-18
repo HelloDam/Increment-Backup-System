@@ -2,7 +2,6 @@ package org.dam.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.dam.common.constant.SystemConstant;
 import org.dam.common.exception.ClientException;
 import org.dam.common.utils.FileUtils;
 import org.dam.common.utils.compress.GzipCompressUtil;
@@ -52,7 +51,9 @@ public class FileMessageServiceImpl extends ServiceImpl<FileMessageMapper, FileM
         // 递归方法：将文件的子文件id添加到待删除ID集合中
         searchFileMessageSons(removeFileMessageIdList, totalRemoveFileMessageIdList);
         // 批量删除
-        baseMapper.deleteBatchIds(totalRemoveFileMessageIdList);
+        if (totalRemoveFileMessageIdList.size() > 0){
+            baseMapper.deleteBatchIds(totalRemoveFileMessageIdList);
+        }
     }
 
     /**
