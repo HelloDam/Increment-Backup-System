@@ -62,26 +62,124 @@
     </div>
     <div class="table">
       <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource"
-                border>
+                border fit :header-cell-style="{ background: '#f7f8fa', color: '#606266' }">
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>
-        <el-table-column prop="rootPath" label="根目录路径" width="300" resizable :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupName" label="简要介绍" width="200" resizable :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupNum" label="备份次数" width="100" resizable :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupType" label="备份类型" width="250" resizable :show-overflow-tooltip="true">
+        <!--        <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>-->
+        <el-table-column prop="backupName" label="数据源信息" min-width="700" resizable :show-overflow-tooltip="true">
           <template #default="scope">
-            <el-tag v-if="scope.row.backupType==0" @click="seeFileMessage(scope.row.id)">
-              数据全部备份到多个目标目录中
-            </el-tag>
-            <el-tag type="success" v-if="scope.row.backupType==1" @click="seeFileMessage(scope.row.id)">
-              数据分散备份到多个目标目录中
-            </el-tag>
+            <div style="display: flex">
+              <div>
+                <div>
+                  <el-tooltip :content="
+                            (scope.row.backupName != null && !('' === scope.row.backupName)) ?
+                            scope.row.backupName :
+                            '用户未设置数据源介绍'"
+                  >
+                    <span>
+                      {{
+                        truncateString((scope.row.backupName != null && !('' === scope.row.backupName)) ?
+                            scope.row.backupName :
+                            "用户未设置数据源介绍", 10)
+                      }}
+                    </span>
+                  </el-tooltip>
+                </div>
+                <div style="color: #a4a4a4;font-size: 12px;display: flex;align-items: center">
+                  <div
+                      style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                    id
+                  </div>
+                  <span style="margin-left: 3px">
+                    {{ scope.row.id }}
+                  </span>
+                </div>
+              </div>
+
+              <div style="display: flex;align-items: center;margin-left: 20px">
+                <div>
+                  <el-tooltip :content=scope.row.rootPath
+                  >
+                    <div style="color: #4783e5;display: flex;align-items: center">
+                      {{ truncateString(scope.row.rootPath, 30) }}
+                      <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px" @click="copyFilePath(scope.row.rootPath)"/>
+                    </div>
+                  </el-tooltip>
+                  <div style="color: #a4a4a4;font-size: 12px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                      备份方式
+                    </div>
+                    <span style="margin-left: 3px">
+                      <span v-if="scope.row.backupType==0" @click="seeFileMessage(scope.row.id)">
+                        数据全部备份到多个目标目录中
+                      </span>
+                      <span v-if="scope.row.backupType==1" @click="seeFileMessage(scope.row.id)">
+                        数据分散备份到多个目标目录中
+                      </span>
+                    </span>
+                  </div>
+                </div>
+
+                <div style="font-size:12px;margin-left: 20px;text-align: center;">
+                  <div
+                      style="display:flex;justify-content: center;align-items: center;color:#888888;font-size: 12px;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                    是否压缩
+                  </div>
+                  <div>
+                    {{ scope.row.isCompress === 0 ? '否' : '是' }}
+                  </div>
+                </div>
+                <div style="font-size:12px;margin-left: 20px;text-align: center;">
+                  <div
+                      style="display:flex;justify-content: center;align-items: center;color:#888888;font-size: 12px;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                    备份次数
+                  </div>
+                  <div>
+                    {{ scope.row.backupNum }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180" resizable :show-overflow-tooltip="true"
-                         :formatter="formatDate"/>
-        <el-table-column prop="updateTime" label="修改时间" width="180" resizable :show-overflow-tooltip="true"
-                         :formatter="formatDate"/>
+        <!--        <el-table-column prop="rootPath" label="备份信息" width="350" resizable :show-overflow-tooltip="true">-->
+        <!--          <template #default="scope">-->
+        <!--            -->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <!--        <el-table-column prop="backupNum" label="备份次数" width="100" resizable :show-overflow-tooltip="true"/>-->
+        <!--        <el-table-column prop="backupType" label="备份类型" width="250" resizable :show-overflow-tooltip="true">-->
+        <!--          <template #default="scope">-->
+        <!--            <el-tag v-if="scope.row.backupType==0" @click="seeFileMessage(scope.row.id)">-->
+        <!--              数据全部备份到多个目标目录中-->
+        <!--            </el-tag>-->
+        <!--            <el-tag type="success" v-if="scope.row.backupType==1" @click="seeFileMessage(scope.row.id)">-->
+        <!--              数据分散备份到多个目标目录中-->
+        <!--            </el-tag>-->
+        <!--          </template>-->
+        <!--        </el-table-column>-->
+        <el-table-column prop="createTime" label="相关时间" width="180" resizable :show-overflow-tooltip="true">
+          <template #default="scope">
+            <div style="font-size: 12px;display: flex;align-items: center">
+              <div
+                  style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                创建
+              </div>
+              <span style="margin-left: 5px">
+                {{ scope.row.createTime }}
+              </span>
+            </div>
+            <div style="font-size: 12px;display: flex;align-items: center">
+              <div
+                  style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
+                修改
+              </div>
+              <span style="margin-left: 5px">
+                {{ scope.row.updateTime }}
+              </span>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
       <div style="padding: 10px">
         <el-pagination background layout="total, sizes, prev, pager, next, jumper" :page-sizes="[10, 20, 30, 40]"
@@ -433,7 +531,31 @@ export default {
       console.log("seeFileMessage：" + sourceId);
       this.fileMessageSourceId = sourceId;
       this.$emit("fileMessageSourceChange", this.fileMessageSourceId);
-    }
+    },
+
+    truncateString(str, num) {
+      if (str.length <= num) {
+        return str;
+      } else {
+        return str.slice(0, num) + "...";
+      }
+    },
+
+    /**
+     * 复制文件路径
+     * @param text
+     */
+    copyFilePath(text) {
+      let eInput = document.createElement('input')
+      eInput.value = text
+      document.body.appendChild(eInput)
+      eInput.select()
+      let copyText = document.execCommand('Copy')
+      eInput.style.display = 'none'
+      if (copyText) {
+        ElMessage.success('数据源根目录路径复制成功!')
+      }
+    },
   },
 
   beforeCreate() {
