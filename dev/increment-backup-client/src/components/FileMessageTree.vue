@@ -32,9 +32,18 @@
               <el-tag type="success" effect="dark" size="small" style="font-weight: bold" v-if="data.fileType===1">
                 {{ node.label }}
               </el-tag>
-              <el-tag size="small" style="margin-left: 10px" v-if="data.fileType===1" @click="copyUrl(data.targetFilePath)">
-                {{ data.targetFilePath }}
-              </el-tag>
+              <el-tooltip
+                  class="box-item"
+                  effect="dark"
+                  content="单击复制文件所在路径"
+                  placement="top"
+                  v-if="data.fileType===1"
+              >
+                <el-tag size="small" style="margin-left: 10px"
+                        @click="copyFilePath(data.targetFilePath)">
+                  {{ data.targetFilePath }}
+                </el-tag>
+              </el-tooltip>
               <!--文件后缀-->
               <el-tag type="info" size="small" style="margin-left: 10px" v-if="data.fileType===1">
                 {{ data.fileSuffix }}
@@ -42,7 +51,8 @@
 
               <!--源文件大小-->
               <el-tag type="danger" size="small" style="margin-left: 10px"
-                      v-if="data.fileType===1 && data.fileLength>1024*1024*1024">
+                      v-if="data.fileType===1 && data.fileLength>1024*1024*1024"
+              >
                 源文件大小：{{ Number(data.fileLength / (1024 * 1024 * 1024)).toFixed(2) }} gb
               </el-tag>
               <el-tag type="warning" size="small" style="margin-left: 10px"
@@ -176,10 +186,10 @@ export default {
     },
 
     /**
-     * 复制
+     * 复制文件路径
      * @param text
      */
-    copyUrl(text) {
+    copyFilePath(text) {
       let eInput = document.createElement('input')
       eInput.value = text
       document.body.appendChild(eInput)
@@ -187,8 +197,7 @@ export default {
       let copyText = document.execCommand('Copy')
       eInput.style.display = 'none'
       if (copyText) {
-        // console.log(eInput.value)
-        ElMessage.success('链接复制成功!')
+        ElMessage.success('文件路径复制成功!')
       }
     },
 
