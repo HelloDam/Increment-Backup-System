@@ -23,11 +23,24 @@
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="backupTargetRoot" label="备份目标根目录" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupProgress" label="备份进度" width="200" resizable:show-overflow-tooltip="true">
+        <el-table-column prop="backupProgress" label="文件数量备份进度" width="200" resizable:show-overflow-tooltip="true">
           <template #default="scope">
             <!-- 进度条 -->
             <el-progress
-                :percentage="scope.row.backupProgress"
+                :percentage="scope.row.backupNumProgress"
+                :stroke-width="15"
+                :status="scope.row.backupStatus==2?'success':null"
+                striped
+                :striped-flow="scope.row.backupStatus==1?true:false"
+                :duration="10"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column prop="backupProgress" label="文件大小备份进度" width="200" resizable:show-overflow-tooltip="true">
+          <template #default="scope">
+            <!-- 进度条 -->
+            <el-progress
+                :percentage="scope.row.backupSizeProgress"
                 :stroke-width="15"
                 :status="scope.row.backupStatus==2?'success':null"
                 striped
