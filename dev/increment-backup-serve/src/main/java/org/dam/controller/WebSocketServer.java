@@ -25,10 +25,6 @@ public class WebSocketServer {
      */
     public static final Map<String, Session> usernameAndSessionMap = new ConcurrentHashMap<>();
     /**
-     * 记录正在进行的聊天的发出者和接收者
-     */
-    public static final Map<String, Integer> fromToMap = new ConcurrentHashMap<>();
-    /**
      * 用户Session保留时间，如果超过该时间，用户还没有给服务端发送消息，认为用户下线，删除其Session
      * 注意：该时间需要比客户端的心跳时间更长
      */
