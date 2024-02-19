@@ -79,45 +79,176 @@
           title="任务列表"
           width="85%"
       >
-        <el-table :data="backupTaskList" border>
-          <el-table-column type="selection" width="55"/>
-          <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>
-          <el-table-column prop="backupSourceRoot" label="备份数据源根目录" width="200"
-                           :show-overflow-tooltip="true"/>
-          <el-table-column prop="backupTargetRoot" label="备份目标根目录" width="200"
-                           :show-overflow-tooltip="true"/>
-          <el-table-column prop="backupProgress" label="备份进度" width="200" :show-overflow-tooltip="true">
-            <template #default="scope">
-              <!-- 进度条 -->
-              <el-progress
-                  :percentage="scope.row.backupProgress"
-                  :stroke-width="15"
-                  :status="scope.row.backupStatus==2?'success':null"
-                  striped
-                  :striped-flow="scope.row.backupStatus==1?true:false"
-                  :duration="10"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column prop="backupTime" label="备份时间(ms)" width="180" :show-overflow-tooltip="true"/>
-          <el-table-column prop="backupStatus" label="状态" width="100" :show-overflow-tooltip="true">
-            <template #default="scope">
-              <el-tag class="ml-2" v-if="scope.row.backupStatus==0">刚创建</el-tag>
-              <el-tag class="ml-2" type="warning" v-if="scope.row.backupStatus==1">进行中</el-tag>
-              <el-tag class="ml-2" type="success" v-if="scope.row.backupStatus==2">完 成</el-tag>
-              <el-tag class="ml-2" type="danger" v-if="scope.row.backupStatus==3">失 败</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="totalFileNum" label="已备份文件数 / 总文件数" width="200"
+        <el-table :data="backupTaskList" border :show-header=false>
+          <!--          <el-table-column type="selection" width="55"/>-->
+          <!--                    <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>-->
+          <el-table-column prop="backupSourceRoot" label="备份信息" width="auto"
                            :show-overflow-tooltip="true">
             <template #default="scope">
-              <span>{{ scope.row.finishFileNum }} / {{ scope.row.totalFileNum }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="totalByteNum" label="已备份字节数 / 总字节数" width="300"
-                           :show-overflow-tooltip="true">
-            <template #default="scope">
-              <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
+              <div style="display: flex">
+
+                <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                  <div
+                      style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                    id
+                  </div>
+                  <span style="margin-left: 5px">
+                        {{ scope.row.id }}
+                    </span>
+                </div>
+
+                <div style="text-align: center;margin-left: 10px">
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#4783e5;border:#4783e5 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                      源
+                    </div>
+                    <el-tooltip :content=scope.row.backupSourceRoot
+                    >
+                      <div style="color: #868585;display: flex;align-items: center;margin-left: 5px">
+                        {{ truncateString(scope.row.backupSourceRoot, 30) }}
+                        <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
+                              @click="copyFilePath(scope.row.backupSourceRoot)"/>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#fa070f;border:#fa070f 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                      终
+                    </div>
+                    <el-tooltip :content=scope.row.backupTargetRoot
+                    >
+                      <div style="color: #868585;display: flex;align-items: center;margin-left: 5px">
+                        {{ truncateString(scope.row.backupTargetRoot, 30) }}
+                        <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
+                              @click="copyFilePath(scope.row.backupTargetRoot)"/>
+                      </div>
+                    </el-tooltip>
+                  </div>
+                </div>
+
+                <div style="align-items:center;margin-left: 10px">
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                      <div
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        备份时间
+                      </div>
+                      <span style="margin-left: 5px">
+                        {{ scope.row.backupTime }} ms
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                      <div
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        创建时间
+                      </div>
+                      <span style="margin-left: 5px">
+                        {{ scope.row.createTime }}
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div style="align-items:center;margin-left: 10px">
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                      <div
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        已备份数
+                      </div>
+                      <span style="margin-left: 5px">
+                        {{ scope.row.finishFileNum }}
+                      </span>
+                    </div>
+                  </div>
+                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                      总文件数
+                    </div>
+                    <span style="margin-left: 5px">
+                        {{ scope.row.totalFileNum }}
+                    </span>
+                  </div>
+                </div>
+
+                <div style="align-items:center;margin-left: 10px">
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                      <div
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        已备份数
+                      </div>
+                      <span style="margin-left: 5px">
+                        {{ scope.row.finishByteNum }}
+                      </span>
+                    </div>
+                  </div>
+                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                      总字节数
+                    </div>
+                    <span style="margin-left: 5px">
+                        {{ scope.row.totalByteNum }}
+                    </span>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-direction: column;justify-content:center;margin-left: 10px">
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                      <div
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        进度
+                      </div>
+                      <span style="margin-left: 5px">
+
+                      </span>
+
+                      <div style="width: 140px;margin-left: 5px">
+                        <!-- 进度条 -->
+                        <el-progress
+                            :percentage="scope.row.backupProgress"
+                            :stroke-width="10"
+                            :status="scope.row.backupStatus==2?'success':null"
+                            striped
+                            :striped-flow="scope.row.backupStatus==1?true:false"
+                            :duration="10"
+                        />
+                      </div>
+
+                    </div>
+                  </div>
+                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                      状态
+                    </div>
+                    <div style="margin-left: 5px">
+                      <span v-if="scope.row.backupStatus==0" style="color: #8a4f03">
+                        刚创建
+                      </span>
+                      <span v-if="scope.row.backupStatus==1" style="color: #0d7df8">
+                        进行中
+                      </span>
+                      <span v-if="scope.row.backupStatus==2" style="color: #069a1e">
+                        完 成
+                      </span>
+                      <span v-if="scope.row.backupStatus==3" style="color: #fa070f">
+                        失 败
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </template>
           </el-table-column>
           <!--          <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"-->
@@ -341,6 +472,30 @@ export default {
           that.headbeat();
         }
       }, that.heartbeatTime);
+    },
+
+    truncateString(str, num) {
+      if (str.length <= num) {
+        return str;
+      } else {
+        return str.slice(0, num) + "...";
+      }
+    },
+
+    /**
+     * 复制文件路径
+     * @param text
+     */
+    copyFilePath(text) {
+      let eInput = document.createElement('input')
+      eInput.value = text
+      document.body.appendChild(eInput)
+      eInput.select()
+      let copyText = document.execCommand('Copy')
+      eInput.style.display = 'none'
+      if (copyText) {
+        ElMessage.success('路径复制成功!')
+      }
     },
 
   },
