@@ -89,7 +89,7 @@
 
                 <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                   <div
-                      style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                      style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                     id
                   </div>
                   <span style="margin-left: 5px">
@@ -100,7 +100,7 @@
                 <div style="text-align: center;margin-left: 10px">
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#4783e5;border:#4783e5 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#4783e5;border:#4783e5 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                       源
                     </div>
                     <el-tooltip :content=scope.row.backupSourceRoot
@@ -114,7 +114,7 @@
                   </div>
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#fa070f;border:#fa070f 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#fa070f;border:#fa070f 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                       终
                     </div>
                     <el-tooltip :content=scope.row.backupTargetRoot
@@ -132,7 +132,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                         备份时间
                       </div>
                       <span style="margin-left: 5px">
@@ -144,7 +144,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                         创建时间
                       </div>
                       <span style="margin-left: 5px">
@@ -159,7 +159,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                         已备份数
                       </div>
                       <span style="margin-left: 5px">
@@ -169,7 +169,7 @@
                   </div>
                   <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                       总文件数
                     </div>
                     <span style="margin-left: 5px">
@@ -182,7 +182,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                         已备份数
                       </div>
                       <span style="margin-left: 5px">
@@ -192,7 +192,7 @@
                   </div>
                   <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                       总字节数
                     </div>
                     <span style="margin-left: 5px">
@@ -205,7 +205,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                         进度
                       </div>
                       <span style="margin-left: 5px">
@@ -228,7 +228,7 @@
                   </div>
                   <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 5px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
                       状态
                     </div>
                     <div style="margin-left: 5px">
