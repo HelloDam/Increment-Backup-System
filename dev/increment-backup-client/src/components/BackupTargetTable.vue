@@ -46,7 +46,7 @@
     <div class="table">
       <el-table :data="backupTargetList" @selection-change="handleBackupTargetSelectionChange" border
                 :header-cell-style="{ background: '#f7f8fa', color: '#606266' }">
-        <el-table-column type="selection" width="55"/>
+        <el-table-column type="selection" width="40" align="center"/>
         <el-table-column prop="targetRootPath" label="目标目录信息" width="auto" resizable
                          :show-overflow-tooltip="true">
           <template #default="scope">
@@ -56,8 +56,6 @@
                 >
                   <div style="color: #4783e5;display: flex;align-items: center">
                     {{ truncateString(scope.row.targetRootPath, 50) }}
-                    <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
-                          @click="copyFilePath(scope.row.rootPath)"/>
                   </div>
                 </el-tooltip>
                 <div style="color: #a4a4a4;font-size: 12px;display: flex;align-items: center">
@@ -70,6 +68,12 @@
                   </span>
                 </div>
               </div>
+
+              <el-tooltip content="复制备份目标目录路径">
+                <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
+                      @click="copyFilePath(scope.row.rootPath)"/>
+              </el-tooltip>
+
             </div>
           </template>
         </el-table-column>

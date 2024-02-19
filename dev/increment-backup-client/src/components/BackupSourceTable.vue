@@ -63,7 +63,7 @@
     <div class="table">
       <el-table :data="sourceList" @selection-change="handleBackupSourceSelectionChange" @select="changeSource"
                 border fit :header-cell-style="{ background: '#f7f8fa', color: '#606266' }">
-        <el-table-column type="selection" width="55"/>
+        <el-table-column type="selection" width="40" align="center"/>
         <!--        <el-table-column prop="id" label="编号" width="100" resizable :show-overflow-tooltip="true"/>-->
         <el-table-column prop="backupName" label="数据源信息" min-width="700" resizable :show-overflow-tooltip="true">
           <template #default="scope">
@@ -101,7 +101,7 @@
                   >
                     <div style="color: #4783e5;display: flex;align-items: center">
                       {{ truncateString(scope.row.rootPath, 30) }}
-                      <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px" @click="copyFilePath(scope.row.rootPath)"/>
+
                     </div>
                   </el-tooltip>
                   <div style="color: #a4a4a4;font-size: 12px;display: flex;align-items: center">
@@ -120,7 +120,17 @@
                   </div>
                 </div>
 
-                <div style="font-size:12px;margin-left: 20px;text-align: center;">
+                <el-tooltip content="复制数据源根目录路径">
+                  <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
+                        @click="copyFilePath(scope.row.rootPath)"/>
+                </el-tooltip>
+
+                <el-tooltip content="查看数据源对应文件结构" v-if="scope.row.backupType===1||scope.row.isCompress===1">
+                  <Files style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
+                         @click="seeFileMessage(scope.row.id)"/>
+                </el-tooltip>
+
+                <div style="font-size:12px;margin-left: 10px;text-align: center;">
                   <div
                       style="display:flex;justify-content: center;align-items: center;color:#888888;font-size: 12px;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
                     是否压缩
@@ -129,7 +139,7 @@
                     {{ scope.row.isCompress === 0 ? '否' : '是' }}
                   </div>
                 </div>
-                <div style="font-size:12px;margin-left: 20px;text-align: center;">
+                <div style="font-size:12px;margin-left: 10px;text-align: center;">
                   <div
                       style="display:flex;justify-content: center;align-items: center;color:#888888;font-size: 12px;border:#c7c7c7 1px solid;border-radius: 2px;padding: 0px 3px;height: 18px">
                     备份次数
@@ -138,6 +148,7 @@
                     {{ scope.row.backupNum }}
                   </div>
                 </div>
+
               </div>
             </div>
           </template>
