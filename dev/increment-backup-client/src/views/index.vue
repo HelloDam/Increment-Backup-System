@@ -248,7 +248,7 @@
 
                     </div>
                   </div>
-                  <div class="gapDiv"></div>
+                  <div style="height: 8px"></div>
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
