@@ -41,5 +41,6 @@ rules:
         type: HASH_MOD
         props:
           sharding-count: 16
-props:
-  sql-show: true
+# 开启分表日志
+#props:
+#  sql-show: true
