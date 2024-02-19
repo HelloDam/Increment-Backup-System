@@ -157,6 +157,7 @@ import mouseEffectsUtil from "../utils/mouseEffectsUtil.js";
 import FileMessageTree from "../components/FileMessageTree.vue";
 import {ElMessage, ElNotification} from "element-plus";
 import SysParam from "../components/SysParam.vue";
+import constant from "../constant.js";
 
 export default {
   components: {
@@ -228,7 +229,7 @@ export default {
         console.log("您的浏览器不支持WebSocket协议");
       } else {
         console.log("您的浏览器支持WebSocket协议");
-        let socketUrl = "ws://localhost:8899/websocket/Admin";
+        let socketUrl = "ws://" + constant.DOMAIN + ":8899/websocket/Admin";
         // 开启一个websocket服务
         _this.socket = new WebSocket(socketUrl);
         //打开日志事件
