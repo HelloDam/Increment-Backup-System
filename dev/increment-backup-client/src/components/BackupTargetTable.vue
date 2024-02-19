@@ -44,7 +44,8 @@
       </div>
     </div>
     <div class="table">
-      <el-table :data="backupTargetList" @selection-change="handleBackupTargetSelectionChange" border>
+      <el-table :data="backupTargetList" @selection-change="handleBackupTargetSelectionChange" border
+                :header-cell-style="{ background: '#f7f8fa', color: '#606266' }">
         <el-table-column type="selection" width="55"/>
         <el-table-column prop="targetRootPath" label="目标目录信息" width="auto" resizable
                          :show-overflow-tooltip="true">
