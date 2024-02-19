@@ -73,7 +73,8 @@ public class BackupTaskServiceImpl extends ServiceImpl<BackupTaskMapper, BackupT
      * @param task
      */
     public static void setProgress(BackupTask task) {
-        task.setBackupProgress(String.format("%.1f", task.getFinishFileNum() * 100.0 / task.getTotalFileNum()));
+        task.setBackupNumProgress(String.format("%.1f", task.getFinishFileNum() * 100.0 / task.getTotalFileNum()));
+        task.setBackupSizeProgress(String.format("%.1f", task.getFinishByteNum() * 100.0 / task.getTotalByteNum()));
     }
 }
 

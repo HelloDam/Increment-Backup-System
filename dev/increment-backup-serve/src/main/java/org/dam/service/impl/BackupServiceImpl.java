@@ -186,7 +186,7 @@ public class BackupServiceImpl implements BackupService {
         // 将任务插入到数据库中
         String targetRootPath = getTargetRootPath(task, backupSource, target);
         BackupTask backupTask = new BackupTask(backupSource.getRootPath(), targetRootPath,
-                sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0", 0L, new Date());
+                sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0","0.0", 0L, new Date());
         backupTaskService.save(backupTask);
         setProgress(backupTask);
         log.info("发送任务消息，通知前端任务创建成功");
@@ -215,6 +215,7 @@ public class BackupServiceImpl implements BackupService {
         // 查询出文件信息的树形结构
         List<FileMessage> fileMessageList = fileMessageService.list(new QueryWrapper<FileMessage>().
                 eq("backup_source_id", backupSource.getId()).eq("father_id", 0L));
+        // 开始备份
         backUpAllFiles(task, isRecordFileMessage, new File(backupSource.getRootPath()), backupSource, target, task.getTargetList(), filePathAndIdMap, sta,
                 "", backupTask.getId(), backupTask.getCreateTime(),
                 0L, fileMessageList, ignoreFileList, ignoreDirectoryList);
@@ -370,8 +371,7 @@ public class BackupServiceImpl implements BackupService {
                         middlePath + file.getName() + File.separator, backupTaskId, taskBackupStartTime,
                         curFileMessageId, children,
                         ignoreFileList, ignoreDirectoryList);
-            }
-            if (file.isFile()) {
+            } else if (file.isFile()) {
                 boolean isContain = false;
                 for (String ignoreFile : ignoreFileList) {
                     if (file.getName().equals(ignoreFile)) {
@@ -400,6 +400,15 @@ public class BackupServiceImpl implements BackupService {
         }
     }
 
+    /**
+     * 存储备份文件夹信息
+     *
+     * @param backupSource
+     * @param backupTarget
+     * @param sourceFilePath
+     * @param targetFilePath
+     * @param backupFileOnDatabase
+     */
     private void saveBackupFileDir(BackupSource backupSource, BackupTarget backupTarget, String sourceFilePath, String targetFilePath, BackupFile backupFileOnDatabase) {
         if (backupFileOnDatabase == null) {
             BackupFile backupFile = new BackupFile();
@@ -533,6 +542,7 @@ public class BackupServiceImpl implements BackupService {
             backupTask.setBackupTargetRoot(getTargetRootPath(task, source, target));
             backupTask.setTotalFileNum(statistic.totalBackupFileNum);
             backupTask.setTotalByteNum(statistic.totalBackupByteNum);
+            backupTask.setCreateTime(taskBackupStartTime);
             setProgress(backupTask);
             backupTask.setBackupTime(curTime - taskBackupStartTime.getTime());
             log.info("发送任务消息，通知前端备份进度变化");
@@ -588,6 +598,16 @@ public class BackupServiceImpl implements BackupService {
 
     }
 
+    /**
+     * 组装完整的备份目标路径
+     *
+     * @param source
+     * @param target
+     * @param targetList
+     * @param middlePath
+     * @param backupSourceFile
+     * @return
+     */
     private String getTargetFilePath(BackupSource source, BackupTarget target, List<BackupTarget> targetList, String middlePath, File backupSourceFile) {
         String targetFilePath;
         if (source.getBackupType() == 0) {
@@ -627,8 +647,10 @@ public class BackupServiceImpl implements BackupService {
 
         try {
             if (isCompress == 1) {
+                // 对文件进行压缩
                 GzipCompressUtil.compressFile(backupSourceFile, targetFilePath);
             } else {
+                // 直接拷贝
                 backupWithFileChannel(backupSourceFile, new File(targetFilePath));
             }
             log.info("备份文件成功，从" + sourceFilePath + " 到 " + targetFilePath);

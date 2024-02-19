@@ -56,10 +56,16 @@ public class BackupTask extends BaseEntity implements Serializable {
     private Integer backupStatus;
 
     /**
-     * 备份进度百分比
+     * 文件数量 备份进度百分比
      */
     @TableField(exist = false)
-    private String backupProgress;
+    private String backupNumProgress;
+
+    /**
+     * 文件大小 备份进度百分比
+     */
+    @TableField(exist = false)
+    private String backupSizeProgress;
 
     /**
      * 备份时间
