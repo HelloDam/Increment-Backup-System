@@ -87,20 +87,43 @@
             <template #default="scope">
               <div style="display: flex">
 
-                <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
-                  <div
-                      style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
-                    id
-                  </div>
-                  <span style="margin-left: 5px">
+                <div>
+                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
+                      id
+                    </div>
+                    <span style="margin-left: 5px">
                         {{ scope.row.id }}
                     </span>
+                  </div>
+                  <div class="gapDiv"></div>
+                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
+                      状态
+                    </div>
+                    <div style="margin-left: 5px">
+                      <span v-if="scope.row.backupStatus==0" style="color: #8a4f03">
+                        刚创建
+                      </span>
+                      <span v-if="scope.row.backupStatus==1" style="color: #0d7df8">
+                        进行中
+                      </span>
+                      <span v-if="scope.row.backupStatus==2" style="color: #069a1e">
+                        完 成
+                      </span>
+                      <span v-if="scope.row.backupStatus==3" style="color: #fa070f">
+                        失 败
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 <div style="text-align: center;margin-left: 10px">
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#4783e5;border:#4783e5 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#4783e5;border:#4783e5 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                       源
                     </div>
                     <el-tooltip :content=scope.row.backupSourceRoot
@@ -112,9 +135,10 @@
                       </div>
                     </el-tooltip>
                   </div>
+                  <div class="gapDiv"></div>
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#fa070f;border:#fa070f 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#fa070f;border:#fa070f 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                       终
                     </div>
                     <el-tooltip :content=scope.row.backupTargetRoot
@@ -132,7 +156,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                         备份时间
                       </div>
                       <span style="margin-left: 5px">
@@ -140,11 +164,11 @@
                       </span>
                     </div>
                   </div>
-
+                  <div class="gapDiv"></div>
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                         创建时间
                       </div>
                       <span style="margin-left: 5px">
@@ -159,7 +183,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                         已备份数
                       </div>
                       <span style="margin-left: 5px">
@@ -167,9 +191,10 @@
                       </span>
                     </div>
                   </div>
+                  <div class="gapDiv"></div>
                   <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                       总文件数
                     </div>
                     <span style="margin-left: 5px">
@@ -182,7 +207,7 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                         已备份数
                       </div>
                       <span style="margin-left: 5px">
@@ -190,9 +215,10 @@
                       </span>
                     </div>
                   </div>
+                  <div class="gapDiv"></div>
                   <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                     <div
-                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
                       总字节数
                     </div>
                     <span style="margin-left: 5px">
@@ -205,17 +231,13 @@
                   <div style="font-size: 15px;display: flex;align-items: center">
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
-                        进度
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
+                        文件数量备份进度
                       </div>
-                      <span style="margin-left: 5px">
-
-                      </span>
-
                       <div style="width: 140px;margin-left: 5px">
                         <!-- 进度条 -->
                         <el-progress
-                            :percentage="scope.row.backupProgress"
+                            :percentage="scope.row.backupNumProgress"
                             :stroke-width="10"
                             :status="scope.row.backupStatus==2?'success':null"
                             striped
@@ -226,24 +248,25 @@
 
                     </div>
                   </div>
-                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
-                    <div
-                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 18px">
-                      状态
-                    </div>
-                    <div style="margin-left: 5px">
-                      <span v-if="scope.row.backupStatus==0" style="color: #8a4f03">
-                        刚创建
-                      </span>
-                      <span v-if="scope.row.backupStatus==1" style="color: #0d7df8">
-                        进行中
-                      </span>
-                      <span v-if="scope.row.backupStatus==2" style="color: #069a1e">
-                        完 成
-                      </span>
-                      <span v-if="scope.row.backupStatus==3" style="color: #fa070f">
-                        失 败
-                      </span>
+                  <div class="gapDiv"></div>
+                  <div style="font-size: 15px;display: flex;align-items: center">
+                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                      <div
+                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
+                        文件大小备份进度
+                      </div>
+                      <div style="width: 140px;margin-left: 5px">
+                        <!-- 进度条 -->
+                        <el-progress
+                            :percentage="scope.row.backupSizeProgress"
+                            :stroke-width="10"
+                            :status="scope.row.backupStatus==2?'success':null"
+                            striped
+                            :striped-flow="scope.row.backupStatus==1?true:false"
+                            :duration="10"
+                        />
+                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -596,6 +619,10 @@ export default {
     box-shadow: 0px 0px 10px 0px rgba(20, 20, 20, 0.116);
     border-radius: 5px;
     padding: 10px 0;
+  }
+
+  .gapDiv{
+    height: 5px;
   }
 
   .bodyDiv {
