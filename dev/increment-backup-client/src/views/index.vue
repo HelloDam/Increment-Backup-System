@@ -104,17 +104,20 @@
                       状态
                     </div>
                     <div style="margin-left: 5px">
-                      <span v-if="scope.row.backupStatus==0" style="color: #8a4f03">
+                      <span v-if="scope.row.backupStatus===0" style="color: #8a4f03">
                         刚创建
                       </span>
-                      <span v-if="scope.row.backupStatus==1" style="color: #0d7df8">
+                      <span v-if="scope.row.backupStatus===1" style="color: #0d7df8">
                         进行中
                       </span>
-                      <span v-if="scope.row.backupStatus==2" style="color: #069a1e">
+                      <span v-if="scope.row.backupStatus===2" style="color: #069a1e">
                         完 成
                       </span>
-                      <span v-if="scope.row.backupStatus==3" style="color: #fa070f">
+                      <span v-if="scope.row.backupStatus===3" style="color: #fa070f">
                         失 败
+                      </span>
+                      <span v-if="scope.row.backupStatus===4" style="color: #f54248">
+                        暂 停
                       </span>
                     </div>
                   </div>
@@ -232,12 +235,12 @@
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
                           style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
-                        文件数量备份进度
+                        数量备份进度
                       </div>
                       <div style="width: 140px;margin-left: 5px">
                         <!-- 进度条 -->
                         <el-progress
-                            :percentage="scope.row.backupNumProgress"
+                            :percentage="parseFloat(scope.row.backupNumProgress)"
                             :stroke-width="10"
                             :status="scope.row.backupStatus==2?'success':null"
                             striped
@@ -253,12 +256,12 @@
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
                           style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
-                        文件大小备份进度
+                        字节备份进度
                       </div>
                       <div style="width: 140px;margin-left: 5px">
                         <!-- 进度条 -->
                         <el-progress
-                            :percentage="scope.row.backupSizeProgress"
+                            :percentage="parseFloat(scope.row.backupSizeProgress)"
                             :stroke-width="10"
                             :status="scope.row.backupStatus==2?'success':null"
                             striped
@@ -271,13 +274,16 @@
                   </div>
                 </div>
 
+                <div style="display: flex;align-items: center" v-if="scope.row.backupStatus===1">
+                  <el-button type="danger" plain size="small" @click="stopTaskById(scope.row.id)">
+                    暂 停
+                  </el-button>
+                </div>
+
+
               </div>
             </template>
           </el-table-column>
-          <!--          <el-table-column prop="createTime" label="创建时间" width="180" :show-overflow-tooltip="true"-->
-          <!--                           :formatter="formatDate"/>-->
-          <!--          <el-table-column prop="updateTime" label="修改时间" width="180" :show-overflow-tooltip="true"-->
-          <!--                           :formatter="formatDate"/>-->
         </el-table>
         <template #footer>
           <span class="dialog-footer">
@@ -521,6 +527,16 @@ export default {
       }
     },
 
+    stopTaskById(taskId) {
+      backupTaskApi.stopTaskById(taskId).then(res => {
+        ElMessage({
+          message: "备份任务暂停完成",
+          type: 'success',
+          duration: 2 * 1000
+        })
+      })
+    }
+
   },
   beforeCreate() {
   }
@@ -621,7 +637,7 @@ export default {
     padding: 10px 0;
   }
 
-  .gapDiv{
+  .gapDiv {
     height: 5px;
   }
 

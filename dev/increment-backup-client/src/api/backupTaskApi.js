@@ -78,5 +78,18 @@ export default {
             method: "post",
             data: data
         })
-    }
+    },
+
+    /**
+     * 暂停任务的备份
+     * @param id
+     * @returns {*}
+     */
+    stopTaskById(id) {
+        return request({
+            url: `${apiName}/stopTaskById/${id}`,
+            method: "get"
+        })
+    },
+
 }

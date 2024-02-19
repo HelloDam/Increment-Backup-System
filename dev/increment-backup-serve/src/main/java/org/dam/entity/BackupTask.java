@@ -51,7 +51,7 @@ public class BackupTask extends BaseEntity implements Serializable {
     private Long finishByteNum;
 
     /**
-     * 状态 0：刚创建 1：正在执行备份 2：备份完成 3：备份失败
+     * 状态 0：刚创建 1：正在执行备份 2：备份完成 3：备份失败 4：暂停
      */
     private Integer backupStatus;
 

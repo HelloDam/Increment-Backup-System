@@ -1,5 +1,6 @@
 package org.dam.controller;
 
+import org.dam.cache.Cache;
 import org.dam.common.page.PageResponse;
 import org.dam.common.result.Result;
 import org.dam.common.result.Results;
@@ -87,6 +88,18 @@ public class TaskController {
     @GetMapping("/getById/{id}")
     public Result getById(@PathVariable Long id) {
         return Results.success(taskService.getById(id));
+    }
+
+    /**
+     * 暂停任务的备份
+     *
+     * @param taskId
+     * @return
+     */
+    @GetMapping("/stopTaskById/{taskId}")
+    public Result stopTaskById(@PathVariable Long taskId) {
+        Cache.STOP_TASK_ID_SET.add(taskId);
+        return Results.success();
     }
 }
 

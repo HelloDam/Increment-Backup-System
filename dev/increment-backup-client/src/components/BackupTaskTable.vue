@@ -55,6 +55,7 @@
             <el-tag class="ml-2" type="warning" v-if="scope.row.backupStatus==1">进行中</el-tag>
             <el-tag class="ml-2" type="success" v-if="scope.row.backupStatus==2">完 成</el-tag>
             <el-tag class="ml-2" type="danger" v-if="scope.row.backupStatus==3">失 败</el-tag>
+            <el-tag class="ml-2" type="info" v-if="scope.row.backupStatus==4">暂 停</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="totalFileNum" label="已备份文件数 / 总文件数" width="200" resizable

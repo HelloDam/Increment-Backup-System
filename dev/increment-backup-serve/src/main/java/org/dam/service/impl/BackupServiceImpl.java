@@ -5,6 +5,7 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.dam.cache.Cache;
 import org.dam.common.constant.SystemConstant;
 import org.dam.common.constant.SystemParamEnum;
 import org.dam.common.exception.ClientException;
@@ -14,6 +15,7 @@ import org.dam.common.utils.compress.GzipCompressUtil;
 import org.dam.controller.BackupController;
 import org.dam.controller.WebSocketServer;
 import org.dam.entity.*;
+import org.dam.entity.base.BaseEntity;
 import org.dam.entity.request.BackupFileRequest;
 import org.dam.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,7 +188,7 @@ public class BackupServiceImpl implements BackupService {
         // 将任务插入到数据库中
         String targetRootPath = getTargetRootPath(task, backupSource, target);
         BackupTask backupTask = new BackupTask(backupSource.getRootPath(), targetRootPath,
-                sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0","0.0", 0L, new Date());
+                sta.totalBackupFileNum, 0, sta.totalBackupByteNum, 0L, 0, "0.0", "0.0", 0L, new Date());
         backupTaskService.save(backupTask);
         setProgress(backupTask);
         log.info("发送任务消息，通知前端任务创建成功");
@@ -211,7 +213,6 @@ public class BackupServiceImpl implements BackupService {
         }
         // 将数据源的数据备份到多个目标目录下面
         sta.second = new Date().getTime() / 1000;
-
         // 查询出文件信息的树形结构
         List<FileMessage> fileMessageList = fileMessageService.list(new QueryWrapper<FileMessage>().
                 eq("backup_source_id", backupSource.getId()).eq("father_id", 0L));
@@ -219,20 +220,24 @@ public class BackupServiceImpl implements BackupService {
         backUpAllFiles(task, isRecordFileMessage, new File(backupSource.getRootPath()), backupSource, target, task.getTargetList(), filePathAndIdMap, sta,
                 "", backupTask.getId(), backupTask.getCreateTime(),
                 0L, fileMessageList, ignoreFileList, ignoreDirectoryList);
-
-        // 备份结束，修改备份任务的状态为完成
-        backupTask.setBackupStatus(2);
-        backupTask.setFinishFileNum(sta.getTotalBackupFileNum());
-        backupTask.setFinishByteNum(sta.getFinishBackupByteNum());
-        backupTask.setEndTime(new Date());
-        backupTaskService.updateById(backupTask);
-        setProgress(backupTask);
-        backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
-        log.info("发送任务消息，通知前端任务备份完成");
-        dataMap = new HashMap<>();
-        dataMap.put("content", "任务备份完成");
-        dataMap.put("backupTask", backupTask);
-        webSocketServer.sendMessage(JSON.toJSONString(dataMap), WebSocketServer.usernameAndSessionMap.get("Admin"));
+        // 将其从暂停任务中移除
+        if (Cache.STOP_TASK_ID_SET.contains(backupTask.getId())) {
+            Cache.STOP_TASK_ID_SET.remove(backupTask.getId());
+        }else {
+            // 备份结束，修改备份任务的状态为完成
+            backupTask.setBackupStatus(2);
+            backupTask.setFinishFileNum(sta.getTotalBackupFileNum());
+            backupTask.setFinishByteNum(sta.getTotalBackupByteNum());
+            backupTask.setEndTime(new Date());
+            backupTaskService.updateById(backupTask);
+            setProgress(backupTask);
+            backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
+            log.info("发送任务消息，通知前端任务备份完成");
+            dataMap = new HashMap<>();
+            dataMap.put("content", "任务备份完成");
+            dataMap.put("backupTask", backupTask);
+            webSocketServer.sendMessage(JSON.toJSONString(dataMap), WebSocketServer.usernameAndSessionMap.get("Admin"));
+        }
     }
 
     /**
@@ -272,9 +277,6 @@ public class BackupServiceImpl implements BackupService {
                                 Long backupTaskId, Date taskBackupStartTime,
                                 Long fatherId, List<FileMessage> fileMessageList,
                                 List<String> ignoreFileList, List<String> ignoreDirectoryList) {
-        if (fatherFile.getName().contains("second-hand-market-front")) {
-            int temp = 0;
-        }
         File[] fileArr = fatherFile.listFiles();
         HashMap<String, FileMessage> fileNameAndFileMessageMap = new HashMap<>();
         if (isRecordFileMessage && fileMessageList != null) {
@@ -293,10 +295,32 @@ public class BackupServiceImpl implements BackupService {
             fileMessageService.recursionRemoveFileMessage(removeFileMessageIdList);
         }
         for (File file : fileArr) {
+            if (Cache.STOP_TASK_ID_SET.contains(backupTaskId)) {
+                // --if-- 如果任务被暂停，退出备份
+                BackupTask backupTask = new BackupTask();
+                backupTask.setId(backupTaskId);
+                backupTask.setBackupStatus(4);
+                backupTask.setFinishFileNum(statistic.getFinishBackupFileNum());
+                backupTask.setFinishByteNum(statistic.getFinishBackupByteNum());
+                backupTask.setEndTime(new Date());
+                backupTaskService.updateById(backupTask);
+                backupTask.setTotalFileNum(statistic.getTotalBackupFileNum());
+                backupTask.setTotalByteNum(statistic.getTotalBackupByteNum());
+                setProgress(backupTask);
+                backupTask.setBackupSourceRoot(backupSource.getRootPath());
+                backupTask.setBackupTargetRoot(backupTarget.getTargetRootPath());
+                backupTask.setCreateTime(taskBackupStartTime);
+                backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
+                log.info("发送任务消息，通知前端任务暂停");
+                Map<String, Object> dataMap = new HashMap<>();
+                dataMap.put("content", "任务暂停备份");
+                dataMap.put("backupTask", backupTask);
+                webSocketServer.sendMessage(JSON.toJSONString(dataMap), WebSocketServer.usernameAndSessionMap.get("Admin"));
+                break;
+            }
 //            if (file.toString().indexOf("/.") != -1 || file.toString().indexOf("\\.") != -1) {
 //                continue;
 //            }
-
             if (file.isDirectory()) {
                 boolean isContain = false;
                 for (String ignoreDirectory : ignoreDirectoryList) {
