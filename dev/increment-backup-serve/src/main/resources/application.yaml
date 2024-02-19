@@ -5,34 +5,6 @@ server:
 spring:
   profiles:
     active: database
-#  datasource:
-#    dynamic:
-#      # 设置默认的数据源或者数据源组
-#      primary: mysql8DB
-#      # 严格匹配数据源，默认false。true未匹配到指定数据源时抛异常，false使用默认数据源
-#      strict: false
-#      datasource:
-#        sqliteDB:
-#          driver-class-name: org.sqlite.JDBC
-#          url: jdbc:sqlite::resource:static/sqlite/increment-backup.db
-#          username:
-#          password:
-#        mysql8DB:
-#          driver-class-name: com.mysql.cj.jdbc.Driver
-#          url: jdbc:mysql://localhost:3308/increment-backup?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
-#          username: root
-#          password: 12345678
-#        mysql5DB:
-#          driver-class-name: com.mysql.cj.jdbc.Driver
-#          url: jdbc:mysql://localhost:3306/increment-backup?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
-#          username: root
-#          password: 12345678
-#  datasource:
-#    # SQLite相关配置，引用项目中的数据库文件
-#    driver-class-name: org.sqlite.JDBC
-#    url: jdbc:sqlite::resource:static/sqlite/increment-backup.db
-#    username:
-#    password:
   # 指定静态资源的路径
   web:
     resources:
