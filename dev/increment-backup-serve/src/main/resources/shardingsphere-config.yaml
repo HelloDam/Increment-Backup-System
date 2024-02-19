@@ -1,0 +1,45 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    # Mysql配置
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3308/increment-backup?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 12345678
+
+rules:
+  - !SHARDING
+    tables:
+      backup_file:
+        actualDataNodes: ds_0.backup_file_${0..15}
+        tableStrategy:
+          standard:
+            shardingColumn: id
+            shardingAlgorithmName: backup_file_hash_mod
+      backup_file_history:
+        actualDataNodes: ds_0.backup_file_history_${0..15}
+        tableStrategy:
+          standard:
+            shardingColumn: backup_file_id
+            shardingAlgorithmName: backup_file_history_hash_mod
+      file_message:
+        actualDataNodes: ds_0.file_message_${0..15}
+        tableStrategy:
+          standard:
+            shardingColumn: father_id
+            shardingAlgorithmName: file_message_hash_mod
+    shardingAlgorithms:
+      backup_file_hash_mod:
+        type: HASH_MOD
+        props:
+          sharding-count: 16
+      backup_file_history_hash_mod:
+        type: HASH_MOD
+        props:
+          sharding-count: 16
+      file_message_hash_mod:
+        type: HASH_MOD
+        props:
+          sharding-count: 16
+props:
+  sql-show: true
