@@ -229,9 +229,9 @@ public class BackupServiceImpl implements BackupService {
             backupTask.setFinishFileNum(sta.getTotalBackupFileNum());
             backupTask.setFinishByteNum(sta.getTotalBackupByteNum());
             backupTask.setEndTime(new Date());
+            backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
             backupTaskService.updateById(backupTask);
             setProgress(backupTask);
-            backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
             log.info("发送任务消息，通知前端任务备份完成");
             dataMap = new HashMap<>();
             dataMap.put("content", "任务备份完成");
@@ -303,6 +303,7 @@ public class BackupServiceImpl implements BackupService {
                 backupTask.setFinishFileNum(statistic.getFinishBackupFileNum());
                 backupTask.setFinishByteNum(statistic.getFinishBackupByteNum());
                 backupTask.setEndTime(new Date());
+                backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
                 backupTaskService.updateById(backupTask);
                 backupTask.setTotalFileNum(statistic.getTotalBackupFileNum());
                 backupTask.setTotalByteNum(statistic.getTotalBackupByteNum());
@@ -310,7 +311,6 @@ public class BackupServiceImpl implements BackupService {
                 backupTask.setBackupSourceRoot(backupSource.getRootPath());
                 backupTask.setBackupTargetRoot(backupTarget.getTargetRootPath());
                 backupTask.setCreateTime(taskBackupStartTime);
-                backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
                 log.info("发送任务消息，通知前端任务暂停");
                 Map<String, Object> dataMap = new HashMap<>();
                 dataMap.put("content", "任务暂停备份");
@@ -560,6 +560,7 @@ public class BackupServiceImpl implements BackupService {
             backupTask.setBackupStatus(1);
             backupTask.setFinishFileNum(statistic.finishBackupFileNum);
             backupTask.setFinishByteNum(statistic.finishBackupByteNum);
+            backupTask.setBackupTime(curTime - taskBackupStartTime.getTime());
             backupTaskService.updateById(backupTask);
             // 剩下的信息用来给前端看的，不需要更新到数据库中
             backupTask.setBackupSourceRoot(source.getRootPath());
@@ -568,7 +569,6 @@ public class BackupServiceImpl implements BackupService {
             backupTask.setTotalByteNum(statistic.totalBackupByteNum);
             backupTask.setCreateTime(taskBackupStartTime);
             setProgress(backupTask);
-            backupTask.setBackupTime(curTime - taskBackupStartTime.getTime());
             log.info("发送任务消息，通知前端备份进度变化");
             Map<String, Object> dataMap = new HashMap<>();
             dataMap.put("content", "备份进度变化");

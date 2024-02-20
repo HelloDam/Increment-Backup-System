@@ -70,7 +70,6 @@ public class BackupTask extends BaseEntity implements Serializable {
     /**
      * 备份时间
      */
-    @TableField(exist = false)
     private Long backupTime;
 
     /**

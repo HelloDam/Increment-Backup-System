@@ -61,7 +61,8 @@ public class BackupTaskServiceImpl extends ServiceImpl<BackupTaskMapper, BackupT
         IPage<BackupTask> page = baseMapper.selectPage(pageParam, queryWrapper);
         for (BackupTask task : page.getRecords()) {
             setProgress(task);
-            task.setBackupTime(task.getEndTime().getTime() - task.getCreateTime().getTime());
+            // 这样不准确，会丢失毫秒值 数据库只存储了 时分秒
+//            task.setBackupTime(task.getEndTime().getTime() - task.getCreateTime().getTime());
         }
 
         return PageUtil.convert(page);
