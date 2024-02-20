@@ -163,7 +163,7 @@
                         备份时间
                       </div>
                       <span style="margin-left: 5px">
-                        {{ scope.row.backupTime }} ms
+                        {{ formatTime(scope.row.backupTime)}}
                       </span>
                     </div>
                   </div>
@@ -318,6 +318,7 @@ import FileMessageTree from "../components/FileMessageTree.vue";
 import {ElMessage, ElNotification} from "element-plus";
 import SysParam from "../components/SysParam.vue";
 import constant from "../constant.js";
+import timeDisplayUtil from "../utils/timeDisplayUtil.js";
 
 export default {
   components: {
@@ -467,6 +468,14 @@ export default {
     formatDate(row, column, cellValue, index) {
       let date = new Date(cellValue);
       return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    },
+
+    /**
+     * 格式化时间
+     * @param time
+     */
+    formatTime(time) {
+      return timeDisplayUtil.formatTime(time)
     },
 
     /**

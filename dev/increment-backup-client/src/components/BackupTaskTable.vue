@@ -23,7 +23,8 @@
                          :show-overflow-tooltip="true"/>
         <el-table-column prop="backupTargetRoot" label="备份目标根目录" width="200" resizable
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupProgress" label="文件数量备份进度" width="200" resizable:show-overflow-tooltip="true">
+        <el-table-column prop="backupProgress" label="文件数量备份进度" width="200"
+                         resizable:show-overflow-tooltip="true">
           <template #default="scope">
             <!-- 进度条 -->
             <el-progress
@@ -36,7 +37,8 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="backupProgress" label="文件大小备份进度" width="200" resizable:show-overflow-tooltip="true">
+        <el-table-column prop="backupProgress" label="文件大小备份进度" width="200"
+                         resizable:show-overflow-tooltip="true">
           <template #default="scope">
             <!-- 进度条 -->
             <el-progress
@@ -71,7 +73,12 @@
             <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="backupTime" label="备份时间(ms)" width="180" resizable :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupTime" label="备份时间" width="180" resizable
+                         :show-overflow-tooltip="true">
+          <template #default="scope">
+            <span>{{formatTime(scope.row.backupTime)}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180" resizable :show-overflow-tooltip="true"
                          :formatter="formatDate"/>
         <el-table-column prop="updateTime" label="修改时间" width="180" resizable :show-overflow-tooltip="true"
@@ -158,6 +165,7 @@ import backupTaskApi from "../api/backupTaskApi.js";
 import backupTargetApi from "../api/backupTargetApi.js";
 import {ElMessage} from "element-plus";
 import backupApi from "../api/backupApi.js";
+import timeDisplayUtil from "../utils/timeDisplayUtil.js";
 
 export default {
   components: {},
@@ -346,6 +354,14 @@ export default {
       let date = new Date(cellValue);
       return date.toLocaleDateString() + " " + date.toLocaleTimeString();
     },
+
+    /**
+     * 格式化时间
+     * @param time
+     */
+    formatTime(time){
+      return timeDisplayUtil.formatTime(time)
+    }
 
   },
   beforeCreate() {
