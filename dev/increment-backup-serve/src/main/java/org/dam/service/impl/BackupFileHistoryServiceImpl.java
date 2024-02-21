@@ -65,6 +65,11 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
         return baseMapper.selectList(new QueryWrapper<BackupFileHistory>().in("backup_file_id", removeBackupFileIdList));
     }
 
+    @Override
+    public List<BackupFileHistory> listLastBackupHistoryByBackupFileIdList(List<Long> exitBackupFileIdList) {
+        return baseMapper.listLastBackupHistoryByBackupFileIdList(exitBackupFileIdList);
+    }
+
 }
 
 

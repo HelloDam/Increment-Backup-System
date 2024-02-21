@@ -22,4 +22,7 @@ public interface BackupFileHistoryService extends IService<BackupFileHistory> {
     void removeByFileIds(List<Long> removeBackupFileIdList);
 
     List<BackupFileHistory> listFileHistoryListByFileIds(List<Long> removeBackupFileIdList);
+
+    List<BackupFileHistory> listLastBackupHistoryByBackupFileIdList(List<Long> exitBackupFileIdList);
+
 }
