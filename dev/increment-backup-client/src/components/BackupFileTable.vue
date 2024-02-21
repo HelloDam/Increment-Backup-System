@@ -19,23 +19,55 @@
       <el-table :data="fileList" @selection-change="handleBackupFileSelectionChange" @select="changeFile" border>
         <el-table-column type="selection" width="55"/>
 
-        <el-table-column prop="id" label="编号" width="200" :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupSourceId" label="数据源ID" resizable width="200"
+        <el-table-column prop="id" label="编号" width="180" :show-overflow-tooltip="true"/>
+        <el-table-column prop="backupSourceId" label="数据源ID" resizable width="180"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="backupTargetId" label="备份目标目录ID" resizable width="200"
+        <el-table-column prop="backupTargetId" label="备份目标目录ID" resizable width="180"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="sourceFilePath" label="源文件路径" resizable width="auto"
+        <el-table-column prop="sourceFilePath" label="源文件路径" resizable width="200"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="targetFilePath" label="文件备份目标路径" resizable width="auto"
+        <el-table-column prop="targetFilePath" label="文件备份目标路径" resizable width="200"
                          :show-overflow-tooltip="true"/>
-        <el-table-column prop="fileType" label="文件类型" resizable width="100"
+        <el-table-column prop="fileType" label="文件类型" resizable width="85"
                          :show-overflow-tooltip="true">
           <template #default="scope">
             <el-tag class="ml-2" v-if="scope.row.fileType==0">目录</el-tag>
             <el-tag class="ml-2" type="success" v-if="scope.row.fileType==1">文件</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="backupNum" label="备份次数" resizable width="100"
+        <el-table-column prop="fileName" label="文件名" resizable width="200"
+                         :show-overflow-tooltip="true"/>
+        <el-table-column prop="fileSuffix" label="文件后缀" resizable width="85"
+                         :show-overflow-tooltip="true"/>
+        <el-table-column prop="fileLength" label="源文件大小" resizable width="120"
+                         :show-overflow-tooltip="true"/>
+        <el-table-column prop="fileLengthAfterCompress" label="压缩后大小" resizable width="120"
+                         :show-overflow-tooltip="true">
+          <template #default="scope">
+            <span>
+                    {{ scope.row.isCompress == 1 ? scope.row.fileLengthAfterCompress : '--' }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="isCompress" label="是否压缩" resizable width="85"
+                         :show-overflow-tooltip="true">
+          <template #default="scope">
+            <span>
+                    {{ scope.row.isCompress == 1 ? '是' : '否' }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="isContainFile" label="是否包含子文件" resizable width="130"
+                         :show-overflow-tooltip="true">
+          <template #default="scope">
+            <span>
+                    {{ scope.row.isContainFile == 1 ? '是' : '否' }}
+            </span>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column prop="backupNum" label="备份次数" resizable width="85"
                          :show-overflow-tooltip="true">
           <template #default="scope">
             <span>
