@@ -21,8 +21,8 @@
             ORDER BY id DESC LIMIT 1
     </select>
     <select id="listLastBackupHistoryByBackupFileIdList" resultType="org.dam.entity.BackupFileHistory">
-        SELECT bfh.id,bfh.md5,bfh.file_size,bfh.backup_file_id,bfh.modify_time
-        FROM backup_file_history bfh
+        SELECT id,md5,file_size,backup_file_id,modify_time
+        FROM backup_file_history
         WHERE backup_file_id IN
         <foreach collection="exitBackupFileIdList" item="fileId" separator="," open="(" close=")">
             #{fileId}
