@@ -674,7 +674,7 @@ export default {
 
       //添加垂直滚动条
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: auto;
     }
 
     /* 定义滚动条的轨道和滑块样式 */

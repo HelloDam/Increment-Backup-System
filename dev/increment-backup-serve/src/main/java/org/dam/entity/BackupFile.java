@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -56,6 +57,49 @@ public class BackupFile extends BaseEntity implements Serializable {
      * 最后一次备份时间
      */
     private Date lastBackupTime;
+
+
+    /**
+     * 文件名
+     */
+    private String fileName;
+
+    /**
+     * 文件后缀
+     */
+    private String fileSuffix;
+
+    /**
+     * 文件大小 byte
+     */
+    private Long fileLength;
+
+    /**
+     * 压缩之后的文件大小 byte
+     */
+    private Long fileLengthAfterCompress;
+
+    /**
+     * 父文件，如果没有设置为0
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long fatherId;
+
+    /**
+     * 是否压缩 0：不压缩 1：压缩
+     */
+    private Integer isCompress;
+
+    /**
+     * 是否包含子文件 0：不包含 1：包含
+     */
+    private Integer isContainFile;
+
+    /**
+     * 子文件
+     */
+    @TableField(exist = false)
+    private List<BackupFile> children;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

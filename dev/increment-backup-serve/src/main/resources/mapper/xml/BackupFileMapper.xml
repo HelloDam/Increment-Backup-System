@@ -16,7 +16,12 @@
         id,backup_root_id,file_path,
         backup_num,last_backup_time
     </sql>
+
     <update id="updateBackupNum">
         update backup_file set backup_num = backup_num + 1 where id = #{fileId}
     </update>
+
+    <select id="selectSonFileIdListByFatherId" resultType="java.lang.Long">
+        select id from backup_file where father_id = #{fatherId}
+    </select>
 </mapper>

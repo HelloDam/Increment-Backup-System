@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Param;
 import org.dam.entity.BackupFile;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
 * @author mac
 * @description 针对表【backup_file】的数据库操作Mapper
@@ -13,6 +15,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface BackupFileMapper extends BaseMapper<BackupFile> {
 
     void updateBackupNum(@Param("fileId") long fileId);
+
+    List<Long> selectSonFileIdListByFatherId(@Param("fatherId") Long fatherId);
 }
 
 

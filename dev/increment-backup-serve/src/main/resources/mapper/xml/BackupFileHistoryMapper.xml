@@ -20,4 +20,18 @@
         SELECT * FROM backup_file_history WHERE backup_file_id = #{ fileId }
             ORDER BY id DESC LIMIT 1
     </select>
+    <select id="listLastBackupHistoryByBackupFileIdList" resultType="org.dam.entity.BackupFileHistory">
+        SELECT bfh.id,bfh.md5,bfh.file_size,bfh.backup_file_id,bfh.modify_time
+        FROM backup_file_history bfh
+        INNER JOIN (
+            SELECT backup_file_id, MAX(backup_end_time) AS max_backup_end_time
+            FROM backup_file_history
+            WHERE backup_file_id IN
+                <foreach collection="exitBackupFileIdList" item="fileId" separator="," open="(" close=")">
+                    #{fileId}
+                </foreach>
+            GROUP BY backup_file_id
+        ) max_dates ON bfh.backup_file_id = max_dates.backup_file_id
+        AND bfh.backup_end_time = max_dates.max_backup_end_time
+    </select>
 </mapper>

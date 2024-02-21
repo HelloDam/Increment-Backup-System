@@ -125,7 +125,7 @@
                         @click="copyFilePath(scope.row.rootPath)"/>
                 </el-tooltip>
 
-                <el-tooltip content="查看数据源对应文件结构" v-if="scope.row.backupType===1||scope.row.isCompress===1">
+                <el-tooltip content="查看数据源对应文件结构">
                   <Files style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
                          @click="seeFileMessage(scope.row.id)"/>
                 </el-tooltip>

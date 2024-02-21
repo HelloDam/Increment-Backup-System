@@ -1,20 +1,13 @@
 package org.dam.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.dam.common.exception.ClientException;
 import org.dam.common.result.Result;
 import org.dam.common.result.Results;
-import org.dam.common.utils.compress.GzipCompressUtil;
-import org.dam.entity.FileMessage;
-import org.dam.service.FileMessageService;
+import org.dam.entity.BackupFile;
+import org.dam.service.BackupFileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -29,14 +22,14 @@ import java.net.URLEncoder;
 //@CrossOrigin
 public class CompressController {
     @Autowired
-    private FileMessageService fileMessageService;
+    private BackupFileService backupFileService;
 
     /**
      * 根据ID对指定的fileMessage进行解压操作，如果是目录，则递归解压其所有子文件
      */
     @GetMapping("/unCompress/{fileMessageId}")
     public Result unCompress(@PathVariable Long fileMessageId) {
-        fileMessageService.unCompress(fileMessageId);
+        backupFileService.unCompress(fileMessageId);
         return Results.success();
     }
 
@@ -49,8 +42,8 @@ public class CompressController {
     @GetMapping("/downloadUnCompressFile/{fileMessageId}")
     public void downloadUnCompressFile(@PathVariable Long fileMessageId, HttpServletResponse response, HttpServletRequest request) throws Exception {
         /// 将文件进行解压，获取解压之后的字节
-        FileMessage fileMessage = fileMessageService.getOne(new QueryWrapper<FileMessage>().eq("id", fileMessageId));
-        byte[] bytes = fileMessageService.downloadUnCompressFile(fileMessage);
+        BackupFile fileMessage = backupFileService.getOne(new QueryWrapper<BackupFile>().eq("id", fileMessageId));
+        byte[] bytes = backupFileService.downloadUnCompressFile(fileMessage);
 
         /// 设置response 响应头
         // 字符编码

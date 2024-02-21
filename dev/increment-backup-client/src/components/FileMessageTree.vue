@@ -102,7 +102,7 @@
 
 <script>
 
-import fileMessageApi from "../api/fileMessageApi.js";
+import backupFileApi from "../api/backupFileApi.js";
 import compressApi from "../api/compressApi.js";
 import {Expand} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
@@ -138,7 +138,7 @@ export default {
     },
 
     listFileMessageChildren() {
-      fileMessageApi.listChildrenBySourceIdAndFatherId(this.fileMessageSourceId, 0).then(res => {
+      backupFileApi.listChildrenBySourceIdAndFatherId(this.fileMessageSourceId, 0).then(res => {
         this.fileMessageTreeData = res.data;
         // console.log("this.fileMessageTreeData:" + JSON.stringify(this.fileMessageTreeData));
       })
@@ -149,7 +149,7 @@ export default {
      */
     handleNodeClick(node) {
       console.log("node:" + JSON.stringify(node));
-      fileMessageApi.listChildrenBySourceIdAndFatherId(this.fileMessageSourceId, node.id).then(res => {
+      backupFileApi.listChildrenBySourceIdAndFatherId(this.fileMessageSourceId, node.id).then(res => {
         node.children = res.data;
         this.$refs.tree.store.nodesMap[node.id].expanded = true
         // console.log("this.fileMessageTreeData:" + JSON.stringify(this.fileMessageTreeData));
@@ -270,7 +270,6 @@ export default {
 .table {
   background: rgba(255, 255, 255, 1);
 }
-
 
 </style>
 

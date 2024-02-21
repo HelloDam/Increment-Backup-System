@@ -32,6 +32,12 @@ public class BackupFileHistory implements Serializable {
     private Long backupFileId;
 
     /**
+     * 属于哪个数据源
+     */
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long backupSourceId;
+
+    /**
      * 备份源文件路径
      */
     private String backupSourceFilePath;

@@ -77,5 +77,18 @@ public class FileController {
     public Result getById(@PathVariable Long id) {
         return Results.success(fileService.getById(id));
     }
+
+    /**
+     * 根据数据源ID和父ID查询出所有 fileMessage 数据
+     *
+     * @param sourceId
+     * @param fatherId
+     * @return
+     */
+    @GetMapping("/listChildrenBySourceIdAndFatherId")
+    public Result listChildrenBySourceIdAndFatherId(@RequestParam("sourceId") Long sourceId, @RequestParam("fatherId") Long fatherId) {
+        List<BackupFile> messageList = fileService.listChildrenBySourceIdAndFatherId(sourceId, fatherId);
+        return Results.success(messageList);
+    }
 }
 
