@@ -14,30 +14,20 @@ rules:
         actualDataNodes: ds_0.backup_file_${0..15}
         tableStrategy:
           standard:
-            shardingColumn: id
+            shardingColumn: backup_source_id
             shardingAlgorithmName: backup_file_hash_mod
       backup_file_history:
         actualDataNodes: ds_0.backup_file_history_${0..15}
         tableStrategy:
           standard:
-            shardingColumn: backup_file_id
+            shardingColumn: backup_source_id
             shardingAlgorithmName: backup_file_history_hash_mod
-      file_message:
-        actualDataNodes: ds_0.file_message_${0..15}
-        tableStrategy:
-          standard:
-            shardingColumn: father_id
-            shardingAlgorithmName: file_message_hash_mod
     shardingAlgorithms:
       backup_file_hash_mod:
         type: HASH_MOD
         props:
           sharding-count: 16
       backup_file_history_hash_mod:
-        type: HASH_MOD
-        props:
-          sharding-count: 16
-      file_message_hash_mod:
         type: HASH_MOD
         props:
           sharding-count: 16
