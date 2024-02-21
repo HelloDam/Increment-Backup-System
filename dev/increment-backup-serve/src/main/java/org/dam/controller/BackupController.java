@@ -9,6 +9,7 @@ import org.dam.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +38,7 @@ public class BackupController {
      * 对指定的数据源进行备份
      */
     @GetMapping("/backupBySourceId/{sourceId}")
-    public Result backupBySourceId(@PathVariable Long sourceId) {
+    public Result backupBySourceId(@PathVariable Long sourceId) throws IOException {
         if (sourceIDSet.contains(sourceId)) {
             throw new ClientException("当前备份源正在备份中，请稍后再试");
         } else {
@@ -47,7 +48,11 @@ public class BackupController {
         // 检查 备份源目录是否存在 和 准备好备份目标目录
         List<Task> taskList = backupService.checkSourceAndTarget(sourceId);
         CompletableFuture.runAsync(() -> {
-            backupService.backupBySourceId(sourceId, taskList);
+            try {
+                backupService.backupBySourceId(sourceId, taskList);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }, executor).exceptionally(throwable -> {
             log.error(throwable.getMessage());
             if (sourceIDSet.contains(sourceId)) {
