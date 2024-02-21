@@ -1,11 +1,11 @@
 package org.dam.service;
 
-import org.dam.common.page.PageRequest;
 import org.dam.common.page.PageResponse;
 import org.dam.entity.BackupFile;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.dam.entity.BackupTarget;
 import org.dam.entity.request.BackupFileRequest;
+
+import java.util.List;
 
 /**
 * @author mac
@@ -17,4 +17,14 @@ public interface BackupFileService extends IService<BackupFile> {
     PageResponse<BackupFile> pageBackupFile(BackupFileRequest pageRequest);
 
     void updateBackupNum(long fileId);
+
+    List<BackupFile> buildTree(Long sourceId);
+
+    void recursionRemoveBackupFile(List<Long> removeFileMessageIdList);
+
+    List<BackupFile> listChildrenBySourceIdAndFatherId(Long sourceId, Long fatherId);
+
+    void unCompress(Long fileMessageId);
+
+    byte[] downloadUnCompressFile(BackupFile fileMessage);
 }
