@@ -46,7 +46,7 @@ public class BackupController {
 
         // 检查 备份源目录是否存在 和 准备好备份目标目录
         List<Task> taskList = backupService.checkSourceAndTarget(sourceId);
-        CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             backupService.backupBySourceId(sourceId, taskList);
         }, executor).exceptionally(throwable -> {
             log.error(throwable.getMessage());
