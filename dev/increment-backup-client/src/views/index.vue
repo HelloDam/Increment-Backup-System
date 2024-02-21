@@ -79,10 +79,10 @@
           title="任务列表"
           width="85%"
       >
-        <el-table :data="backupTaskList" border :show-header=false>
+        <el-table :data="backupTaskList" border>
           <!--          <el-table-column type="selection" width="55"/>-->
           <!--                    <el-table-column prop="id" label="编号" width="100" :show-overflow-tooltip="true"/>-->
-          <el-table-column prop="backupSourceRoot" label="备份信息" width="auto"
+          <el-table-column prop="backupSourceRoot" label="备份信息" width="1200" align="center"
                            :show-overflow-tooltip="true">
             <template #default="scope">
               <div style="display: flex">
@@ -163,7 +163,7 @@
                         备份时间
                       </div>
                       <span style="margin-left: 5px">
-                        {{ formatTime(scope.row.backupTime)}}
+                        {{ formatTime(scope.row.backupTime) }}
                       </span>
                     </div>
                   </div>
@@ -211,10 +211,10 @@
                     <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                       <div
                           style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
-                        已备份数
+                        已备份大小
                       </div>
                       <span style="margin-left: 5px">
-                        {{ scope.row.finishByteNum }}
+                        {{ formatBytes(scope.row.totalByteNum) }}
                       </span>
                     </div>
                   </div>
@@ -222,66 +222,73 @@
                   <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
                     <div
                         style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
-                      总字节数
+                      总文件大小
                     </div>
                     <span style="margin-left: 5px">
-                        {{ scope.row.totalByteNum }}
+                        {{ formatBytes(scope.row.totalByteNum) }}
                     </span>
                   </div>
                 </div>
 
-                <div style="display:flex;flex-direction: column;justify-content:center;margin-left: 10px">
-                  <div style="font-size: 15px;display: flex;align-items: center">
-                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
-                      <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
-                        数量备份进度
-                      </div>
-                      <div style="width: 140px;margin-left: 5px">
-                        <!-- 进度条 -->
-                        <el-progress
-                            :percentage="parseFloat(scope.row.backupNumProgress)"
-                            :stroke-width="10"
-                            :status="scope.row.backupStatus==2?'success':null"
-                            striped
-                            :striped-flow="scope.row.backupStatus==1?true:false"
-                            :duration="10"
-                        />
-                      </div>
-
-                    </div>
-                  </div>
-                  <div style="height: 8px"></div>
-                  <div style="font-size: 15px;display: flex;align-items: center">
-                    <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
-                      <div
-                          style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
-                        字节备份进度
-                      </div>
-                      <div style="width: 140px;margin-left: 5px">
-                        <!-- 进度条 -->
-                        <el-progress
-                            :percentage="parseFloat(scope.row.backupSizeProgress)"
-                            :stroke-width="10"
-                            :status="scope.row.backupStatus==2?'success':null"
-                            striped
-                            :striped-flow="scope.row.backupStatus==1?true:false"
-                            :duration="10"
-                        />
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-
-                <div style="display: flex;align-items: center" v-if="scope.row.backupStatus===1">
-                  <el-button type="danger" plain size="small" @click="stopTaskById(scope.row.id)">
-                    暂 停
-                  </el-button>
-                </div>
-
-
               </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="backupSourceRoot" label="备份进度" width="250" align="center" fixed="right">
+            <template #default="scope">
+              <div style="display:flex;flex-direction: column;justify-content:center;margin-left: 10px">
+                <div style="font-size: 15px;display: flex;align-items: center">
+                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
+                      数量进度
+                    </div>
+                    <div style="width: 140px;margin-left: 5px">
+                      <!-- 进度条 -->
+                      <el-progress
+                          :percentage="parseFloat(scope.row.backupNumProgress)"
+                          :stroke-width="10"
+                          :status="scope.row.backupStatus==2?'success':null"
+                          striped
+                          :striped-flow="scope.row.backupStatus==1?true:false"
+                          :duration="10"
+                      />
+                    </div>
+
+                  </div>
+                </div>
+                <div style="height: 8px"></div>
+                <div style="font-size: 15px;display: flex;align-items: center">
+                  <div style="color: #868585;font-size: 15px;display: flex;align-items: center">
+                    <div
+                        style="display:flex;justify-content: center;align-items: center;color:#888888;border:#c7c7c7 1px solid;border-radius: 2px;padding: 3px 3px;height: 20px">
+                      大小进度
+                    </div>
+                    <div style="width: 140px;margin-left: 5px">
+                      <!-- 进度条 -->
+                      <el-progress
+                          :percentage="parseFloat(scope.row.backupSizeProgress)"
+                          :stroke-width="10"
+                          :status="scope.row.backupStatus==2?'success':null"
+                          striped
+                          :striped-flow="scope.row.backupStatus==1?true:false"
+                          :duration="10"
+                      />
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="backupSourceRoot" label="操作" width="80" align="center" fixed="right">
+            <template #default="scope">
+              <el-button type="danger" plain size="small" v-if="scope.row.backupStatus===1"
+                         @click="stopTaskById(scope.row.id)">
+                暂 停
+              </el-button>
+              <el-button type="danger" plain size="small" v-else disabled @click="stopTaskById(scope.row.id)">
+                暂 停
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -319,6 +326,7 @@ import {ElMessage, ElNotification} from "element-plus";
 import SysParam from "../components/SysParam.vue";
 import constant from "../constant.js";
 import timeDisplayUtil from "../utils/timeDisplayUtil.js";
+import storageUtil from "../utils/storageUtil.js";
 
 export default {
   components: {
@@ -544,6 +552,10 @@ export default {
           duration: 2 * 1000
         })
       })
+    },
+
+    formatBytes(byteNum) {
+      return storageUtil.formatBytes(byteNum);
     }
 
   },
