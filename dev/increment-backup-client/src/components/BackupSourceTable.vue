@@ -497,9 +497,9 @@ export default {
         for (let i = 0; i < this.selectBackupSourceIdArr.length; i++) {
           backupApi.backupBySourceId(this.selectBackupSourceIdArr[i]).then(res => {
             ElMessage({
-              message: "数据源：" + this.selectBackupSourceIdArr[i] + " 开始备份",
+              message: "数据源：" + this.selectBackupSourceIdArr[i] + " 添加备份成功，正在准备备份信息，请耐心等候",
               type: 'success',
-              duration: 2 * 1000
+              duration: 4 * 1000
             })
           })
         }
