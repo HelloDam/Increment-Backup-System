@@ -69,7 +69,15 @@ public class BackupController {
      */
     @GetMapping("/clearBySourceId/{sourceId}")
     public Result clearBySourceId(@PathVariable Long sourceId) {
-        backupService.clearBySourceId(sourceId);
+        CompletableFuture.runAsync(() -> {
+            backupService.clearBySourceId(sourceId);
+        }, executor).exceptionally(throwable -> {
+            log.error(throwable.getMessage());
+            if (sourceIDSet.contains(sourceId)) {
+                sourceIDSet.remove(sourceId);
+            }
+            return null;
+        });
         return Results.success();
     }
 
