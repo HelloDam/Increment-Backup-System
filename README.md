@@ -1,5 +1,4 @@
 
-@[toc]
 # 系统介绍
 随着时代的发展，计算机相关技术日渐成熟，如今人们大部分数据存储在计算机中，许多数据非常珍贵，比如说学习编程的学生无法记住所有的技术如何使用，只能记得一个大概，因此大部分学生都会将自己学习的知识构建成一个知识网络存储在计算机中，倘若有一天电脑的固态坏了，里面的数据就很难再找回来，这样很多技术相当于白学。
 
@@ -8,44 +7,44 @@
 为了解决这个问题，我开发了一个增量备份系统来辅助数据的备份，即将过往的备份信息存储到数据库中，在对文件执行备份之前，首先判断文件距上次备份是否有变动，如果有变动才进行备份，这样可以大大提高备份的效率。
 # 功能说明
 ## 数据源增删改查
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/b555b98cc471437783dee9a1a455078d.png#pic_center)
+![输入图片说明](ReadmePicture/image.png)
 
 
 增加数据源时，有两种备份类型可以选择：一是将数据源中的数据全部备份到每个备份目标目录中（简称`全备份`）；二是将数据源中的数据分散备份到多个不同的备份目标目录中（简称`分散备份`）。此外，还可以选择是否对文件进行压缩，通过在备份时对文件进行压缩可以减少文件所占用的空间
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/d268a1e4d89149578445eb103c59b2da.png#pic_center)
+![输入图片说明](ReadmePicture/image1.png)
 ## 数据备份目标目录增删改查
 在增加备份目标目录之前，需要先勾选数据源，这样才可以建立两者的关联关系
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/b1ee9496651d4754aade12eae7142335.png#pic_center)
+![输入图片说明](ReadmePicture/image2.png)
 ## 备份
 在勾选数据源之后，可以将数据源中的数据备份到备份目标目录中
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/1da255fd40d9431a8ba6f926154a2b33.png#pic_center)
+![输入图片说明](ReadmePicture/image3.png)
 ## 查看任务的备份进度
 为了方便用户查看任务的备份进度，系统开发了任务备份进度查看功能。如果备份类型为全备份，则数据源和每个备份目标目录形成一个备份任务，这些备份任务会异步多线程同时执行；如果备份类型为分散备份，则一个数据源只对应一个备份任务
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/041867e03ec2498e810d9cb2d60193bb.png#pic_center)
+![输入图片说明](ReadmePicture/image4.png)
 同时任务备份结束之后，会给用户发送备份成功通知
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/c6a035d80af043149836533c640a7829.png#pic_center)
+![输入图片说明](ReadmePicture/image5.png)
 ## 备份任务管理
 可以查看过往创建的备份任务的备份情况，如备份文件数量、备份文件大小、备份时间和备份状态
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/dfc091ec054a4e4e88c352f5116c8473.png#pic_center)
+![输入图片说明](ReadmePicture/image6.png)
 ## 备份文件管理
 存储备份文件的目的是为了让用户知道每个文件的源路径和目标路径，此外，还可以查看文件的备份次数、上次备份的时间
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/082bbe9827154415b0d9afeddf9ecfe3.png#pic_center)
+![输入图片说明](ReadmePicture/image7.png)
 ## 文件备份记录管理
 记录文件每次备份的备份信息，如文件修改时间、文件备份时间，MD5码用来判断相同大小的文件内容距离上次备份时是否被修改，因为同样的输入，生成的MD5码是不变的，通过将文件输入流作为输入生成MD5码再和数据库中的MD5码进行比对，即可判断文件是否被修改
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/6aedf035a3aa484eb3e24220f2b1482f.png#pic_center)
+![输入图片说明](ReadmePicture/image8.png)
 
 ## 文件结构
 因为有时候用户会选择分散备份，这样文件会被分散备份到多个备份目标目录中
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/51375f91be624a66b700767d40dd2d3b.png#pic_center)
+![输入图片说明](ReadmePicture/image9.png)
 
 
 
