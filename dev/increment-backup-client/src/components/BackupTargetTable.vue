@@ -71,7 +71,7 @@
 
               <el-tooltip content="复制备份目标目录路径">
                 <Link style="width: 1.3em; height: 1.3em;color:#4783e5;margin-left: 5px"
-                      @click="copyFilePath(scope.row.rootPath)"/>
+                      @click="copyFilePath(scope.row.targetRootPath)"/>
               </el-tooltip>
 
             </div>

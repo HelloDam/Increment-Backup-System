@@ -214,7 +214,7 @@
                         已备份大小
                       </div>
                       <span style="margin-left: 5px">
-                        {{ formatBytes(scope.row.totalByteNum) }}
+                        {{ formatBytes(scope.row.finishByteNum) }}
                       </span>
                     </div>
                   </div>
