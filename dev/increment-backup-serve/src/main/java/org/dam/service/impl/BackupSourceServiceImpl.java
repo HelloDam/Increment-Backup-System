@@ -42,6 +42,7 @@ public class BackupSourceServiceImpl extends ServiceImpl<BackupSourceMapper, Bac
         if (sourceRequest.getBackupType() != null) {
             queryWrapper.like("backup_type", sourceRequest.getBackupType());
         }
+        queryWrapper.orderBy(true, false, "create_time");
         IPage<BackupSource> page = baseMapper.selectPage(new Page(sourceRequest.getCurrent(), sourceRequest.getSize()), queryWrapper);
 
         return PageUtil.convert(page);

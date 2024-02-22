@@ -37,7 +37,7 @@ public class BackupTargetServiceImpl extends ServiceImpl<BackupTargetMapper, Bac
         if (!StringUtils.isEmpty(pageRequest.getTargetRootPath())) {
             queryWrapper.like("target_root_path", pageRequest.getTargetRootPath());
         }
-
+        queryWrapper.orderBy(true, false, "create_time");
         IPage<BackupTarget> page = baseMapper.selectPage(PageUtil.convert(pageRequest), queryWrapper);
         return PageUtil.convert(page);
     }
