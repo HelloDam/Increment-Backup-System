@@ -1,3 +1,4 @@
+如果大家觉得项目有用，希望可以点个`Star`呀
 
 # 系统介绍
 随着时代的发展，计算机相关技术日渐成熟，如今人们大部分数据存储在计算机中，许多数据非常珍贵，比如说学习编程的学生无法记住所有的技术如何使用，只能记得一个大概，因此大部分学生都会将自己学习的知识构建成一个知识网络存储在计算机中，倘若有一天电脑的固态坏了，里面的数据就很难再找回来，这样很多技术相当于白学。
@@ -136,11 +137,11 @@
 ![输入图片说明](ReadmePicture/image29.png)
 系统启动成功之后，访问`localhost:8899`即可
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/2777fd0a5c9c49a383cf4d5eac02c28e.png#pic_center)
+![输入图片说明](ReadmePicture/30image.png)
 ## MYSQL方式启动
 首先创建数据库，然后运行如下 sql 来创建数据库的表结构
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/725f05750a194c0aae516ddb5dd9635e.png#pic_center)
+![输入图片说明](ReadmePicture/image31.png)
 项目目前有三种使用数据库的方式：
 1. 使用SQLite（优点：使用便捷；缺点：性能较差，版本更新时，过往备份过程信息无法保留）
 2. 单纯使用MYSQL数据库，不使用分表（优点：性能较好，版本更新时，过往备份过程信息不会丢失；缺点：需要用户按照MYSQL数据库并创建备份数据库和相应表结构）
@@ -148,11 +149,11 @@
 
 说明：使用不同的数据库连接方式，只保留相应的数据库连接信息即可，其他连接方式的代码要注释掉。如果需要自定义成其他数据库，自己修改配置文件的数据库配置即可
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/b039c93a3c77429fb2596e0ea3524a24.png#pic_center)
+![输入图片说明](ReadmePicture/image32.png)
 
 如果使用分表的方式，记住还需要修改`shardingsphere-config.yaml`文件的数据库连接信息
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/87885973c1a342e7836e37e67d673782.png#pic_center)
+![输入图片说明](ReadmePicture/image33.png)
 
 
 
@@ -166,11 +167,9 @@
 # 页面优化
 随着项目的更新，上述的功能说明页面并非最新页面，更新后的页面会在本节显示
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/429b152d32954e74820db98cd3ae1bc3.png)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/298b89efa49542dd9e7dff50008bc704.png)
+![输入图片说明](ReadmePicture/image34.png)
+![输入图片说明](ReadmePicture/image35.png)
 
-# 开源
-[开源仓库链接](https://gitee.com/damqiusheng/increment-backup)（如果大家觉得项目有用，希望可以点个`Star`呀）
 
 因本人目前学业繁忙，部分功能现在还不够完善，项目后面会根据大家的需求和建议逐步完善
 # 演示视频
