@@ -13,6 +13,7 @@ import org.dam.mapper.BackupFileHistoryMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,7 +68,11 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
 
     @Override
     public List<BackupFileHistory> listLastBackupHistoryByBackupFileIdList(List<Long> exitBackupFileIdList) {
-        return baseMapper.listLastBackupHistoryByBackupFileIdList(exitBackupFileIdList);
+        if (exitBackupFileIdList.size() > 0) {
+            return baseMapper.listLastBackupHistoryByBackupFileIdList(exitBackupFileIdList);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 }

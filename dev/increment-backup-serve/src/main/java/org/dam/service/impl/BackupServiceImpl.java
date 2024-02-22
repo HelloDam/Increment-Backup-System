@@ -71,51 +71,6 @@ public class BackupServiceImpl implements BackupService {
     private Random random = new Random();
 
     /**
-     * 对指定的备份源进行备份
-     *
-     * @param sourceId
-     */
-    @Override
-    public void backupBySourceId(Long sourceId, List<Task> taskList) throws IOException {
-        // 更新数据源备份次数
-        backupSourceService.updateBackupNum(sourceId);
-        // 查询忽略文件和忽略目录
-        List<String> ignoreFileList = sysParamService.getIgnoreFileOrIgnoreDir(SystemParamEnum.IGNORE_FILE_NAME.getParamName());
-        List<String> ignoreDirectoryList = sysParamService.getIgnoreFileOrIgnoreDir(SystemParamEnum.IGNORE_DIRECTORY_NAME.getParamName());
-        // 执行备份
-        CompletableFuture[] futureArr = new CompletableFuture[taskList.size()];
-        for (int i = 0; i < taskList.size(); i++) {
-            int finalI = i;
-            Task task = taskList.get(finalI);
-//            backUpByTask(task, ignoreFileList, ignoreDirectoryList);
-            futureArr[i] = CompletableFuture.runAsync(() -> {
-                try {
-                    backUpByTask(task, ignoreFileList, ignoreDirectoryList);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }, executor).exceptionally(e -> {
-                log.error(e.getMessage());
-                // 备份失败（出现异常），移除相应数据源ID
-                if (backupController.sourceIDSet.contains(sourceId)) {
-                    backupController.sourceIDSet.remove(sourceId);
-                }
-                Map<String, Object> dataMap = new HashMap<>();
-                dataMap.put("content", "任务备份失败");
-                dataMap.put("message", e.getMessage());
-                webSocketServer.sendMessage(JSON.toJSONString(dataMap), WebSocketServer.usernameAndSessionMap.get("Admin"));
-                return null;
-            });
-        }
-        CompletableFuture.allOf(futureArr).join();
-
-        // 备份完成，移除相应数据源ID
-        if (backupController.sourceIDSet.contains(sourceId)) {
-            backupController.sourceIDSet.remove(sourceId);
-        }
-    }
-
-    /**
      * 检查数据，删除 无效备份信息 和 已备份文件
      * 什么叫无效？简单来说就是，已备份文件和原文件对应不上，或者说原文件被删除了
      *
@@ -173,6 +128,52 @@ public class BackupServiceImpl implements BackupService {
         }
     }
 
+
+    /**
+     * 对指定的备份源进行备份
+     *
+     * @param sourceId
+     */
+    @Override
+    public void backupBySourceId(Long sourceId, List<Task> taskList) throws IOException {
+        // 更新数据源备份次数
+        backupSourceService.updateBackupNum(sourceId);
+        // 查询忽略文件和忽略目录
+        List<String> ignoreFileList = sysParamService.getIgnoreFileOrIgnoreDir(SystemParamEnum.IGNORE_FILE_NAME.getParamName());
+        List<String> ignoreDirectoryList = sysParamService.getIgnoreFileOrIgnoreDir(SystemParamEnum.IGNORE_DIRECTORY_NAME.getParamName());
+        // 执行备份
+        CompletableFuture[] futureArr = new CompletableFuture[taskList.size()];
+        for (int i = 0; i < taskList.size(); i++) {
+            int finalI = i;
+            Task task = taskList.get(finalI);
+//            backUpByTask(task, ignoreFileList, ignoreDirectoryList);
+            futureArr[i] = CompletableFuture.runAsync(() -> {
+                try {
+                    backUpByTask(task, ignoreFileList, ignoreDirectoryList);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }, executor).exceptionally(e -> {
+                log.error(e.getMessage());
+                // 备份失败（出现异常），移除相应数据源ID
+                if (backupController.sourceIDSet.contains(sourceId)) {
+                    backupController.sourceIDSet.remove(sourceId);
+                }
+                Map<String, Object> dataMap = new HashMap<>();
+                dataMap.put("content", "任务备份失败");
+                dataMap.put("message", e.getMessage());
+                webSocketServer.sendMessage(JSON.toJSONString(dataMap), WebSocketServer.usernameAndSessionMap.get("Admin"));
+                return null;
+            });
+        }
+        CompletableFuture.allOf(futureArr).join();
+
+        // 备份完成，移除相应数据源ID
+        if (backupController.sourceIDSet.contains(sourceId)) {
+            backupController.sourceIDSet.remove(sourceId);
+        }
+    }
+
     /**
      * 根据备份任务来进行备份
      *
@@ -206,7 +207,7 @@ public class BackupServiceImpl implements BackupService {
         QueryWrapper<BackupFile> backupFileQueryWrapper = new QueryWrapper<BackupFile>()
                 .eq("backup_source_id", backupSource.getId())
                 .eq("father_id", 0L)
-                .select("id", "source_file_path", "file_name");
+                .select("id", "source_file_path", "target_file_path", "file_name");
         if (backupSource.getBackupType() == 0) {
             // 集中备份的时候，根据目标id查询；分散备份的时候，目标id不确定，所以都查询出来
             backupFileQueryWrapper.eq("backup_target_id", backupTarget.getId());
@@ -228,7 +229,7 @@ public class BackupServiceImpl implements BackupService {
                 backupFileBuffer1, backupFileHistoryBuffer1,
                 backupFileBuffer2, backupFileHistoryBuffer2);
         // 处理缓冲区中残留数据
-        buffer1Process(backupFileBuffer1, backupFileHistoryBuffer1);
+        addToBuffer1(backupFileBuffer1, backupFileHistoryBuffer1);
         buffer2Process(backupSource.getId(), backupTarget.getId(), backupTask.getId(),
                 backupSource, backupFileBuffer2, backupFileHistoryBuffer2);
         /// 备份结束
@@ -486,6 +487,9 @@ public class BackupServiceImpl implements BackupService {
         }*/
         // 获取源文件
         File backupSourceFile = new File(backupSourceFilePath);
+        if (!backupSourceFile.exists()) {
+            int temp = 0;
+        }
         Long targetId = source.getBackupType() == 0 ? target.getId() : 0;
         if (fileNameAndBackupFileMap.get(backupSourceFile.getName()) == null) {
             // --if-- 文件还没有备份过，将其插入到数据库中，并取出id
@@ -507,7 +511,7 @@ public class BackupServiceImpl implements BackupService {
             sourceFileInputStream.close();
             // backupFileId 待定，还不是准确的
             BackupFileHistory backupFileHistory = constructBackupFileHistory(backupSourceFilePath, source.getId(), targetId, targetFilePath, 0L, backupTaskId, new Date(), backupSourceFile, md5str);
-            buffer1Process(backupFile, backupFileHistory, backupFileBuffer1, backupFileHistoryBuffer1,
+            addToBuffer1(backupFile, backupFileHistory, backupFileBuffer1, backupFileHistoryBuffer1,
                     isCompress, backupSourceFile, targetFilePath);
         } else {
             // 直接从字典中获取
@@ -581,26 +585,31 @@ public class BackupServiceImpl implements BackupService {
      * 1. 将其进行备份
      * 2. 直接给这些备份文件添加备份记录
      *
-     * @param backupFileInDatabase
+     * @param backupFile
      * @param backupFileBuffer1
      */
-    private void buffer1Process(BackupFile backupFileInDatabase, BackupFileHistory backupFileHistory,
-                                List<BackupFile> backupFileBuffer1, List<BackupFileHistory> backupFileHistoryBuffer1,
-                                int isCompress, File backupSourceFile, String targetFilePath) {
-        backupFileBuffer1.add(backupFileInDatabase);
-        backupFileHistoryBuffer1.add(backupFileHistory);
+    private void addToBuffer1(BackupFile backupFile, BackupFileHistory backupFileHistory,
+                              List<BackupFile> backupFileBuffer1, List<BackupFileHistory> backupFileHistoryBuffer1,
+                              int isCompress, File backupSourceFile, String targetFilePath) {
+        // 执行文件备份
         try {
-            // 执行文件备份
-            execBackupSingleFile(isCompress, backupSourceFile, targetFilePath);
-        } catch (IOException e) {
+            if (execBackupSingleFile(isCompress, backupSourceFile, targetFilePath)) {
+                backupFileBuffer1.add(backupFile);
+                backupFileHistoryBuffer1.add(backupFileHistory);
+            } else {
+                log.error("备份出错");
+            }
+        } catch (Exception e) {
+            log.error("文件备份出错");
             throw new RuntimeException(e);
         }
+
         if (backupFileBuffer1.size() > this.BATCH_SIZE) {
-            buffer1Process(backupFileBuffer1, backupFileHistoryBuffer1);
+            addToBuffer1(backupFileBuffer1, backupFileHistoryBuffer1);
         }
     }
 
-    private void buffer1Process(List<BackupFile> backupFileBuffer1, List<BackupFileHistory> backupFileHistoryBuffer1) {
+    private void addToBuffer1(List<BackupFile> backupFileBuffer1, List<BackupFileHistory> backupFileHistoryBuffer1) {
         backupFileService.saveBatch(backupFileBuffer1);
         for (int i = 0; i < backupFileHistoryBuffer1.size(); i++) {
             backupFileHistoryBuffer1.get(i).setBackupFileId(backupFileBuffer1.get(i).getId());
@@ -658,6 +667,8 @@ public class BackupServiceImpl implements BackupService {
                 long lastModify = fileHistory.getModifyTime();
                 long fileSize = fileHistory.getFileSize();
                 String historyMD5 = fileHistory.getMd5();
+                long backupSourceFileLastModify = backupSourceFile.lastModified();
+                long backupSourceFileLength = backupSourceFile.length();
                 if (lastModify == backupSourceFile.lastModified() && fileSize == backupSourceFile.length()) {
                     // 如果文件的 修改时间 和 文件大小 都和数据库中的对应，认为文件没有被修改，无需备份
                     isNeedBackup = false;
@@ -673,38 +684,51 @@ public class BackupServiceImpl implements BackupService {
                 }
             }
 
+            if (isNeedBackup == false) {
+                // 判断备份目标目录中是否有文件，没有的话，也要备份过去
+                File file = new File(targetFilePath);
+                if (!file.exists()) {
+                    isNeedBackup = true;
+                }
+            }
+
             if (isNeedBackup) {
                 Date startDate = new Date();
-                if (!execBackupSingleFile(isCompress, backupSourceFile, targetFilePath)) {
-                    log.error("备份出错");
-                } else {
-                    if (sourceFileInputStream == null) {
-                        sourceFileInputStream = new FileInputStream(backupSourceFile);
-                        md5str = DigestUtil.md5Hex(sourceFileInputStream);
-                    }
-                    /// 保存文件备份历史
-                    BackupFileHistory history = constructBackupFileHistory(backupFile.getSourceFilePath(), backupSourceId, backupTargetId,
-                            targetFilePath, backupFile.getId(), backupTaskId, startDate, backupSourceFile, md5str);
-                    history.setId(fileHistory.getId());
-                    updateBackupFileHistory(history, backupFileHistoryBuffer2);
+                try {
+                    if (!execBackupSingleFile(isCompress, backupSourceFile, targetFilePath)) {
+                        log.error("备份出错");
+                    } else {
+                        if (sourceFileInputStream == null) {
+                            sourceFileInputStream = new FileInputStream(backupSourceFile);
+                            md5str = DigestUtil.md5Hex(sourceFileInputStream);
+                        }
+                        /// 保存文件备份历史
+                        BackupFileHistory history = constructBackupFileHistory(backupFile.getSourceFilePath(), backupSourceId, backupTargetId,
+                                targetFilePath, backupFile.getId(), backupTaskId, startDate, backupSourceFile, md5str);
+                        history.setId(fileHistory.getId());
+                        updateBackupFileHistory(history, backupFileHistoryBuffer2);
 
-                    /// 更新文件信息
-                    BackupFile newBackupFile = new BackupFile();
-                    // 文件的大小可能会改变
-                    newBackupFile.setFileLength(backupSourceFile.length());
-                    // 文件大小改变之后，压缩之后的文件大小也会改变
-                    if (isCompress == 1) {
-                        File targetFile = new File(targetFilePath);
-                        newBackupFile.setFileLengthAfterCompress(targetFile.length());
+                        /// 更新文件信息
+                        BackupFile newBackupFile = new BackupFile();
+                        // 文件的大小可能会改变
+                        newBackupFile.setFileLength(backupSourceFile.length());
+                        // 文件大小改变之后，压缩之后的文件大小也会改变
+                        if (isCompress == 1) {
+                            File targetFile = new File(targetFilePath);
+                            newBackupFile.setFileLengthAfterCompress(targetFile.length());
+                        }
+                        // 本来可以压缩的文件，修改之后可能不再可以压缩，因为空间可能变大
+                        newBackupFile.setIsCompress(isCompress);
+                        // 更新文件的备份次数
+                        int backupNum = backupFile.getBackupNum();
+                        newBackupFile.setBackupNum(++backupNum);
+                        // 修改文件的上次备份时间
+                        newBackupFile.setLastBackupTime(new Date());
+                        updateBackupFileBuffer.add(newBackupFile);
                     }
-                    // 本来可以压缩的文件，修改之后可能不再可以压缩，因为空间可能变大
-                    newBackupFile.setIsCompress(isCompress);
-                    // 更新文件的备份次数
-                    int backupNum = backupFile.getBackupNum();
-                    newBackupFile.setBackupNum(++backupNum);
-                    // 修改文件的上次备份时间
-                    newBackupFile.setLastBackupTime(new Date());
-                    updateBackupFileBuffer.add(newBackupFile);
+                } catch (Exception e) {
+                    log.error("文件备份出错");
+                    throw new RuntimeException(e);
                 }
             }
             if (sourceFileInputStream != null) {
@@ -724,7 +748,7 @@ public class BackupServiceImpl implements BackupService {
      * 根据已有信息，构建BackupFile对象
      *
      * @param source
-     * @param backupSourceFilePath
+     * @param sourceFilePath
      * @param targetFilePath
      * @param targetId
      * @param fatherId
@@ -732,11 +756,12 @@ public class BackupServiceImpl implements BackupService {
      * @param backupSourceFile
      * @return
      */
-    private static BackupFile constructBackupFile(BackupSource source, String backupSourceFilePath, String targetFilePath, long targetId, Long fatherId, int isCompress, File backupSourceFile) {
+    private static BackupFile constructBackupFile(BackupSource source, String sourceFilePath, String targetFilePath, long targetId, Long fatherId, int isCompress, File backupSourceFile) {
         BackupFile backupFile = new BackupFile();
         backupFile.setBackupSourceId(source.getId());
         backupFile.setBackupTargetId(targetId);
-        backupFile.setSourceFilePath(backupSourceFilePath.replace("\\", "\\\\").replace("'", "\\'"));
+//        ourceFilePath.replace("\\", "\\\\").replace("'", "\\'")
+        backupFile.setSourceFilePath(sourceFilePath);
         backupFile.setTargetFilePath(targetFilePath);
         backupFile.setBackupNum(1);
         backupFile.setLastBackupTime(new DateTime());
@@ -745,7 +770,12 @@ public class BackupServiceImpl implements BackupService {
         // 分散存储的时候，不会创建文件夹，因此直接为空就行
         // 目录的后缀为空
         if (backupSourceFile.getName().contains(".")) {
-            backupFile.setFileSuffix(backupSourceFile.getName().substring(backupSourceFile.getName().lastIndexOf(".")));
+            String suffix = backupSourceFile.getName().substring(backupSourceFile.getName().lastIndexOf("."));
+            if (suffix.length() > 30) {
+                log.info("后缀太长：" + suffix);
+                suffix = "后缀太长";
+            }
+            backupFile.setFileSuffix(suffix);
         } else {
             backupFile.setFileSuffix("该文件无后缀");
         }
@@ -790,7 +820,7 @@ public class BackupServiceImpl implements BackupService {
      * @throws IOException
      */
     private boolean execBackupSingleFile(int isCompress, File backupSourceFile, String targetFilePath) throws IOException {
-        System.out.println("执行备份");
+//        System.out.println("执行备份");
         try {
             if (isCompress == 1) {
                 // 对文件进行压缩

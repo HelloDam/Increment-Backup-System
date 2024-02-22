@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.rmi.ServerException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -50,6 +51,12 @@ public class BackupController {
         CompletableFuture.runAsync(() -> {
             try {
                 backupService.backupBySourceId(sourceId, taskList);
+            } catch (ServerException e) {
+                try {
+                    throw new ServerException(e.getMessage());
+                } catch (ServerException ex) {
+                    throw new RuntimeException(ex);
+                }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
