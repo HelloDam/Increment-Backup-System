@@ -50,30 +50,29 @@
 
 为了让用户可以查看数据源原本的文件结构，系统会在备份的时候记录数据源的文件结构
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/7e30da76b7dd4dcab84ce8aac887b30f.png#pic_center)
+![输入图片说明](ReadmePicture/image10.png)
 通过复制文件的备份目标路径，即可快速找到文件被备份到何处
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/0e9b16ff67bd4361b50e156ff6e74ece.png#pic_center)
+![输入图片说明](ReadmePicture/image11.png)
 ## 压缩
 压缩后的文件后缀为`.easyBackupZip`
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/20d8def8f4cb47f894368f50f4878b2f.png#pic_center)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/935b882052ea4474bcd5230982e2ef30.png#pic_center)
+![输入图片说明](ReadmePicture/image12.png)
+![输入图片说明](ReadmePicture/image13.png)
 点击解压按钮，可以将压缩文件解压到压缩文件所在目录
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/0cbf9ec44a844e4fa5c6ad26196c4035.png#pic_center)
+![输入图片说明](ReadmePicture/image14.png)
 除此之外，也可以将压缩文件下载为解压后的文件
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/eb415143af7d4eb8a335073f333d3175.png#pic_center)
+![输入图片说明](ReadmePicture/image15.png)
 
 ## 清理
 该功能是用来清理不必要的数据，例如本来数据源中有一个文件，这个文件被备份到目标目录中了，也在数据库中留下了备份的过程数据。但是后续从数据源中删除了该文件，认为该文件不再有用。使用清理功能可以从备份目标目录中将该文件删除，同时删除文件在数据库中留存的备份数据，减少数据库中的垃圾数据
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/0de6f789790044a2b48efbf89a654606.png#pic_center)
+![输入图片说明](ReadmePicture/image16.png)
 
 ## 忽略文件或目录
 在备份时，可能有的文件并不需要进行备份，如Java项目的`.idea`，Vue项目的`node_modules`，通过设置忽略文件或目录，系统在备份的时候会跳过相应的文件或目录
-
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/4931d1f456eb496da234f85327bde08b.png#pic_center)
+![输入图片说明](ReadmePicture/image17.png)
 
 
 # 测试
@@ -81,41 +80,41 @@
 ### 备份
 执行备份之后，备份目标目录的文件结构和数据源中的完全一致
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/6a41c5274ca445309209dff47c73d184.png#pic_center)
+![输入图片说明](ReadmePicture/image18.png)
 ### 创建新文件夹、新文件
 在数据源中创建新的文件夹和文件，此时，数据源的文件结构和备份目标目录的文件结构不再一致
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/a4df4b7094e44c2394f4b0ac59bd4a0f.png#pic_center)
+![输入图片说明](ReadmePicture/image19.png)
 
 执行备份之后，备份目标目录的文件结构重新和数据源的一致
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/ed4b5920696f4dc6a3ef7efd5a57b608.png#pic_center)
+![输入图片说明](ReadmePicture/image20.png)
 ### 修改数据源中的数据
 首先修改数据源中的文本数据
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/3dee7150b24a42e08aef40e60a6d7edd.png#pic_center)
+![输入图片说明](ReadmePicture/image21.png)
 
 此时，备份目标目录中的文本数据如下
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/3f0449973bae40879e9c379de478c40e.png#pic_center)
+![输入图片说明](ReadmePicture/image22.png)
 
 执行备份，备份目标目录中的文本数据被修改
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/bb3fb5295bc04880864267530660a21e.png#pic_center)
+![输入图片说明](ReadmePicture/image23.png)
 ## 文件结构同步测试
 当前文件结构
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/c037a06406e64cd1b4e7a0aa1730c5bb.png#pic_center)
+![输入图片说明](ReadmePicture/image24.png)
 从数据源中删除该文件
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/86dbe57c705845be990b3d9703b5f922.png#pic_center)
+![输入图片说明](ReadmePicture/image25.png)
 文件结构也同步更新
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/ec6b970b33cc4ff7ba14af9ef757509c.png#pic_center)
+![输入图片说明](ReadmePicture/image26.png)
 
 ## 忽略文件或目录测试
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/a289d715008b48fcbbf17ea9f75502a6.png)
+![输入图片说明](ReadmePicture/image27.png)
 
 通过设置忽略目录`idea`和文件`idea.txt`之后，再进行备份，得到的备份结果如下
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/e6b48958ed4343c795742cb0f45f8e64.png#pic_center)
+![输入图片说明](ReadmePicture/image28.png)
 
 # 系统技术栈
 ## 后端项目
@@ -134,7 +133,7 @@
 # 启动方式
 为了降低用户的使用门槛，系统数据库选用SQLite，因此用户无需安装并配置数据库。此外在将后端打成jar包之前，先整合了前端打包之后的文件，所以最终只需要启动jar包即可启动整个系统
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/d4b80665e15f49d89c9d4faa2bfd7460.png#pic_center)
+![输入图片说明](ReadmePicture/image29.png)
 系统启动成功之后，访问`localhost:8899`即可
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/2777fd0a5c9c49a383cf4d5eac02c28e.png#pic_center)
