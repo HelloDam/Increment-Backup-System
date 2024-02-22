@@ -70,7 +70,7 @@
         <el-table-column prop="totalByteNum" label="已备份字节数 / 总字节数" width="300" resizable
                          :show-overflow-tooltip="true">
           <template #default="scope">
-            <span>{{ scope.row.finishByteNum }} / {{ scope.row.totalByteNum }}</span>
+            <span>{{ formatBytes(scope.row.finishByteNum) }} / {{ formatBytes(scope.row.totalByteNum) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="backupTime" label="备份时间" width="180" resizable
@@ -166,6 +166,7 @@ import backupTargetApi from "../api/backupTargetApi.js";
 import {ElMessage} from "element-plus";
 import backupApi from "../api/backupApi.js";
 import timeDisplayUtil from "../utils/timeDisplayUtil.js";
+import storageUtil from "../utils/storageUtil.js";
 
 export default {
   components: {},
@@ -361,6 +362,10 @@ export default {
      */
     formatTime(time){
       return timeDisplayUtil.formatTime(time)
+    },
+
+    formatBytes(byteNum) {
+      return storageUtil.formatBytes(byteNum);
     }
 
   },
