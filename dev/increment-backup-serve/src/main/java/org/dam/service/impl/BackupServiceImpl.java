@@ -324,7 +324,7 @@ public class BackupServiceImpl implements BackupService {
                 backupTask.setFinishFileNum(statistic.getFinishBackupFileNum());
                 backupTask.setFinishByteNum(statistic.getFinishBackupByteNum());
                 backupTask.setEndTime(new Date());
-                backupTask.setBackupTime(backupTask.getEndTime().getTime() - backupTask.getCreateTime().getTime());
+                backupTask.setBackupTime(backupTask.getEndTime().getTime() - taskBackupStartTime.getTime());
                 backupTaskService.updateById(backupTask);
                 backupTask.setTotalFileNum(statistic.getTotalBackupFileNum());
                 backupTask.setTotalByteNum(statistic.getTotalBackupByteNum());
