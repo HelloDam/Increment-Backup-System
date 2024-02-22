@@ -3,12 +3,35 @@ server:
   port: 8899
 # spring
 spring:
-  profiles:
-    active: database
   # 指定静态资源的路径
   web:
     resources:
       static-locations: classpath:/static/dist
+#  profiles:
+#    active: database
+  # Mysql 用户（分表）
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
+  # Mysql 用户（不分表）
+#  datasource:
+#    username: root
+#    password: 12345678
+#    url: jdbc:mysql://127.0.0.1:3308/increment-backup?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:
+#      connection-test-query: select 1
+#      connection-timeout: 20000
+#      idle-timeout: 300000
+#      maximum-pool-size: 5
+#      minimum-idle: 5
+  # SQLite 用户
+#  datasource:
+#    driver-class-name: org.sqlite.JDBC
+#    url: jdbc:sqlite::resource:static/sqlite/increment-backup.db
+#    username:
+#    password:
+
 
 #mybatis-plus:
 #  configuration:
