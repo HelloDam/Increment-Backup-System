@@ -499,7 +499,7 @@ export default {
             ElMessage({
               message: "数据源：" + this.selectBackupSourceIdArr[i] + " 添加备份成功，正在准备备份信息，请耐心等候",
               type: 'success',
-              duration: 4 * 1000
+              duration: 2 * 1000
             })
           })
         }
