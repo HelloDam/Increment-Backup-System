@@ -75,6 +75,11 @@ public class BackupFileHistoryServiceImpl extends ServiceImpl<BackupFileHistoryM
         }
     }
 
+    @Override
+    public void updateBatch(List<BackupFileHistory> buffer) {
+        baseMapper.updateBatch(buffer);
+    }
+
 }
 
 

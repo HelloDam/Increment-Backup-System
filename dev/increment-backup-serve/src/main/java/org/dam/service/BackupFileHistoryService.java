@@ -25,4 +25,5 @@ public interface BackupFileHistoryService extends IService<BackupFileHistory> {
 
     List<BackupFileHistory> listLastBackupHistoryByBackupFileIdList(List<Long> exitBackupFileIdList);
 
+    void updateBatch(List<BackupFileHistory> buffer);
 }

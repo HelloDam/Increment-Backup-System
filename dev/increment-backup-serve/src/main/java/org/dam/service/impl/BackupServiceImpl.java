@@ -685,7 +685,7 @@ public class BackupServiceImpl implements BackupService {
             }
 
             if (isNeedBackup == false) {
-                // 判断备份目标目录中是否有文件，没有的话，也要备份过去
+                // --if-- 判断备份目标目录中没有文件，也要备份过去
                 File file = new File(targetFilePath);
                 if (!file.exists()) {
                     isNeedBackup = true;
@@ -695,6 +695,12 @@ public class BackupServiceImpl implements BackupService {
             if (isNeedBackup) {
                 Date startDate = new Date();
                 try {
+                    // 检查目标目录的文件对应的目录是否存在，不存在则创建（有可能文件被备份到目标目录之后，目标目录的文件夹被删除）
+                    String dirPath = targetFilePath.substring(0, targetFilePath.lastIndexOf(File.separator));
+                    File dir = new File(dirPath);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
                     if (!execBackupSingleFile(isCompress, backupSourceFile, targetFilePath)) {
                         log.error("备份出错");
                     } else {
@@ -876,7 +882,10 @@ public class BackupServiceImpl implements BackupService {
     private void updateBackupFileHistory(BackupFileHistory history, List<BackupFileHistory> buffer) {
         buffer.add(history);
         if (buffer.size() >= BATCH_SIZE) {
-            backupFileHistoryService.updateBatchById(buffer);
+//            for (BackupFileHistory backupFileHistory : buffer) {
+//                System.out.println(backupFileHistory.toString());
+//            }
+            backupFileHistoryService.updateBatch(buffer);
             buffer.clear();
         }
     }

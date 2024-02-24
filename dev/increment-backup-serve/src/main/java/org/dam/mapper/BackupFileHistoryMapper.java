@@ -19,6 +19,8 @@ public interface BackupFileHistoryMapper extends BaseMapper<BackupFileHistory> {
     void removeByFileIds(@Param("removeBackupFileIdList") List<Long> removeBackupFileIdList);
 
     List<BackupFileHistory> listLastBackupHistoryByBackupFileIdList(@Param("exitBackupFileIdList") List<Long> exitBackupFileIdList);
+
+    void updateBatch(@Param("buffer") List<BackupFileHistory> buffer);
 }
 
 

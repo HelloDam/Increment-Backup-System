@@ -10,6 +10,7 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * 
@@ -17,6 +18,7 @@ import lombok.Data;
  */
 @TableName(value ="backup_file_history")
 @Data
+@ToString
 public class BackupFileHistory implements Serializable {
     /**
      * id

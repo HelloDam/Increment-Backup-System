@@ -10,6 +10,15 @@
         backup_target_path,backup_target_root_id,md5,
         backup_id
     </sql>
+    <update id="updateBatch">
+        <foreach collection="buffer" item="item" index="index" separator=";">
+            UPDATE backup_file_history
+            SET backup_file_id=#{item.backupFileId}, backup_source_id=#{item.backupSourceId}, backup_source_file_path=#{item.backupSourceFilePath},
+            modify_time=#{item.modifyTime}, file_size=#{item.fileSize}, backup_target_file_path=#{item.backupTargetFilePath},
+            backup_target_root_id=#{item.backupTargetRootId}, md5=#{item.md5}, backup_task_id=#{item.backupTaskId}
+            WHERE id=#{item.id} and backup_source_id=#{item.backupSourceId}
+        </foreach>
+    </update>
     <delete id="removeByFileIds">
         DELETE FROM backup_file_history WHERE backup_file_id IN
         <foreach collection="removeBackupFileIdList" item="fileId" separator="," open="(" close=")">
